@@ -1,0 +1,2578 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>고교선택 적성검사 v2 — 멘탈 유형 통합판</title>
+<style>
+/* ===== Design Tokens ===== */
+:root {
+  --ink: #0E2A3D;
+  --ink-soft: #2A4A60;
+  --paper: #FAFAF6;
+  --paper-2: #F1F5F4;
+  --line: #D7DDDC;
+  --teal: #0E8F86;
+  --teal-deep: #0A6E66;
+  --teal-soft: #E3F1EF;
+  --amber: #C98A2B;
+  --amber-soft: #FBF1DD;
+  --rose: #B14A5A;
+  --rose-soft: #F7E3E6;
+  --good: #2D7A4F;
+  --warn: #B14A5A;
+  --shadow-sm: 0 1px 2px rgba(14,42,61,.06), 0 1px 1px rgba(14,42,61,.04);
+  --shadow-md: 0 4px 12px rgba(14,42,61,.08), 0 2px 4px rgba(14,42,61,.04);
+  --shadow-lg: 0 18px 40px rgba(14,42,61,.12), 0 6px 14px rgba(14,42,61,.06);
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --font-display: "Noto Serif KR", "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.55;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse at top right, rgba(14,143,134,.05), transparent 40%),
+    radial-gradient(ellipse at bottom left, rgba(201,138,43,.04), transparent 40%);
+}
+
+/* ===== Layout ===== */
+.shell {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 18px 80px;
+  position: relative;
+}
+
+header.top {
+  padding: 22px 0 14px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+header.top .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-mark {
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-deep) 100%);
+  display: grid;
+  place-items: center;
+  color: white;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -.5px;
+  box-shadow: var(--shadow-sm);
+}
+.brand-text {
+  display: flex; flex-direction: column; line-height: 1.15;
+}
+.brand-text strong {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -.3px;
+}
+.brand-text span {
+  font-size: 11px;
+  color: var(--ink-soft);
+  letter-spacing: .5px;
+}
+
+.admin-key {
+  font-size: 11px;
+  color: var(--ink-soft);
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  padding: 6px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all .15s;
+}
+.admin-key:hover { background: white; border-color: var(--teal); color: var(--teal-deep); }
+
+/* ===== Headings ===== */
+h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -.5px; margin: 0; }
+h1 { font-size: 28px; font-weight: 700; line-height: 1.25; }
+h2 { font-size: 22px; font-weight: 700; line-height: 1.3; margin-bottom: 6px; }
+h3 { font-size: 17px; font-weight: 700; line-height: 1.35; }
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--teal-deep);
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.lede {
+  font-size: 16px;
+  color: var(--ink-soft);
+  line-height: 1.65;
+  margin: 12px 0 0;
+}
+
+/* ===== Cards ===== */
+.card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+.card.flat {
+  background: var(--paper-2);
+  box-shadow: none;
+  border: 1px dashed var(--line);
+}
+.card.tinted {
+  background: var(--teal-soft);
+  border-color: rgba(14,143,134,.2);
+}
+
+/* ===== Buttons ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 14px 22px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all .18s cubic-bezier(.2,.7,.3,1);
+  text-decoration: none;
+  letter-spacing: -.2px;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-primary {
+  background: var(--ink);
+  color: white;
+}
+.btn-primary:hover { background: var(--teal-deep); transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled {
+  background: var(--line); color: var(--ink-soft); cursor: not-allowed; transform: none;
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line);
+}
+.btn-ghost:hover { background: var(--paper-2); border-color: var(--ink-soft); }
+.btn-block { width: 100%; }
+.btn-sm { padding: 9px 14px; font-size: 14px; }
+
+/* ===== Form fields ===== */
+.field { margin-bottom: 16px; }
+.field label {
+  display: block;
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-bottom: 7px;
+  font-weight: 500;
+}
+.field input, .field select {
+  width: 100%;
+  padding: 13px 15px;
+  font-size: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: white;
+  font-family: var(--font-body);
+  color: var(--ink);
+  transition: border-color .15s;
+}
+.field input:focus, .field select:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px var(--teal-soft);
+}
+
+/* ===== Welcome screen ===== */
+.hero-decor {
+  position: relative;
+  padding: 32px 24px 28px;
+}
+.hero-decor::before {
+  content: '';
+  position: absolute;
+  top: 18px; right: 18px;
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, var(--amber-soft), var(--amber) 80%);
+  opacity: .35;
+  filter: blur(2px);
+}
+.hero-decor h1 { position: relative; z-index: 1; }
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+.feature {
+  padding: 14px 13px;
+  background: var(--paper-2);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.feature strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 3px;
+  color: var(--teal-deep);
+}
+
+/* ===== Progress ===== */
+.progress-shell {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--paper);
+  padding: 12px 0 14px;
+  margin: -22px -18px 16px;
+  padding-left: 18px;
+  padding-right: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.progress-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; color: var(--ink-soft);
+  margin-bottom: 8px;
+  letter-spacing: .3px;
+}
+.progress-meta strong { color: var(--ink); font-weight: 600; }
+.progress-bar {
+  height: 6px;
+  background: var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--teal), var(--teal-deep));
+  border-radius: 999px;
+  transition: width .35s cubic-bezier(.2,.7,.3,1);
+  width: 0%;
+}
+
+/* ===== Question ===== */
+.q-axis-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--teal-deep);
+  background: var(--teal-soft);
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+.q-text {
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -.5px;
+  color: var(--ink);
+  margin: 0 0 24px;
+}
+.q-hint {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin: -16px 0 22px;
+  line-height: 1.5;
+  padding: 10px 12px;
+  background: var(--amber-soft);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--amber);
+}
+
+/* Likert scale */
+.likert {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.likert-opt {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 6px 12px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  background: white;
+  transition: all .15s;
+  text-align: center;
+}
+.likert-opt:hover { border-color: var(--teal); }
+.likert-opt input { display: none; }
+.likert-opt .dot {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--paper-2);
+  border: 2px solid var(--line);
+  transition: all .15s;
+}
+.likert-opt span {
+  font-size: 11px;
+  color: var(--ink-soft);
+  line-height: 1.2;
+  font-weight: 500;
+}
+.likert-opt.selected {
+  border-color: var(--teal);
+  background: var(--teal-soft);
+}
+.likert-opt.selected .dot {
+  background: var(--teal);
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px white inset;
+}
+.likert-opt.selected span { color: var(--teal-deep); font-weight: 600; }
+
+.likert-axis-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-top: 10px;
+  padding: 0 4px;
+}
+
+/* Multi-select (계열) */
+.ms-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.ms-card {
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  cursor: pointer;
+  background: white;
+  transition: all .15s;
+}
+.ms-card:hover { border-color: var(--teal); }
+.ms-card.selected {
+  border-color: var(--teal);
+  background: var(--teal-soft);
+}
+.ms-card-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 6px;
+}
+.ms-card-head strong {
+  font-family: var(--font-display);
+  font-size: 16px;
+}
+.ms-check {
+  width: 22px; height: 22px;
+  border: 2px solid var(--line);
+  border-radius: 6px;
+  display: grid; place-items: center;
+  flex-shrink: 0;
+}
+.ms-card.selected .ms-check {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: white;
+}
+.ms-card.selected .ms-check::after {
+  content: '✓';
+  font-size: 14px;
+  font-weight: 700;
+}
+.ms-card .col { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+.ms-card .col em { font-style: normal; color: var(--ink); font-weight: 500; }
+.ms-card.unsure {
+  background: var(--amber-soft);
+  border-color: rgba(201,138,43,.4);
+}
+.ms-card.unsure.selected {
+  border-color: var(--amber);
+  background: var(--amber-soft);
+}
+.ms-card.unsure.selected .ms-check {
+  background: var(--amber); border-color: var(--amber);
+}
+
+/* ===== Nav ===== */
+.q-nav {
+  display: flex;
+  gap: 10px;
+  margin-top: 22px;
+}
+.q-nav .btn { flex: 1; }
+
+/* ===== Result ===== */
+.cap-alert {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 18px 18px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 14px;
+  border: 1.5px solid;
+}
+.cap-alert.severe {
+  background: var(--rose-soft);
+  border-color: var(--rose);
+  color: var(--ink);
+}
+.cap-alert.moderate {
+  background: var(--amber-soft);
+  border-color: var(--amber);
+  color: var(--ink);
+}
+.cap-alert.info {
+  background: var(--teal-soft);
+  border-color: var(--teal);
+  color: var(--ink);
+}
+.cap-alert .cap-icon {
+  flex-shrink: 0;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: white;
+}
+.cap-alert.severe .cap-icon { background: var(--rose); }
+.cap-alert.moderate .cap-icon { background: var(--amber); }
+.cap-alert.info .cap-icon { background: var(--teal); }
+.cap-alert .cap-body strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+.cap-alert.severe .cap-body strong { color: var(--rose); }
+.cap-alert.moderate .cap-body strong { color: #8C5A0F; }
+.cap-alert.info .cap-body strong { color: var(--teal-deep); }
+.cap-alert .cap-body p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.cap-alert .cap-body p strong { display: inline; font-size: inherit; color: var(--ink); margin: 0; }
+
+.result-hero {
+  padding: 32px 24px;
+  text-align: center;
+  background: linear-gradient(135deg, var(--ink) 0%, var(--teal-deep) 100%);
+  color: white;
+  border-radius: var(--radius-lg);
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.result-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255,255,255,.08), transparent 50%),
+    radial-gradient(circle at 80% 100%, rgba(201,138,43,.15), transparent 50%);
+  pointer-events: none;
+}
+.result-hero h1 {
+  color: white;
+  font-size: 24px;
+  position: relative;
+}
+.result-hero .sub {
+  color: rgba(255,255,255,.75);
+  font-size: 14px;
+  margin-top: 6px;
+  position: relative;
+}
+.result-hero .top-tag {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,.7);
+  background: rgba(255,255,255,.1);
+  padding: 5px 12px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+  position: relative;
+}
+
+/* Hexagon chart */
+.hex-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 14px 0 6px;
+}
+.hex-wrap svg { max-width: 100%; height: auto; }
+
+/* Rank list */
+.rank-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 18px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+  background: white;
+}
+.rank-item.r1 {
+  border-color: var(--teal);
+  background: var(--teal-soft);
+  border-width: 2px;
+}
+.rank-item.r2 {
+  border-color: var(--amber);
+  background: var(--amber-soft);
+}
+.rank-num {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: white;
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.rank-item.r1 .rank-num { background: var(--teal); }
+.rank-item.r2 .rank-num { background: var(--amber); }
+.rank-body { flex: 1; min-width: 0; }
+.rank-body strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 17px;
+  margin-bottom: 2px;
+}
+.rank-body .why {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.45;
+}
+.rank-score {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  flex-shrink: 0;
+}
+.rank-item.r1 .rank-score { color: var(--teal-deep); }
+
+/* Mental type card */
+.mental-card {
+  padding: 24px 20px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--paper-2), white);
+  border: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+.mental-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 56px; height: 56px;
+  border-radius: 16px;
+  background: var(--teal-soft);
+  color: var(--teal-deep);
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+/* Bars */
+.bar-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 40px;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.bar-row .label { color: var(--ink-soft); font-weight: 500; }
+.bar-row .num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--ink); }
+.bar-track {
+  height: 8px;
+  background: var(--paper-2);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--teal), var(--teal-deep));
+  border-radius: 999px;
+  transition: width .8s cubic-bezier(.2,.7,.3,1);
+}
+.bar-fill.amber { background: linear-gradient(90deg, var(--amber), #A16910); }
+.bar-fill.rose { background: linear-gradient(90deg, var(--rose), #8C3441); }
+
+/* Section header */
+.section-h {
+  display: flex; align-items: baseline; gap: 8px;
+  margin: 24px 0 12px;
+  padding-left: 4px;
+}
+.section-h h2 { margin: 0; }
+.section-h .num {
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: var(--teal-deep);
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+/* ===== Admin panel ===== */
+.admin-shell {
+  background: var(--ink);
+  color: white;
+  min-height: 100vh;
+  padding: 22px 18px 60px;
+}
+.admin-top {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 22px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+}
+.admin-top h1 { color: white; font-size: 20px; }
+.admin-top .sub { font-size: 12px; color: rgba(255,255,255,.6); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+
+.src-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .3px;
+}
+.src-badge.src-cloud { background: rgba(14,143,134,.18); color: #6FD9CD; border: 1px solid rgba(14,143,134,.4); }
+.src-badge.src-local { background: rgba(255,255,255,.08); color: rgba(255,255,255,.7); border: 1px solid rgba(255,255,255,.15); }
+.src-badge.src-fail  { background: rgba(177,74,90,.18); color: #FFB5BD; border: 1px solid rgba(177,74,90,.5); }
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.admin-stat {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--radius-md);
+  padding: 14px 14px 12px;
+}
+.admin-stat .num {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  color: white;
+  line-height: 1.1;
+}
+.admin-stat .lbl {
+  font-size: 11px;
+  color: rgba(255,255,255,.6);
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+.admin-toolbar {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.admin-toolbar input {
+  flex: 1;
+  min-width: 140px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.15);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 14px;
+}
+.admin-toolbar input::placeholder { color: rgba(255,255,255,.4); }
+.admin-toolbar input:focus { outline: none; border-color: var(--teal); }
+.admin-toolbar .btn {
+  background: rgba(255,255,255,.08);
+  color: white;
+  border-color: rgba(255,255,255,.15);
+  padding: 10px 16px;
+  font-size: 13px;
+}
+.admin-toolbar .btn:hover { background: rgba(255,255,255,.15); }
+.admin-toolbar .btn.danger { background: var(--rose); border-color: var(--rose); }
+.admin-toolbar .btn.primary { background: var(--teal); border-color: var(--teal); }
+
+.admin-table {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.admin-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  cursor: pointer;
+  transition: background .15s;
+  gap: 6px;
+}
+.admin-row:hover { background: rgba(255,255,255,.04); }
+.admin-row:last-child { border-bottom: none; }
+.admin-row.head { background: rgba(255,255,255,.05); cursor: default; font-size: 11px; letter-spacing: 1px; color: rgba(255,255,255,.55); padding: 10px 16px; }
+.admin-row .name { font-weight: 600; color: white; font-size: 15px; }
+.admin-row .meta { font-size: 12px; color: rgba(255,255,255,.6); display: flex; flex-wrap: wrap; gap: 10px 14px; }
+.admin-row .meta span { display: inline-flex; align-items: center; gap: 4px; }
+.admin-row .top1 {
+  font-size: 12px;
+  color: var(--teal);
+  font-weight: 600;
+}
+
+.admin-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: rgba(255,255,255,.5);
+  font-size: 13px;
+}
+
+/* Detail modal */
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(14,42,61,.7);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px 14px;
+  overflow-y: auto;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: var(--radius-lg);
+  max-width: 720px;
+  width: 100%;
+  padding: 24px 22px;
+  box-shadow: var(--shadow-lg);
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+.modal-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.modal-close {
+  background: var(--paper-2);
+  border: none;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--ink-soft);
+  display: grid; place-items: center;
+  transition: all .15s;
+  flex-shrink: 0;
+}
+.modal-close:hover { background: var(--ink); color: white; }
+
+.detail-section {
+  margin-bottom: 20px;
+}
+.detail-section h4 {
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--teal-deep);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+.detail-grid .row {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 12px;
+  font-size: 13px;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--line);
+}
+.detail-grid .row:last-child { border-bottom: none; }
+.detail-grid .row .lbl { color: var(--ink-soft); }
+.detail-grid .row .val { font-weight: 500; }
+
+.q-answer-row {
+  display: grid;
+  grid-template-columns: 50px 1fr 50px;
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+.q-answer-row:nth-child(odd) { background: var(--paper-2); }
+.q-answer-row .qid { font-family: ui-monospace, monospace; color: var(--ink-soft); font-size: 11px; }
+.q-answer-row .qtext { color: var(--ink); line-height: 1.4; }
+.q-answer-row .qval {
+  text-align: center;
+  font-weight: 700;
+  font-family: var(--font-display);
+  background: white;
+  border-radius: 6px;
+  padding: 3px 0;
+  border: 1px solid var(--line);
+}
+.q-answer-row .qval.v5 { background: var(--teal); color: white; border-color: var(--teal); }
+.q-answer-row .qval.v4 { background: var(--teal-soft); color: var(--teal-deep); border-color: var(--teal); }
+.q-answer-row .qval.v3 { background: var(--amber-soft); color: var(--amber); }
+.q-answer-row .qval.v2 { background: var(--rose-soft); color: var(--rose); }
+.q-answer-row .qval.v1 { background: var(--rose); color: white; border-color: var(--rose); }
+
+/* Pinpad */
+.pinpad-shell {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, var(--ink) 0%, #061421 100%);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.pinpad-shell.open { display: flex; }
+.pinpad {
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  color: white;
+}
+.pinpad h2 { color: white; margin-bottom: 8px; }
+.pinpad .pin-sub { color: rgba(255,255,255,.5); font-size: 13px; margin-bottom: 26px; }
+.pinpad input {
+  width: 100%;
+  padding: 16px;
+  font-size: 18px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.15);
+  color: white;
+  border-radius: var(--radius-md);
+  text-align: center;
+  letter-spacing: 4px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  margin-bottom: 14px;
+}
+.pinpad input:focus { outline: none; border-color: var(--teal); }
+.pinpad .err { color: var(--rose); font-size: 13px; height: 18px; margin-bottom: 8px; }
+.pinpad .actions { display: flex; gap: 10px; }
+.pinpad .actions .btn { flex: 1; }
+
+/* Notice strip */
+.notice {
+  font-size: 12px;
+  color: var(--ink-soft);
+  background: var(--amber-soft);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  border-left: 3px solid var(--amber);
+  line-height: 1.5;
+}
+
+/* ===== Responsive ===== */
+@media (min-width: 600px) {
+  .ms-grid { grid-template-columns: 1fr 1fr; }
+  .admin-row { grid-template-columns: 200px 1fr 1fr 100px; align-items: center; }
+  .admin-row .meta { flex-direction: row; }
+  .detail-grid { grid-template-columns: 1fr 1fr; }
+  .detail-grid .row { grid-template-columns: 110px 1fr; }
+  h1 { font-size: 32px; }
+  .q-text { font-size: 23px; }
+  .likert-opt { padding: 18px 8px 14px; }
+  .likert-opt .dot { width: 26px; height: 26px; }
+}
+
+@media (max-width: 380px) {
+  .likert { gap: 5px; }
+  .likert-opt { padding: 12px 4px 10px; }
+  .likert-opt .dot { width: 18px; height: 18px; }
+  .likert-opt span { font-size: 10px; }
+  .q-text { font-size: 19px; }
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeUp .35s cubic-bezier(.2,.7,.3,1); }
+
+</style>
+</head>
+<body>
+
+<div class="shell" id="shell">
+  <header class="top">
+    <div class="brand">
+      <div class="logo-mark">高</div>
+      <div class="brand-text">
+        <strong>고교선택 적성검사</strong>
+        <span>v2 · MENTAL TYPE EDITION</span>
+      </div>
+    </div>
+    <button class="admin-key" id="adminKeyBtn" title="관리자 모드">관리자</button>
+  </header>
+
+  <main id="main"></main>
+</div>
+
+<!-- Pinpad -->
+<div class="pinpad-shell" id="pinpadShell">
+  <div class="pinpad">
+    <h2>관리자 인증</h2>
+    <div class="pin-sub">검사 응답자 데이터를 조회하려면<br>관리자 비밀번호를 입력하세요</div>
+    <input type="password" id="pinInput" placeholder="비밀번호" inputmode="text" autocomplete="off" />
+    <div class="err" id="pinErr">&nbsp;</div>
+    <div class="actions">
+      <button class="btn btn-ghost" id="pinCancel" style="background:rgba(255,255,255,.05);color:white;border-color:rgba(255,255,255,.15)">취소</button>
+      <button class="btn btn-primary" id="pinOk">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- Detail modal -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="modalBody"></div>
+</div>
+
+<script>
+/* ============================================================
+ * 고교선택 적성검사 v2
+ *  - 5개 축(A~E) + 신규 축 F: 멘탈 유형(성격 5요인 기반)
+ *  - 워크넷 직업심리검사 인터페이스 차용 (간결한 한 화면-한 문항)
+ *  - 응답 데이터를 storage에 저장 → 관리자 모드에서 전체 조회
+ * ============================================================ */
+
+// 관리자 비밀번호 (코드에서 직접 변경하세요)
+// ※ 클라우드 모드를 쓰면 이 값은 사용하지 않고 Supabase에 저장된 비밀번호로 검증됩니다.
+const ADMIN_PASSWORD = "guide2026";
+
+// ============================================================
+// ★ 클라우드 동기화 설정 (선택)
+// ============================================================
+// • 비워두면: 이 기기의 localStorage에만 저장 (오프라인 모드)
+// • 채워두면: Supabase 클라우드에 자동 저장 → 어느 기기에서나
+//             관리자 비밀번호로 모든 응답을 한 번에 조회 가능
+// 설정 방법은 SUPABASE_설정가이드.md 파일 참고
+// ============================================================
+const SUPABASE_URL = "";       // 예: "https://abcdxyz.supabase.co"
+const SUPABASE_ANON_KEY = "";  // anon public 키 (긴 문자열)
+// ============================================================
+
+const isCloudEnabled = () => Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+let currentAdminPassword = null;  // 관리자 인증 후 세션에 임시 저장
+
+// 7개 고교 유형
+const HS_TYPES = {
+  '일반고':       { sub: '지역 기반 일반고', desc: '내신 중심 전형 접근성 우수, 통학·비용 부담 최소' },
+  '자공고2.0':    { sub: '자율형 공립고',   desc: '일반고 관리시스템 + 학점제 선택과목 확대의 절충형' },
+  '자사고':       { sub: '자율형 사립고',   desc: '내신·학교생활 활동·수능 동시 공략, 강한 또래 효과, 높은 학업 강도' },
+  '외고':         { sub: '외국어고',         desc: '어문·인문·사회·국제 계열 특화, 학교생활 활동 평가에 강점' },
+  '국제고':       { sub: '국제고',           desc: '국제관계·영어·제2외국어 중심, 국제·사회 계열' },
+  '과학고':       { sub: '과학고',           desc: '이공계 진학 전제, 의대 진학 페널티 있음' },
+  '영재학교':     { sub: '영재학교(8교)',   desc: '전국 모집, 이공 심화의 최고 강도, 연구 중심' }
+};
+
+// ============================================================
+// 문항 정의
+// ============================================================
+const QUESTIONS = [
+  // ── 축 A. 학업 성향·학습 체력 (8문항)
+  { id:'A1-1', axis:'A', text:'매일 정해진 양의 공부를 일정하게 끝까지 해낸다.' },
+  { id:'A1-2', axis:'A', text:'숙제·과제가 많아져도 미루지 않고 처리한다.' },
+  { id:'A2-1', axis:'A', text:'친구들과 등수를 비교당해도 흔들리지 않고 내 페이스를 지킨다.' },
+  { id:'A2-2', axis:'A', text:'시험이 자주 있어도 스트레스를 잘 관리할 수 있다.' },
+  { id:'A3-1', axis:'A', text:'누가 시키지 않아도 스스로 공부 계획을 세우고 실행한다.' },
+  { id:'A3-2', axis:'A', text:'모르는 문제를 만나면 검색·질문·인강으로 직접 해결한다.' },
+  { id:'A4-1', axis:'A', text:'또래보다 한 학기~1년 정도 앞선 내용도 어렵지 않게 이해한다.' },
+  { id:'A4-2', axis:'A', text:'한 가지 주제를 깊게 파고드는 것을 좋아한다.' },
+
+  // ── 축 B. 진로 명확도 (5문항 + 계열 선택은 별도)
+  { id:'B1-1', axis:'B', text:'내가 가고 싶은 직업이나 분야가 명확하다.' },
+  { id:'B1-2', axis:'B', text:'그 분야를 위해 지금 무엇을 해야 하는지 알고 있다.' },
+  { id:'B2',   axis:'B', text:'아래 중 관심 있는 학과/직업을 모두 골라주세요.', type:'multi-career', hint:'2개 이상 골라도 됩니다. 잘 모르겠으면 마지막 항목을 선택하세요.' },
+  { id:'B3-1', axis:'B', text:'한 분야에 꾸준히 관심을 두고 활동(독서·동아리·봉사)을 이어간다.' },
+  { id:'B3-2', axis:'B', text:'내 진로와 관련된 활동·대회 경험이 있다.' },
+
+  // ── 축 C. 입시 전략 (5문항)
+  { id:'C1-1', axis:'C', text:'학교 시험에서 내신을 안정적으로 관리할 자신이 있다.' },
+  { id:'C2-1', axis:'C', text:'모의고사 성적이 학교 내신만큼, 또는 더 잘 나온다.' },
+  { id:'C3-1', axis:'C', text:'수업 중 발표·과제·보고서(수행평가)에 따로 시간을 투자할 여력이 있다.', hint:'고등학교에서는 시험 점수 외에 수업 활동 기록도 입시에서 큰 비중을 차지해요.' },
+  { id:'C4-1', axis:'C', text:'의대·SKY 같은 최상위권 진학을 목표로 한다.' },
+  { id:'C4-2', axis:'C', text:'수능 시험과 학교 내신·활동 기록 중 한쪽이 분명히 더 강하다.', hint:'대입은 크게 ① 수능 중심(정시) ② 학교 내신·활동 중심(수시) 두 갈래로 나뉘어요.' },
+
+  // ── 축 D. 환경·생활·비용 (5문항, 보호자 응답 권장)
+  { id:'D1-1', axis:'D', text:'통학시간이 편도 60분이 넘어도 감당할 수 있다.', hint:'주로 보호자가 함께 답해주세요.' },
+  { id:'D2-1', axis:'D', text:'기숙사 생활(빨래·식사·일정관리)을 잘 적응할 것 같다.' },
+  { id:'D3-1', axis:'D', text:'연 1,000만원 이상의 학비·기숙사비도 가계 부담 가능하다.' },
+  { id:'D3-2', axis:'D', text:'사교육비를 추가로 감당할 여력이 있다.' },
+  { id:'D4-1', axis:'D', text:'비용은 우리 가정의 핵심 결정 변수가 아니다.' },
+
+  // ── 축 E. 심리·사회성·분위기 (6문항)
+  { id:'E1-1', axis:'E', text:'우열반·등수 공개 같은 경쟁 환경이 오히려 동기부여가 된다.' },
+  { id:'E2-1', axis:'E', text:'비슷한 성적·관심사의 친구들과 어울릴 때 더 편하다.' },
+  { id:'E2-2', axis:'E', text:'다양한 배경의 친구들이 있는 환경을 더 선호한다.', reverse:true },
+  { id:'E3-1', axis:'E', text:'친구가 나보다 잘하면 자존감이 흔들리는 편이다.', reverse:true },
+  { id:'E3-2', axis:'E', text:'비교 상황에서 평정심을 유지할 수 있다.' },
+  { id:'E4-1', axis:'E', text:'선생님과 자주 상담·피드백 받는 환경이 필요하다.' },
+
+  // ── 축 F. 멘탈 유형 (성격 5요인, 10문항) ★신규
+  { id:'F-N1', axis:'F', sub:'N', text:'압박 상황에서도 침착함을 유지하는 편이다.' },
+  { id:'F-N2', axis:'F', sub:'N', text:'실패하거나 안 좋은 일이 있어도 회복이 빠르다.' },
+  { id:'F-E1', axis:'F', sub:'E', text:'사람들과 어울릴 때 에너지를 얻는다.' },
+  { id:'F-E2', axis:'F', sub:'E', text:'발표·토론·리더 역할을 즐기는 편이다.' },
+  { id:'F-C1', axis:'F', sub:'C', text:'약속·마감·계획을 지키는 것이 중요하다.' },
+  { id:'F-C2', axis:'F', sub:'C', text:'시작한 일은 끝까지 마무리해야 마음이 편하다.' },
+  { id:'F-O1', axis:'F', sub:'O', text:'새로운 것·낯선 분야에 도전하는 것을 좋아한다.' },
+  { id:'F-O2', axis:'F', sub:'O', text:'익숙한 방법보다 새로운 방법을 시도해보고 싶다.' },
+  { id:'F-A1', axis:'F', sub:'A', text:'협력·팀 작업에서 만족을 느낀다.' },
+  { id:'F-A2', axis:'F', sub:'A', text:'친구나 가족의 입장을 잘 헤아리는 편이다.' },
+];
+
+// ── 계열 선택지 (B2 문항 — 가이드의 §2 표 그대로 임베드)
+const CAREER_TRACKS = [
+  { id:'eng', name:'이공 계열',
+    majors:'기계·전기전자·컴퓨터/AI·SW·화학·생명·수학·물리·건축·산업·의예/치의예/한의예·약학·간호·수의',
+    jobs:'엔지니어, 개발자/프로그래머, 연구원, 의사·치과의사·한의사·약사·간호사·수의사, 로봇·AI 개발자',
+    tracks:{eng:1.0} },
+  { id:'hum', name:'인문 계열',
+    majors:'국문·영문·사학·철학·문예창작·언어학·종교학·고고학',
+    jobs:'작가, 기자, 번역가, 학예연구사, 국어·영어 교사, 출판편집자',
+    tracks:{hum:1.0} },
+  { id:'soc', name:'사회 계열',
+    majors:'경영·경제·정치외교·행정·법학·사회학·심리·사회복지·교육·미디어/언론·광고홍보',
+    jobs:'회계사·변호사·판사·검사, 경영컨설턴트, 마케터, 심리상담사, 사회복지사, PD·기자·광고기획자',
+    tracks:{soc:1.0} },
+  { id:'lang', name:'외국어 계열',
+    majors:'중·일·스페인·프랑스·독일·아랍·러시아·베트남·태국어, 통번역, 지역학(유럽·중남미·아시아)',
+    jobs:'외교관, 통역사·번역가, 해외 영업/무역, 해외 공관·상사 주재원, 외국어 교사',
+    tracks:{lang:1.0} },
+  { id:'intl', name:'국제 계열',
+    majors:'국제학부·국제관계·외교학·국제통상·국제개발협력·글로벌 리더십·자유전공',
+    jobs:'외교관, 국제기구(UN·OECD) 직원, 국제변호사, 해외 NGO, 글로벌 기업 본사/해외지사',
+    tracks:{intl:1.0} },
+  { id:'mix-psy', name:'심리·교육 (인문·사회 혼합)',
+    majors:'심리학·교육학·아동학·상담학',
+    jobs:'심리상담사, 교사, 임상심리사, 청소년상담사',
+    tracks:{soc:0.7, hum:0.3} },
+  { id:'mix-cre', name:'예술·콘텐츠 (인문·이공 혼합)',
+    majors:'문화콘텐츠·디자인·미디어공학·게임공학·영상',
+    jobs:'콘텐츠 기획자, 디자이너, 게임 개발자, 영상 제작자',
+    tracks:{hum:0.5, eng:0.5} },
+  { id:'unsure', name:'아직 잘 모르겠어요', isUnsure:true,
+    majors:'지금 단계에서는 다양한 분야를 탐색하는 것이 더 중요해요.',
+    jobs:'천천히 찾아도 괜찮습니다. 일반고·자공고2.0 등 탐색 친화적인 환경이 추천됩니다.',
+    tracks:{} }
+];
+
+// 5점 척도
+const LIKERT_LABELS = ['전혀\n그렇지 않다', '그렇지\n않은 편', '보통이다', '그런\n편이다', '매우\n그렇다'];
+
+// ============================================================
+// 스코어링 가중치
+// ============================================================
+// ★ 축별 점수가 높을 때 각 고교 유형에 부여하는 보너스
+// 자사고/특목고가 압도적으로 유리하지 않도록 격차 완화. 일반고·자공고도 충분히 경쟁력 있게.
+const AXIS_TYPE_WEIGHTS = {
+  // 축 A: 학업 체력 高 → 강도 높은 학교만 살짝 우위
+  A: { '일반고': 0.8, '자공고2.0': 0.9, '자사고': 1.0, '외고': 0.7, '국제고': 0.7, '과학고': 1.0, '영재학교': 1.0 },
+  // 축 B: 진로 명확도
+  B: { '일반고': 0.6, '자공고2.0': 0.6, '자사고': 0.7, '외고': 0.9, '국제고': 0.9, '과학고': 1.0, '영재학교': 1.0 },
+  // 축 C: 입시 전략
+  C: { '일반고': 0.8, '자공고2.0': 0.9, '자사고': 1.0, '외고': 0.8, '국제고': 0.8, '과학고': 0.9, '영재학교': 0.9 },
+  // 축 D: 환경·비용 — 점수 높을수록 비용 큰 학교 가능
+  D: { '일반고': 0.3, '자공고2.0': 0.4, '자사고': 1.0, '외고': 0.8, '국제고': 0.8, '과학고': 0.5, '영재학교': 0.5 },
+  // 축 E: 심리·사회 — 경쟁 내성 高
+  E: { '일반고': 0.5, '자공고2.0': 0.7, '자사고': 1.0, '외고': 0.8, '국제고': 0.8, '과학고': 1.0, '영재학교': 1.0 },
+  // 축 F: 멘탈 유형 — 안정성 高
+  F: { '일반고': 0.7, '자공고2.0': 0.9, '자사고': 1.0, '외고': 0.8, '국제고': 0.8, '과학고': 1.0, '영재학교': 1.0 },
+};
+
+// 계열별 고교 유형 적합도
+// ★ 외고는 외국어(lang)·국제는 국제고에서만 압도적. 인문·사회·교육은 일반고/자공고/자사고가 메인.
+const TRACK_TYPE_BONUS = {
+  // 이공 — 과학고/영재학교 우위지만 일반고·자사고도 충분히 강한 옵션
+  eng:  { '과학고': 2.5, '영재학교': 2.5, '자사고': 1.2, '일반고': 0.8, '자공고2.0': 0.8, '외고': -2.0, '국제고': -1.5 },
+  // 인문(국문·영문·사학·철학·문예창작 등) — 일반고가 메인. 외고는 어문 한정(여기선 lang으로 분리)
+  hum:  { '일반고': 1.2, '자공고2.0': 1.2, '자사고': 1.0, '외고': 0.5, '국제고': 0.3, '과학고': -2.0, '영재학교': -2.5 },
+  // 사회·교육·심리(경영·경제·정외·법·심리·교육 등) — 일반고/자공고/자사고가 동등하게 강함
+  soc:  { '일반고': 1.2, '자공고2.0': 1.2, '자사고': 1.0, '국제고': 0.6, '외고': 0.5, '과학고': -1.5, '영재학교': -2.0 },
+  // 외국어 특화 — 외고가 압도적
+  lang: { '외고': 3.0, '국제고': 1.8, '자사고': 0.5, '일반고': 0.5, '자공고2.0': 0.5, '과학고': -2.0, '영재학교': -2.5 },
+  // 국제 — 국제고가 압도적
+  intl: { '국제고': 3.0, '외고': 1.5, '자사고': 1.0, '일반고': 0.6, '자공고2.0': 0.6, '과학고': -2.0, '영재학교': -2.5 },
+};
+
+// 멘탈 유형(F축 5요인) 매핑 → 고교 유형 추가 가중치
+// ★ 정서적 안정성(N)을 가장 결정적 변수로. 멘탈 약하면 강도 높은 학교 모두 페널티.
+function mentalTypeBonus(big5) {
+  // big5 = {N, E, C, O, A} 각 0~100
+  const bonus = {'일반고':0, '자공고2.0':0, '자사고':0, '외고':0, '국제고':0, '과학고':0, '영재학교':0};
+
+  // 정서적 안정성(N) — 가장 결정적. 회복형은 강도 높은 학교 모두 부적합.
+  if (big5.N < 35) {
+    // 매우 낮음: 강한 회복 우선
+    bonus['일반고']    += 2.5;
+    bonus['자공고2.0'] += 2.8;
+    bonus['자사고']    -= 4.0;
+    bonus['외고']      -= 3.5;
+    bonus['국제고']    -= 3.5;
+    bonus['과학고']    -= 3.5;
+    bonus['영재학교']  -= 4.5;
+  } else if (big5.N < 50) {
+    // 중하: ★ 사용자 케이스. 외고/국제고/자사고/특목 모두 부적합 신호.
+    bonus['일반고']    += 1.8;
+    bonus['자공고2.0'] += 2.0;
+    bonus['자사고']    -= 2.8;
+    bonus['외고']      -= 2.3;
+    bonus['국제고']    -= 2.3;
+    bonus['과학고']    -= 2.3;
+    bonus['영재학교']  -= 3.0;
+  } else if (big5.N < 60) {
+    // 평균: 약간의 보정만
+    bonus['일반고']    += 0.4;
+    bonus['자공고2.0'] += 0.4;
+    bonus['자사고']    -= 0.5;
+    bonus['영재학교']  -= 0.7;
+  } else if (big5.N >= 75) {
+    // 매우 높음: 강철 멘탈
+    bonus['자사고']    += 1.0;
+    bonus['영재학교']  += 1.0;
+    bonus['과학고']    += 1.0;
+    bonus['외고']      += 0.5;
+    bonus['국제고']    += 0.5;
+  }
+  // 외향성(E) — 높으면 다양한 또래 환경에서 강점
+  if (big5.E >= 65) {
+    bonus['외고']     += 0.8;
+    bonus['국제고']   += 0.8;
+    bonus['자사고']   += 0.4;
+  } else if (big5.E < 35) {
+    bonus['일반고']   += 0.4;
+    bonus['자공고2.0']+= 0.4;
+    bonus['과학고']   += 0.5;  // 내향+탐구 친화
+  }
+  // 성실성(C) — 높으면 거의 모든 학교에 +
+  if (big5.C >= 65) {
+    bonus['자사고']   += 0.6;
+    bonus['과학고']   += 0.7;
+    bonus['영재학교'] += 0.7;
+    bonus['외고']     += 0.4;
+    bonus['국제고']   += 0.4;
+  } else if (big5.C < 40) {
+    bonus['자사고']   -= 0.8;
+    bonus['과학고']   -= 0.8;
+    bonus['영재학교'] -= 0.8;
+    bonus['일반고']   += 0.5;
+    bonus['자공고2.0']+= 0.7;
+  }
+  // 개방성(O) — 높으면 도전·다양성 환경
+  if (big5.O >= 65) {
+    bonus['외고']     += 0.5;
+    bonus['국제고']   += 0.6;
+    bonus['영재학교'] += 0.5;
+  }
+  // 우호성(A) — 높으면 협력적 환경, 낮으면 경쟁환경 가능
+  if (big5.A < 40) {
+    bonus['자사고']   += 0.3;
+    bonus['영재학교'] += 0.3;
+  }
+  return bonus;
+}
+
+// 멘탈 유형 분류 (6가지) — ★ 보호형 임계값 N<50으로 상향(이전 40)
+function classifyMentalType(big5) {
+  const {N, E, C, O, A} = big5;
+  // 우선순위 규칙 적용 — 정서적 안정성이 평균 이하면 무조건 보호형
+  if (N < 50) {
+    return {
+      key: 'protective',
+      name: '회복·보호형',
+      icon: '保',
+      tone: 'rose',
+      summary: '감정 회복력이 아직 충전 중인 시기예요. 경쟁이 강한 환경보다는 선생님의 관리·피드백이 촘촘한 곳이 안전합니다. 이 유형은 환경을 잘못 고르면 회복이 더 길어질 수 있어요.',
+      strength: ['세심함', '공감 능력', '신중한 의사결정'],
+      careful: ['치열한 비교 환경', '서열 공개 분위기', '익명성이 큰 대형 학교'],
+      fitTypes: ['일반고', '자공고2.0']
+    };
+  }
+  if (N >= 70 && C >= 65) {
+    return {
+      key: 'resilient',
+      name: '강철 멘탈형',
+      icon: '剛',
+      tone: 'teal',
+      summary: '높은 압박 속에서도 흔들리지 않고 끝까지 밀어붙이는 유형입니다. 강도 높은 학교에서도 무너지지 않아요.',
+      strength: ['감정 안정', '꾸준함', '회복 탄력성'],
+      careful: ['혼자 다 짊어지지 않기', '번아웃 신호 점검'],
+      fitTypes: ['자사고', '영재학교', '과학고']
+    };
+  }
+  if (O >= 65 && E >= 60) {
+    return {
+      key: 'explorer',
+      name: '도전·탐험형',
+      icon: '探',
+      tone: 'amber',
+      summary: '새로운 사람·아이디어·환경에 끌리는 유형. 다양성과 자극이 많은 학교에서 빛납니다.',
+      strength: ['호기심', '주도성', '사교성'],
+      careful: ['깊이 vs 넓이 균형', '한 분야 집중력'],
+      fitTypes: ['외고', '국제고', '자사고']
+    };
+  }
+  if (C >= 65 && E < 50) {
+    return {
+      key: 'planner',
+      name: '신중·정밀형',
+      icon: '精',
+      tone: 'teal',
+      summary: '계획대로 차근차근 쌓아 올리는 스타일. 조용한 몰입이 잘 통하는 환경에서 강해요.',
+      strength: ['정확성', '책임감', '깊이 있는 사고'],
+      careful: ['갑작스러운 변화 적응', '발표·네트워킹 훈련'],
+      fitTypes: ['일반고', '자공고2.0', '과학고']
+    };
+  }
+  if (A >= 65 && E >= 55) {
+    return {
+      key: 'connector',
+      name: '공감·협력형',
+      icon: '和',
+      tone: 'amber',
+      summary: '사람과 사람 사이에서 빛나는 유형. 협력·팀활동이 많은 환경에서 동기부여가 잘 됩니다.',
+      strength: ['공감 능력', '팀워크', '관계 지능'],
+      careful: ['타인의 페이스에 휩쓸리지 않기', '내 의견 말하기'],
+      fitTypes: ['일반고', '자공고2.0', '외고']
+    };
+  }
+  // 그 외 — 균형형
+  return {
+    key: 'balanced',
+    name: '균형·탐색형',
+    icon: '衡',
+    tone: 'teal',
+    summary: '특정 방향으로 치우치지 않은 유형이에요. 지금은 다양한 환경을 탐색해 보는 것이 좋습니다.',
+    strength: ['적응력', '균형 감각', '유연성'],
+    careful: ['색깔 찾기', '나만의 강점 키우기'],
+    fitTypes: ['일반고', '자공고2.0']
+  };
+}
+
+// ============================================================
+// 점수 계산 메인 함수
+// ============================================================
+function computeScores(answers, careerSelections) {
+  // 1. 축별 점수 (0-100 정규화)
+  const axes = {A:[], B:[], C:[], D:[], E:[], F:[]};
+  const axisDetail = {};
+
+  QUESTIONS.forEach(q => {
+    if (q.type === 'multi-career') return;
+    const ans = answers[q.id];
+    if (ans == null) return;
+    let val = ans;
+    if (q.reverse) val = 6 - val; // 역문항
+    axes[q.axis].push(val);
+    if (!axisDetail[q.axis]) axisDetail[q.axis] = [];
+    axisDetail[q.axis].push({ id: q.id, sub: q.sub, val });
+  });
+
+  const axisScore = {};
+  Object.keys(axes).forEach(k => {
+    if (axes[k].length === 0) { axisScore[k] = 50; return; }
+    const avg = axes[k].reduce((a,b)=>a+b,0) / axes[k].length;  // 1-5
+    axisScore[k] = Math.round(((avg - 1) / 4) * 100);            // 0-100
+  });
+
+  // 2. 멘탈 유형 (F축 하위 — 5요인 별도 점수)
+  const big5 = {N:50, E:50, C:50, O:50, A:50};
+  ['N','E','C','O','A'].forEach(sub => {
+    const items = (axisDetail.F || []).filter(it => it.sub === sub);
+    if (items.length === 0) return;
+    const avg = items.reduce((a,b)=>a+b.val,0) / items.length;
+    big5[sub] = Math.round(((avg - 1) / 4) * 100);
+  });
+  const mental = classifyMentalType(big5);
+
+  // 3. 7개 고교 유형별 적합도 점수
+  const typeScores = {};
+  Object.keys(HS_TYPES).forEach(t => typeScores[t] = 0);
+
+  // (a) 축 점수 × 가중치
+  Object.keys(AXIS_TYPE_WEIGHTS).forEach(ax => {
+    const score = axisScore[ax] || 50;
+    // 50을 기준으로 하여 +-50 범위 → -1.0 ~ +1.0 normalized
+    const norm = (score - 50) / 50;
+    Object.keys(AXIS_TYPE_WEIGHTS[ax]).forEach(t => {
+      typeScores[t] += norm * AXIS_TYPE_WEIGHTS[ax][t] * 10;
+    });
+  });
+
+  // (b) 계열 선택 보너스
+  const careerHasUnsure = careerSelections.includes('unsure');
+  const realCareers = careerSelections.filter(id => id !== 'unsure');
+
+  if (careerHasUnsure || realCareers.length === 0) {
+    // 잘 모르겠다 → 탐색 친화적 학교 가산
+    typeScores['일반고'] += 4;
+    typeScores['자공고2.0'] += 4;
+    typeScores['자사고'] -= 2;
+    typeScores['외고'] -= 1.5;
+    typeScores['국제고'] -= 1.5;
+    typeScores['과학고'] -= 2;
+    typeScores['영재학교'] -= 2;
+  } else {
+    // 선택한 계열들의 가중 평균 적용
+    const trackWeights = {eng:0, hum:0, soc:0, lang:0, intl:0};
+    realCareers.forEach(careerId => {
+      const c = CAREER_TRACKS.find(x => x.id === careerId);
+      if (!c) return;
+      Object.keys(c.tracks).forEach(t => {
+        trackWeights[t] += c.tracks[t];
+      });
+    });
+    // 정규화 (선택 개수로 나눔)
+    const totalWeight = Object.values(trackWeights).reduce((a,b)=>a+b,0) || 1;
+    Object.keys(trackWeights).forEach(t => {
+      const w = trackWeights[t] / totalWeight;
+      const bonus = TRACK_TYPE_BONUS[t];
+      if (!bonus) return;
+      Object.keys(bonus).forEach(hs => {
+        typeScores[hs] += w * bonus[hs] * 4;
+      });
+    });
+  }
+
+  // (c) 멘탈 유형 보너스
+  const mentalBonus = mentalTypeBonus(big5);
+  Object.keys(mentalBonus).forEach(t => typeScores[t] += mentalBonus[t]);
+
+  // (d) 0-100 스케일로 변환
+  // 모든 점수를 50을 기준으로 옮긴 뒤 양수로 만들기
+  const finalScores = {};
+  Object.keys(typeScores).forEach(t => {
+    finalScores[t] = Math.max(0, Math.min(100, Math.round(50 + typeScores[t] * 1.5)));
+  });
+
+  // (e) ★ 멘탈 보호 후처리: 정서적 안정성이 낮으면 특목고 점수에 절대 cap 적용
+  // 단순 가중치만으로는 다른 축이 매우 높을 때 특목고가 다시 상위로 올라올 위험이 있음.
+  // 멘탈 약 → 특목고는 환경 자체가 회복을 막을 수 있어 사실상 추천에서 배제.
+  const SPECIAL_TYPES = ['자사고', '외고', '국제고', '과학고', '영재학교'];
+  let mentalCap = null;
+  if (big5.N < 35) {
+    SPECIAL_TYPES.forEach(t => { finalScores[t] = Math.min(finalScores[t], 30); });
+    mentalCap = 'severe';
+  } else if (big5.N < 50) {
+    SPECIAL_TYPES.forEach(t => { finalScores[t] = Math.min(finalScores[t], 50); });
+    mentalCap = 'moderate';
+  }
+
+  // (f) ★ 계열 fit cap: 명확한 계열을 골랐는데 학교 특화 분야와 안 맞으면 자동 후순위
+  // 외고는 외국어, 국제고는 국제, 과학고/영재학교는 이공 특화학교.
+  // 이 계열을 안 골랐다면 그 특목고는 추천 대상에서 자연스럽게 빠져야 한다.
+  const careerCapList = [];
+  if (!careerHasUnsure && realCareers.length > 0) {
+    const trackFlags = { eng: false, lang: false, intl: false };
+    realCareers.forEach(id => {
+      const c = CAREER_TRACKS.find(x => x.id === id);
+      if (!c || !c.tracks) return;
+      if (c.tracks.eng)  trackFlags.eng  = true;
+      if (c.tracks.lang) trackFlags.lang = true;
+      if (c.tracks.intl) trackFlags.intl = true;
+    });
+    // 외국어 계열 미선택 → 외고 cap 60
+    if (!trackFlags.lang) {
+      finalScores['외고'] = Math.min(finalScores['외고'], 60);
+      careerCapList.push('외고');
+    }
+    // 국제·외국어 둘 다 미선택 → 국제고 cap 60
+    if (!trackFlags.intl && !trackFlags.lang) {
+      finalScores['국제고'] = Math.min(finalScores['국제고'], 60);
+      careerCapList.push('국제고');
+    }
+    // 이공 계열 미선택 → 과학고/영재학교 cap 55
+    if (!trackFlags.eng) {
+      finalScores['과학고']   = Math.min(finalScores['과학고'], 55);
+      finalScores['영재학교'] = Math.min(finalScores['영재학교'], 55);
+      careerCapList.push('과학고', '영재학교');
+    }
+  }
+
+  // 4. 추천 순위
+  const ranking = Object.entries(finalScores)
+    .sort((a, b) => b[1] - a[1])
+    .map(([type, score]) => ({ type, score }));
+
+  return {
+    axisScore,
+    big5,
+    mental,
+    typeScores: finalScores,
+    ranking,
+    careerSelections,
+    mentalCap,
+    careerCapList
+  };
+}
+
+// ============================================================
+// 추천 사유 자동 생성
+// ============================================================
+function buildRationale(rank, scores) {
+  const t = rank.type;
+  const reasons = [];
+  const ax = scores.axisScore;
+  const m = scores.mental;
+  const careers = scores.careerSelections;
+  const hasUnsure = careers.includes('unsure') || careers.length === 0;
+  const SPECIAL = ['자사고', '외고', '국제고', '과학고', '영재학교'];
+
+  // ★ 멘탈 cap 발동 시: 특목고는 추천 사유 자체가 "권하지 않는다"
+  if (scores.mentalCap && SPECIAL.includes(t)) {
+    if (scores.mentalCap === 'severe') {
+      return '정서적 안정성이 평균보다 많이 낮아 회복이 최우선입니다. 강도 높은 학교는 환경 자체가 위험 요인이 될 수 있어 권장하지 않아요.';
+    }
+    return '정서적 안정성이 평균 이하라 멘탈 보호가 우선입니다. 다른 조건이 좋아도 강도 높은 환경은 적응 부담이 클 수 있어 후순위로 두었어요.';
+  }
+  // ★ 멘탈 cap 발동 시: 일반고/자공고가 상위로 올라온 이유
+  if (scores.mentalCap && (t === '일반고' || t === '자공고2.0')) {
+    if (scores.mentalCap === 'severe') {
+      reasons.push('정서적 안정성 회복이 최우선이라, 안정적인 학교 환경이 가장 중요한 조건이에요.');
+    } else {
+      reasons.push('멘탈이 평균 이하라 강도 높은 학교보다 안정적인 환경이 더 중요해요.');
+    }
+  }
+
+  switch(t) {
+    case '일반고':
+      if (hasUnsure) reasons.push('진로 탐색 단계에 있어 다양한 가능성을 열어두기에 좋아요.');
+      if (ax.A < 60) reasons.push('자기주도 학습 체력을 학교 시스템과 함께 차근차근 키울 수 있어요.');
+      if (ax.D < 50) reasons.push('통학·비용 부담을 최소화할 수 있는 현실적인 선택입니다.');
+      if (m.key === 'protective') reasons.push('감정 회복기에 안정적인 학습 환경을 제공받을 수 있어요.');
+      break;
+    case '자공고2.0':
+      reasons.push('일반고의 안정감과 학점제 선택과목의 폭을 함께 누릴 수 있어요.');
+      if (ax.A >= 50 && ax.A < 75) reasons.push('자기주도 학습이 중상위 수준인 학생에게 잘 맞는 절충형이에요.');
+      if (m.key === 'planner' || m.key === 'connector') reasons.push('관리받으면서도 다양성을 경험할 수 있는 환경입니다.');
+      break;
+    case '자사고':
+      if (ax.A >= 70) reasons.push('학습량이 많아도 끝까지 소화할 수 있는 학습 체력이 있어요.');
+      if (ax.E >= 65) reasons.push('또래 경쟁이 동기부여로 작용하는 유형이에요.');
+      if (ax.D >= 60) reasons.push('학비·기숙비를 감당할 수 있는 환경이 준비되어 있어요.');
+      if (m.key === 'resilient') reasons.push('압박 속에서도 흔들리지 않는 멘탈을 가지고 있어요.');
+      break;
+    case '외고':
+      if (careers.includes('lang') || careers.includes('hum')) reasons.push('어문·인문 계열 진학에 특화된 환경이에요.');
+      if (m.key === 'explorer' || m.key === 'connector') reasons.push('언어와 사람에 대한 호기심이 강한 멘탈 유형과 잘 맞아요.');
+      break;
+    case '국제고':
+      if (careers.includes('intl') || careers.includes('soc')) reasons.push('국제·사회 계열 진학에 가장 적합한 환경입니다.');
+      if (ax.B >= 60) reasons.push('진로 방향이 비교적 분명해 학교생활 기록의 일관성을 만들기 좋아요.');
+      break;
+    case '과학고':
+      if (careers.includes('eng')) reasons.push('이공계 진학을 전제로 한 심화 환경에 부합해요.');
+      if (ax.A >= 70) reasons.push('이공 심화 학습량을 감당할 학습 체력이 있어요.');
+      reasons.push('※ 의대 진학 시 페널티가 있으니 진로 확정 여부를 다시 점검하세요.');
+      break;
+    case '영재학교':
+      if (ax.A >= 80 && (careers.includes('eng'))) reasons.push('이공 심화의 최고 강도 환경에 적성이 매우 잘 맞아요.');
+      else reasons.push('전국 최상위 수·과학 영재 대상 학교입니다. 학업 강도를 신중히 점검하세요.');
+      break;
+  }
+  if (reasons.length === 0) {
+    reasons.push(`종합 적합도 점수가 ${rank.score}점으로 평가되었습니다.`);
+  }
+  return reasons.slice(0, 3).join(' ');
+}
+
+// ============================================================
+// 화면 렌더링
+// ============================================================
+const main = document.getElementById('main');
+let state = {
+  view: 'welcome',  // welcome | quiz | result | admin
+  name: '', grade: '', school: '',
+  questionIdx: 0,
+  answers: {},
+  careerSelections: [],
+  result: null
+};
+
+function render() {
+  if (state.view === 'welcome') return renderWelcome();
+  if (state.view === 'quiz') return renderQuiz();
+  if (state.view === 'result') return renderResult();
+  if (state.view === 'admin') return renderAdmin();
+}
+
+// ── Welcome ────────────────────────────────────────────────
+function renderWelcome() {
+  document.getElementById('shell').classList.remove('admin-shell');
+  main.innerHTML = `
+    <div class="card hero-decor fade-in">
+      <div class="eyebrow">고교선택 적성검사 · v2</div>
+      <h1>내 아이의 성향과<br>학교 시스템의 적합도</h1>
+      <p class="lede">
+        2025학년도 고1부터 내신 5등급제, 고교학점제 전면 시행, "명문고 신화"의 붕괴 ─
+        이제는 <strong>같은 유형 안에서도 학교별 편차가 더 큰 시대</strong>입니다.
+        5개 축에 <strong>멘탈 유형(성격 5요인)</strong>을 더해, 7개 고교 유형 중 적합한 후보군을 찾아드려요.
+      </p>
+      <div class="feature-grid">
+        <div class="feature"><strong>40문항 · 약 10분</strong>학업·진로·입시·환경·심리·멘탈 6축 종합</div>
+        <div class="feature"><strong>1~3순위 추천</strong>7개 고교 유형별 적합도 점수 + 추천 사유</div>
+        <div class="feature"><strong>멘탈 유형 분석</strong>강철 멘탈형·도전형·신중형·공감형·회복형·균형형</div>
+      </div>
+    </div>
+
+    <div class="card fade-in" style="animation-delay:.05s">
+      <h3 style="margin-bottom:14px">시작하기 전에</h3>
+      <div class="field">
+        <label>학생 이름</label>
+        <input type="text" id="fName" placeholder="홍길동" autocomplete="name" value="${state.name}" />
+      </div>
+      <div class="field">
+        <label>학년</label>
+        <select id="fGrade">
+          <option value="">선택해 주세요</option>
+          <option ${state.grade==='초4'?'selected':''}>초4</option>
+          <option ${state.grade==='초5'?'selected':''}>초5</option>
+          <option ${state.grade==='초6'?'selected':''}>초6</option>
+          <option ${state.grade==='중1'?'selected':''}>중1</option>
+          <option ${state.grade==='중2'?'selected':''}>중2</option>
+          <option ${state.grade==='중3'?'selected':''}>중3</option>
+          <option ${state.grade==='기타'?'selected':''}>기타</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>학교 (선택)</label>
+        <input type="text" id="fSchool" placeholder="○○중학교" value="${state.school}" />
+      </div>
+      <div class="notice">
+        ${isCloudEnabled()
+          ? '※ 응답 데이터는 <strong>클라우드 서버에 안전하게 저장</strong>됩니다. 검사 운영자(관리자)가 모든 응답을 한 곳에서 조회하며, 진로 상담 외 용도로 사용되지 않습니다.'
+          : '※ 응답 데이터는 <strong>이 기기의 브라우저 저장소</strong>에 보관되며, 같은 기기에서 관리자 페이지로 들어가면 모든 응답을 조회할 수 있어요. 시크릿 창이나 사이트 데이터 차단 환경에서는 저장이 안 될 수 있습니다.'}
+      </div>
+      <button class="btn btn-primary btn-block" id="btnStart">검사 시작하기 →</button>
+    </div>
+  `;
+  document.getElementById('btnStart').onclick = () => {
+    state.name = document.getElementById('fName').value.trim();
+    state.grade = document.getElementById('fGrade').value;
+    state.school = document.getElementById('fSchool').value.trim();
+    if (!state.name || !state.grade) {
+      alert('이름과 학년을 입력해 주세요.');
+      return;
+    }
+    state.view = 'quiz';
+    state.questionIdx = 0;
+    state.answers = {};
+    state.careerSelections = [];
+    render();
+  };
+}
+
+// ── Quiz ───────────────────────────────────────────────────
+function renderQuiz() {
+  const total = QUESTIONS.length;
+  const cur = QUESTIONS[state.questionIdx];
+  const pct = Math.round((state.questionIdx / total) * 100);
+  const axisName = {A:'학업 성향', B:'진로 명확도', C:'입시 전략', D:'환경·생활', E:'심리·사회성', F:'멘탈 유형'}[cur.axis];
+
+  let bodyHTML = '';
+  if (cur.type === 'multi-career') {
+    bodyHTML = `
+      <div class="ms-grid">
+        ${CAREER_TRACKS.map(c => {
+          const sel = state.careerSelections.includes(c.id);
+          return `
+          <div class="ms-card ${sel ? 'selected' : ''} ${c.isUnsure ? 'unsure' : ''}" data-cid="${c.id}">
+            <div class="ms-card-head">
+              <strong>${c.name}</strong>
+              <div class="ms-check"></div>
+            </div>
+            <div class="col"><em>${c.majors}</em></div>
+            ${c.jobs ? `<div class="col" style="margin-top:4px">${c.jobs}</div>` : ''}
+          </div>`;
+        }).join('')}
+      </div>
+    `;
+  } else {
+    const cur_ans = state.answers[cur.id];
+    bodyHTML = `
+      <div class="likert">
+        ${[1,2,3,4,5].map(v => `
+          <label class="likert-opt ${cur_ans === v ? 'selected' : ''}" data-val="${v}">
+            <div class="dot"></div>
+            <span>${LIKERT_LABELS[v-1]}</span>
+          </label>
+        `).join('')}
+      </div>
+      <div class="likert-axis-labels"><span>← 아니다</span><span>그렇다 →</span></div>
+    `;
+  }
+
+  main.innerHTML = `
+    <div class="progress-shell">
+      <div class="progress-meta">
+        <span><strong>${state.questionIdx + 1}</strong> / ${total}</span>
+        <span>${axisName}</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>
+
+    <div class="card fade-in" key="${cur.id}">
+      <div class="q-axis-tag">축 ${cur.axis} · ${axisName}</div>
+      <div class="q-text">${cur.text}</div>
+      ${cur.hint ? `<div class="q-hint">${cur.hint}</div>` : ''}
+      ${bodyHTML}
+      <div class="q-nav">
+        <button class="btn btn-ghost" id="btnPrev" ${state.questionIdx === 0 ? 'disabled' : ''}>← 이전</button>
+        <button class="btn btn-primary" id="btnNext">${state.questionIdx === total - 1 ? '결과 보기 →' : '다음 →'}</button>
+      </div>
+    </div>
+  `;
+
+  // Likert 클릭
+  if (cur.type !== 'multi-career') {
+    main.querySelectorAll('.likert-opt').forEach(opt => {
+      opt.onclick = () => {
+        const v = parseInt(opt.dataset.val);
+        state.answers[cur.id] = v;
+        // 시각 피드백
+        main.querySelectorAll('.likert-opt').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        // 자동 진행 (300ms 후)
+        setTimeout(() => {
+          if (state.questionIdx < total - 1) {
+            state.questionIdx += 1;
+            render();
+          }
+        }, 280);
+      };
+    });
+  } else {
+    // Multi-select 클릭
+    main.querySelectorAll('.ms-card').forEach(card => {
+      card.onclick = () => {
+        const cid = card.dataset.cid;
+        if (cid === 'unsure') {
+          // unsure는 단독 선택
+          state.careerSelections = state.careerSelections.includes('unsure') ? [] : ['unsure'];
+        } else {
+          // 다른 항목 선택 시 unsure 제거
+          state.careerSelections = state.careerSelections.filter(x => x !== 'unsure');
+          if (state.careerSelections.includes(cid)) {
+            state.careerSelections = state.careerSelections.filter(x => x !== cid);
+          } else {
+            state.careerSelections.push(cid);
+          }
+        }
+        render();  // 전체 다시 그려서 체크 표시 갱신
+      };
+    });
+  }
+
+  // 이전/다음
+  document.getElementById('btnPrev').onclick = () => {
+    if (state.questionIdx > 0) {
+      state.questionIdx -= 1;
+      render();
+    }
+  };
+  document.getElementById('btnNext').onclick = () => {
+    // 응답 검증
+    if (cur.type === 'multi-career') {
+      if (state.careerSelections.length === 0) {
+        alert('하나 이상 선택해 주세요. 잘 모르겠으면 마지막 항목을 선택하세요.');
+        return;
+      }
+    } else if (state.answers[cur.id] == null) {
+      alert('응답을 선택해 주세요.');
+      return;
+    }
+    if (state.questionIdx < total - 1) {
+      state.questionIdx += 1;
+      render();
+    } else {
+      // 결과 계산
+      finishQuiz();
+    }
+  };
+}
+
+async function finishQuiz() {
+  const result = computeScores(state.answers, state.careerSelections);
+  state.result = result;
+
+  // 저장
+  const record = {
+    id: 'r' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+    name: state.name,
+    grade: state.grade,
+    school: state.school,
+    completedAt: new Date().toISOString(),
+    answers: state.answers,
+    careerSelections: state.careerSelections,
+    axisScore: result.axisScore,
+    big5: result.big5,
+    mentalKey: result.mental.key,
+    mentalName: result.mental.name,
+    typeScores: result.typeScores,
+    ranking: result.ranking
+  };
+
+  const localOk = saveResponseSync(record);
+
+  let cloudOk = false;
+  let cloudError = null;
+  if (isCloudEnabled()) {
+    try {
+      await cloudInsert(record);
+      cloudOk = true;
+    } catch(e) {
+      cloudError = e.message;
+      console.error('[Cloud] 저장 실패:', e);
+    }
+  }
+
+  if (!localOk && !cloudOk) {
+    alert('⚠️ 응답 저장에 실패했습니다.\n결과는 표시되지만 데이터가 보관되지 않습니다.\n' +
+          '브라우저의 localStorage 차단 여부 또는 네트워크를 확인해주세요.');
+  } else if (isCloudEnabled() && !cloudOk) {
+    console.warn('클라우드 저장 실패, 이 기기에는 저장됨:', cloudError);
+  }
+
+  state.view = 'result';
+  render();
+}
+
+// ============================================================
+// 저장소: localStorage 기반 (브라우저 단독 동작 보장)
+// ============================================================
+const STORAGE_KEY = 'guide_v2_responses';
+
+function loadAllResponsesSync() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const list = JSON.parse(raw);
+    return Array.isArray(list) ? list : [];
+  } catch(e) {
+    console.error('load 실패', e);
+    return [];
+  }
+}
+
+function saveResponseSync(record) {
+  try {
+    let list = loadAllResponsesSync();
+    list.push(record);
+    if (list.length > 2000) list = list.slice(-2000);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    // 검증: 즉시 다시 읽어서 확인
+    const verify = localStorage.getItem(STORAGE_KEY);
+    if (!verify) return false;
+    return true;
+  } catch(e) {
+    console.error('save 실패', e);
+    return false;
+  }
+}
+
+function saveAllResponsesSync(list) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    return true;
+  } catch(e) {
+    console.error('save all 실패', e);
+    return false;
+  }
+}
+
+function deleteAllResponsesSync() {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    return true;
+  } catch(e) { return false; }
+}
+
+// ============================================================
+// 클라우드 헬퍼 (Supabase REST API)
+// ============================================================
+function _cloudHeaders() {
+  return {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json'
+  };
+}
+
+async function cloudInsert(record) {
+  if (!isCloudEnabled()) throw new Error('Cloud not configured');
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/responses`, {
+    method: 'POST',
+    headers: { ..._cloudHeaders(), 'Prefer': 'return=minimal' },
+    body: JSON.stringify({
+      id: record.id,
+      name: record.name || null,
+      grade: record.grade || null,
+      school: record.school || null,
+      completed_at: record.completedAt,
+      payload: record
+    })
+  });
+  if (!res.ok) {
+    const t = await res.text().catch(() => 'unknown error');
+    throw new Error(`HTTP ${res.status}: ${t}`);
+  }
+  return true;
+}
+
+async function cloudList(password) {
+  if (!isCloudEnabled()) throw new Error('Cloud not configured');
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/admin_list`, {
+    method: 'POST',
+    headers: _cloudHeaders(),
+    body: JSON.stringify({ pwd: password })
+  });
+  if (!res.ok) {
+    const t = await res.text().catch(() => '');
+    if (t.toLowerCase().includes('unauthorized') || res.status === 401 || res.status === 403) {
+      throw new Error('Unauthorized');
+    }
+    throw new Error(`HTTP ${res.status}: ${t}`);
+  }
+  const rows = await res.json();
+  // payload 컬럼에 전체 응답이 들어있음
+  return Array.isArray(rows)
+    ? rows.map(r => r.payload).filter(Boolean)
+    : [];
+}
+
+async function cloudDelete(password, id) {
+  if (!isCloudEnabled()) throw new Error('Cloud not configured');
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/admin_delete`, {
+    method: 'POST',
+    headers: _cloudHeaders(),
+    body: JSON.stringify({ pwd: password, rid: id })
+  });
+  if (!res.ok) {
+    const t = await res.text().catch(() => '');
+    throw new Error(`HTTP ${res.status}: ${t}`);
+  }
+  return true;
+}
+
+async function cloudClear(password) {
+  if (!isCloudEnabled()) throw new Error('Cloud not configured');
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/admin_clear`, {
+    method: 'POST',
+    headers: _cloudHeaders(),
+    body: JSON.stringify({ pwd: password })
+  });
+  if (!res.ok) {
+    const t = await res.text().catch(() => '');
+    throw new Error(`HTTP ${res.status}: ${t}`);
+  }
+  return true;
+}
+
+// ── Result ─────────────────────────────────────────────────
+function renderResult() {
+  const r = state.result;
+  if (!r) { state.view = 'welcome'; render(); return; }
+
+  document.getElementById('shell').classList.remove('admin-shell');
+  const top = r.ranking[0];
+  const r2 = r.ranking[1];
+  const r3 = r.ranking[2];
+
+  // 6축 hexagon SVG
+  const hex = buildHexagonSVG(r.axisScore);
+  // 5요인 bar
+  const big5Names = {N:'정서적 안정성', E:'외향성', C:'성실성', O:'개방성', A:'우호성'};
+  const big5Bars = ['N','E','C','O','A'].map(k => {
+    const v = r.big5[k];
+    const tone = v >= 65 ? '' : (v < 40 ? 'rose' : 'amber');
+    return `
+      <div class="bar-row">
+        <div class="label">${big5Names[k]}</div>
+        <div class="bar-track"><div class="bar-fill ${tone}" style="width:${v}%"></div></div>
+        <div class="num">${v}</div>
+      </div>`;
+  }).join('');
+
+  main.innerHTML = `
+    ${r.mentalCap === 'severe' ? `
+    <div class="cap-alert severe fade-in">
+      <div class="cap-icon">!</div>
+      <div class="cap-body">
+        <strong>지금은 특목고를 권하지 않아요</strong>
+        <p>정서적 안정성 점수가 평균보다 많이 낮습니다. 자사고·외고·국제고·과학고·영재학교는 환경 자체가 회복을 막을 수 있어 추천에서 제외했어요. <strong>안정적인 일반고·자공고2.0이 최우선</strong>입니다.</p>
+      </div>
+    </div>` : r.mentalCap === 'moderate' ? `
+    <div class="cap-alert moderate fade-in">
+      <div class="cap-icon">i</div>
+      <div class="cap-body">
+        <strong>멘탈 보호가 우선이에요</strong>
+        <p>정서적 안정성이 평균 이하라 강도 높은 학교는 적응 부담이 클 수 있어요. 학업·진로·환경 점수가 좋아도 <strong>특목고는 후순위로 밀어두었습니다</strong>.</p>
+      </div>
+    </div>` : (r.careerCapList && r.careerCapList.length > 0) ? `
+    <div class="cap-alert info fade-in">
+      <div class="cap-icon">i</div>
+      <div class="cap-body">
+        <strong>계열 적합도에 따라 일부 특목고는 후순위</strong>
+        <p>고른 계열(${(r.careerSelections||[]).filter(c=>c!=='unsure').map(id => (CAREER_TRACKS.find(c=>c.id===id)||{}).name).filter(Boolean).join('·')})과 특화 분야가 다른 <strong>${[...new Set(r.careerCapList)].join('·')}</strong>는 자연스럽게 후순위로 두었어요. 학교 특화 영역과 진로 방향을 일치시킨 결과입니다.</p>
+      </div>
+    </div>` : ''}
+
+    <div class="result-hero fade-in">
+      <div class="top-tag">${state.name}님의 추천 1순위</div>
+      <h1>${top.type}</h1>
+      <div class="sub">${HS_TYPES[top.type].sub} · 적합도 ${top.score}점</div>
+    </div>
+
+    <div class="card fade-in" style="animation-delay:.05s">
+      <div class="section-h"><span class="num">01</span><h2>6축 종합 프로파일</h2></div>
+      <p class="lede" style="margin:0 0 14px;font-size:14px">
+        학업·진로·입시·환경·심리·멘탈 6개 축 점수입니다 (50점이 평균).
+      </p>
+      <div class="hex-wrap">${hex}</div>
+    </div>
+
+    <div class="card fade-in" style="animation-delay:.1s">
+      <div class="section-h"><span class="num">02</span><h2>멘탈 유형</h2></div>
+      <div class="mental-card">
+        <div class="mental-icon">${r.mental.icon}</div>
+        <h3 style="font-size:22px;margin-bottom:8px">${r.mental.name}</h3>
+        <p style="margin:0 0 14px;color:var(--ink-soft);line-height:1.6">${r.mental.summary}</p>
+        <div style="margin-bottom:10px"><strong style="font-size:12px;letter-spacing:1px;color:var(--teal-deep)">강점</strong>
+          <div style="font-size:14px;margin-top:4px">${r.mental.strength.join(' · ')}</div>
+        </div>
+        <div><strong style="font-size:12px;letter-spacing:1px;color:var(--rose)">주의</strong>
+          <div style="font-size:14px;margin-top:4px;color:var(--ink-soft)">${r.mental.careful.join(' · ')}</div>
+        </div>
+      </div>
+      <h4 style="font-size:13px;letter-spacing:1px;color:var(--ink-soft);margin-bottom:10px;text-transform:uppercase;margin-top:18px">성격 5요인 점수</h4>
+      ${big5Bars}
+    </div>
+
+    <div class="card fade-in" style="animation-delay:.15s">
+      <div class="section-h"><span class="num">03</span><h2>고교 유형 추천 1~3순위</h2></div>
+      <div class="rank-item r1">
+        <div class="rank-num">1</div>
+        <div class="rank-body">
+          <strong>${top.type}</strong>
+          <div class="why">${buildRationale(top, r)}</div>
+        </div>
+        <div class="rank-score">${top.score}</div>
+      </div>
+      <div class="rank-item r2">
+        <div class="rank-num">2</div>
+        <div class="rank-body">
+          <strong>${r2.type}</strong>
+          <div class="why">${buildRationale(r2, r)}</div>
+        </div>
+        <div class="rank-score">${r2.score}</div>
+      </div>
+      <div class="rank-item">
+        <div class="rank-num">3</div>
+        <div class="rank-body">
+          <strong>${r3.type}</strong>
+          <div class="why">${buildRationale(r3, r)}</div>
+        </div>
+        <div class="rank-score">${r3.score}</div>
+      </div>
+    </div>
+
+    <div class="card fade-in" style="animation-delay:.2s">
+      <div class="section-h"><span class="num">04</span><h2>전체 7개 유형 적합도</h2></div>
+      ${r.ranking.map(item => `
+        <div class="bar-row">
+          <div class="label">${item.type}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${item.score}%"></div></div>
+          <div class="num">${item.score}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="card flat fade-in" style="animation-delay:.25s">
+      <h4 style="font-size:13px;letter-spacing:1px;color:var(--ink-soft);margin-bottom:10px;text-transform:uppercase">유의사항</h4>
+      <p style="margin:0;font-size:13px;line-height:1.6;color:var(--ink-soft)">
+        본 검사는 가이드 자료이며 학교 선택의 결정적 기준이 되어선 안 됩니다.
+        실제 결정은 최근 3년간 졸업생 진학 분포, 개설 선택과목 수, 수행평가 비중 등을
+        직접 확인한 뒤, 진로 상담 전문가와 함께 내리시기를 권합니다.
+      </p>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn btn-ghost" id="btnRestart" style="flex:1">처음부터 다시</button>
+      <button class="btn btn-primary" id="btnPrint" style="flex:1">결과 인쇄·저장</button>
+    </div>
+  `;
+
+  document.getElementById('btnRestart').onclick = () => {
+    state = {
+      view: 'welcome', name: '', grade: '', school: '',
+      questionIdx: 0, answers: {}, careerSelections: [], result: null
+    };
+    render();
+  };
+  document.getElementById('btnPrint').onclick = () => window.print();
+}
+
+// ── Hexagon SVG (6축 visualization) ───────────────────────
+function buildHexagonSVG(axisScore) {
+  const labels = [
+    {key:'A', name:'학업', x:0,  y:-1},
+    {key:'B', name:'진로', x:.866,  y:-.5},
+    {key:'C', name:'입시', x:.866, y:.5},
+    {key:'D', name:'환경', x:0,  y:1},
+    {key:'E', name:'심리', x:-.866, y:.5},
+    {key:'F', name:'멘탈', x:-.866, y:-.5}
+  ];
+  const cx = 160, cy = 160, R = 110;
+  // 격자 (5단계: 20, 40, 60, 80, 100)
+  let grid = '';
+  [20, 40, 60, 80, 100].forEach((g, idx) => {
+    const r = (g / 100) * R;
+    const pts = labels.map(l => `${cx + l.x*r},${cy + l.y*r}`).join(' ');
+    grid += `<polygon points="${pts}" fill="${idx===4?'rgba(14,143,134,.04)':'none'}" stroke="var(--line)" stroke-width="1" />`;
+  });
+  // 축선
+  let lines = '';
+  labels.forEach(l => {
+    lines += `<line x1="${cx}" y1="${cy}" x2="${cx + l.x*R}" y2="${cy + l.y*R}" stroke="var(--line)" stroke-width="1" />`;
+  });
+  // 데이터 다각형
+  const dataPts = labels.map(l => {
+    const v = axisScore[l.key] || 0;
+    const r = (v / 100) * R;
+    return `${cx + l.x*r},${cy + l.y*r}`;
+  }).join(' ');
+  // 데이터 점 + 라벨
+  let dots = '';
+  let textLabels = '';
+  labels.forEach(l => {
+    const v = axisScore[l.key] || 0;
+    const r = (v / 100) * R;
+    const px = cx + l.x*r;
+    const py = cy + l.y*r;
+    dots += `<circle cx="${px}" cy="${py}" r="4" fill="var(--teal-deep)" stroke="white" stroke-width="2" />`;
+    const lblR = R + 22;
+    const lx = cx + l.x*lblR;
+    const ly = cy + l.y*lblR + 4;
+    textLabels += `<text x="${lx}" y="${ly}" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--font-display)">${l.name}</text>`;
+    textLabels += `<text x="${lx}" y="${ly+14}" text-anchor="middle" fill="var(--ink-soft)" font-size="11" font-family="var(--font-body)">${v}</text>`;
+  });
+  return `
+    <svg viewBox="0 0 320 320" width="320" height="320" xmlns="http://www.w3.org/2000/svg">
+      ${grid}
+      ${lines}
+      <polygon points="${dataPts}" fill="rgba(14,143,134,.18)" stroke="var(--teal-deep)" stroke-width="2" stroke-linejoin="round" />
+      ${dots}
+      ${textLabels}
+    </svg>
+  `;
+}
+
+// ============================================================
+// 관리자 패널
+// ============================================================
+let adminData = [];
+let adminFilter = '';
+
+async function renderAdmin() {
+  document.getElementById('shell').classList.add('admin-shell');
+
+  // 데이터 로드: 클라우드 우선, 실패 시 로컬 폴백
+  let dataSource = 'local';   // 'cloud' | 'local' | 'cloud-fail'
+  let cloudErr = null;
+
+  if (isCloudEnabled() && currentAdminPassword) {
+    try {
+      adminData = await cloudList(currentAdminPassword);
+      dataSource = 'cloud';
+    } catch(e) {
+      cloudErr = e.message;
+      adminData = loadAllResponsesSync();
+      dataSource = 'cloud-fail';
+    }
+  } else {
+    adminData = loadAllResponsesSync();
+  }
+
+  // 정렬: 최신순
+  adminData.sort((a, b) => (b.completedAt || '').localeCompare(a.completedAt || ''));
+
+  // 통계
+  const total = adminData.length;
+  const grades = {};
+  const top1 = {};
+  const mentals = {};
+  adminData.forEach(d => {
+    grades[d.grade] = (grades[d.grade] || 0) + 1;
+    const t1 = d.ranking?.[0]?.type;
+    if (t1) top1[t1] = (top1[t1] || 0) + 1;
+    if (d.mentalName) mentals[d.mentalName] = (mentals[d.mentalName] || 0) + 1;
+  });
+  const mostType = Object.entries(top1).sort((a,b)=>b[1]-a[1])[0]?.[0] || '-';
+  const mostMental = Object.entries(mentals).sort((a,b)=>b[1]-a[1])[0]?.[0] || '-';
+
+  // 필터
+  const filtered = adminData.filter(d => {
+    if (!adminFilter) return true;
+    const q = adminFilter.toLowerCase();
+    return (
+      (d.name || '').toLowerCase().includes(q) ||
+      (d.school || '').toLowerCase().includes(q) ||
+      (d.grade || '').toLowerCase().includes(q) ||
+      (d.ranking?.[0]?.type || '').toLowerCase().includes(q) ||
+      (d.mentalName || '').toLowerCase().includes(q)
+    );
+  });
+
+  // 데이터 소스 배지 텍스트
+  const sourceBadge = dataSource === 'cloud'
+    ? `<span class="src-badge src-cloud">☁️ 클라우드 동기화</span>`
+    : dataSource === 'cloud-fail'
+    ? `<span class="src-badge src-fail">⚠ 클라우드 연결 실패 — 이 기기 데이터만 표시</span>`
+    : isCloudEnabled()
+    ? `<span class="src-badge src-fail">⚠ 클라우드 미인증</span>`
+    : `<span class="src-badge src-local">📱 이 기기 (localStorage)</span>`;
+
+  main.innerHTML = `
+    <div class="admin-top">
+      <div>
+        <h1>관리자 콘솔</h1>
+        <div class="sub">전체 응답자 ${total}명 · ${sourceBadge}</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        ${isCloudEnabled() ? `<button class="btn btn-sm btn-ghost" id="btnRefresh" style="background:rgba(255,255,255,.05);color:white;border-color:rgba(255,255,255,.15);font-size:12px">↻ 새로고침</button>` : ''}
+        <button class="btn btn-sm btn-ghost" id="btnExitAdmin" style="background:rgba(255,255,255,.05);color:white;border-color:rgba(255,255,255,.15);font-size:12px">검사로 돌아가기</button>
+      </div>
+    </div>
+
+    ${cloudErr ? `<div style="background:rgba(177,74,90,.15);border:1px solid var(--rose);color:#FFB5BD;padding:10px 14px;border-radius:10px;margin-bottom:14px;font-size:12px">클라우드 오류: ${escapeHtml(cloudErr)}</div>` : ''}
+
+    <div class="admin-stats">
+      <div class="admin-stat"><div class="num">${total}</div><div class="lbl">총 응답수</div></div>
+      <div class="admin-stat"><div class="num">${Object.keys(grades).length}</div><div class="lbl">학년 종류</div></div>
+      <div class="admin-stat"><div class="num" style="font-size:18px;line-height:1.3">${mostType}</div><div class="lbl">최다 추천 1순위</div></div>
+      <div class="admin-stat"><div class="num" style="font-size:18px;line-height:1.3">${mostMental}</div><div class="lbl">최다 멘탈 유형</div></div>
+    </div>
+
+    <div class="admin-toolbar">
+      <input type="text" id="adminSearch" placeholder="이름·학년·학교·고교 유형·멘탈 유형 검색" value="${adminFilter}" />
+      <button class="btn primary" id="btnExportCsv">CSV 내보내기</button>
+      <button class="btn primary" id="btnExportJson">JSON 내보내기</button>
+      <button class="btn primary" id="btnImportJson">JSON 가져오기 (병합)</button>
+      <button class="btn danger" id="btnClearAll">전체 삭제</button>
+      <input type="file" id="importJsonFile" accept="application/json,.json" style="display:none" />
+    </div>
+
+    <div class="admin-table">
+      <div class="admin-row head">
+        <div>이름·학년</div>
+        <div>완료시각·학교</div>
+        <div>1순위 / 멘탈</div>
+        <div style="text-align:right">점수</div>
+      </div>
+      ${filtered.length === 0 ? `<div class="admin-empty">${adminFilter ? '검색 결과가 없습니다.' : '아직 응답이 없습니다.'}</div>` : filtered.map((d, i) => {
+        const t1 = d.ranking?.[0];
+        const dt = d.completedAt ? new Date(d.completedAt).toLocaleString('ko-KR', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' }) : '-';
+        return `
+        <div class="admin-row" data-rid="${d.id}">
+          <div>
+            <div class="name">${escapeHtml(d.name || '-')}</div>
+            <div class="meta"><span>${escapeHtml(d.grade || '')}</span></div>
+          </div>
+          <div class="meta">
+            <span>${dt}</span>
+            ${d.school ? `<span>${escapeHtml(d.school)}</span>` : ''}
+          </div>
+          <div>
+            <div class="top1">${t1?.type || '-'}</div>
+            <div class="meta"><span>${d.mentalName || '-'}</span></div>
+          </div>
+          <div class="top1" style="text-align:right">${t1?.score ?? '-'}</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div style="margin-top:14px;font-size:11px;color:rgba(255,255,255,.4);line-height:1.5">
+      ※ 데이터는 이 브라우저의 로컬 저장소(localStorage)에 보관됩니다.
+      다른 기기에서 응답한 데이터는 그쪽 브라우저에 따로 저장되니, 합쳐서 보려면
+      다른 기기에서 <strong style="color:rgba(255,255,255,.7)">JSON 내보내기</strong> →
+      이쪽에서 <strong style="color:rgba(255,255,255,.7)">JSON 가져오기</strong>로 병합하세요.
+      행을 클릭하면 응답 전체를 볼 수 있습니다.
+    </div>
+  `;
+
+  // 이벤트
+  document.getElementById('btnExitAdmin').onclick = () => {
+    state.view = 'welcome';
+    document.getElementById('shell').classList.remove('admin-shell');
+    render();
+  };
+
+  // 새로고침 (클라우드 모드 전용)
+  const refreshBtn = document.getElementById('btnRefresh');
+  if (refreshBtn) {
+    refreshBtn.onclick = () => renderAdmin();
+  }
+
+  document.getElementById('adminSearch').oninput = (e) => {
+    adminFilter = e.target.value;
+    renderAdmin();
+  };
+
+  document.getElementById('btnExportCsv').onclick = () => exportCsv(adminData);
+  document.getElementById('btnExportJson').onclick = () => exportJson(adminData);
+  document.getElementById('btnImportJson').onclick = () => document.getElementById('importJsonFile').click();
+  document.getElementById('importJsonFile').onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const incoming = JSON.parse(text);
+      if (!Array.isArray(incoming)) throw new Error('JSON이 응답 배열 형식이 아닙니다.');
+      const existing = loadAllResponsesSync();
+      const existingIds = new Set(existing.map(x => x.id));
+      let added = 0, skipped = 0;
+      incoming.forEach(rec => {
+        if (rec && rec.id && !existingIds.has(rec.id)) {
+          existing.push(rec);
+          existingIds.add(rec.id);
+          added++;
+        } else { skipped++; }
+      });
+      const ok = saveAllResponsesSync(existing);
+      if (!ok) { alert('병합 저장에 실패했습니다.'); return; }
+      alert(`✓ 병합 완료\n• 추가: ${added}건\n• 중복으로 건너뜀: ${skipped}건\n• 현재 총 ${existing.length}건`);
+      e.target.value = '';
+      renderAdmin();
+    } catch(err) {
+      alert('가져오기 실패: ' + err.message);
+      e.target.value = '';
+    }
+  };
+  document.getElementById('btnClearAll').onclick = async () => {
+    if (!confirm('정말 모든 응답 데이터를 삭제하시겠습니까? 복구할 수 없습니다.')) return;
+    if (!confirm('마지막 확인입니다. 정말 삭제할까요?')) return;
+
+    if (isCloudEnabled() && currentAdminPassword) {
+      try {
+        await cloudClear(currentAdminPassword);
+      } catch(e) {
+        alert('클라우드 전체 삭제 실패: ' + e.message);
+        return;
+      }
+    }
+    deleteAllResponsesSync();
+    adminData = [];
+    renderAdmin();
+  };
+
+  // 행 클릭 → 상세
+  main.querySelectorAll('.admin-row[data-rid]').forEach(row => {
+    row.onclick = () => {
+      const rid = row.dataset.rid;
+      const rec = adminData.find(x => x.id === rid);
+      if (rec) showDetail(rec);
+    };
+  });
+}
+
+function showDetail(rec) {
+  const big5Names = {N:'정서적 안정성', E:'외향성', C:'성실성', O:'개방성', A:'우호성'};
+  const axisName = {A:'학업 성향', B:'진로 명확도', C:'입시 전략', D:'환경·생활', E:'심리·사회성', F:'멘탈 유형'};
+  const careerNames = {};
+  CAREER_TRACKS.forEach(c => careerNames[c.id] = c.name);
+  const selectedCareers = (rec.careerSelections || []).map(id => careerNames[id] || id).join(', ') || '-';
+
+  const dt = rec.completedAt ? new Date(rec.completedAt).toLocaleString('ko-KR') : '-';
+
+  // 응답별 텍스트 매핑
+  const ansRows = QUESTIONS.filter(q => q.type !== 'multi-career').map(q => {
+    const v = rec.answers?.[q.id];
+    if (v == null) return '';
+    return `
+      <div class="q-answer-row">
+        <div class="qid">${q.id}</div>
+        <div class="qtext">${q.text}</div>
+        <div class="qval v${v}">${v}</div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-head">
+      <div>
+        <h2 style="margin-bottom:4px">${escapeHtml(rec.name || '-')}</h2>
+        <div style="font-size:13px;color:var(--ink-soft)">${escapeHtml(rec.grade || '')} · ${escapeHtml(rec.school || '')} · ${dt}</div>
+      </div>
+      <button class="modal-close" id="modalCloseBtn">×</button>
+    </div>
+
+    <div class="detail-section">
+      <h4>기본 정보</h4>
+      <div class="detail-grid">
+        <div class="row"><div class="lbl">이름</div><div class="val">${escapeHtml(rec.name || '-')}</div></div>
+        <div class="row"><div class="lbl">학년</div><div class="val">${escapeHtml(rec.grade || '-')}</div></div>
+        <div class="row"><div class="lbl">학교</div><div class="val">${escapeHtml(rec.school || '-')}</div></div>
+        <div class="row"><div class="lbl">완료시각</div><div class="val">${dt}</div></div>
+        <div class="row" style="grid-column:1/-1"><div class="lbl">선택 계열</div><div class="val">${escapeHtml(selectedCareers)}</div></div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h4>축별 점수 (0-100)</h4>
+      ${Object.entries(rec.axisScore || {}).map(([k, v]) => `
+        <div class="bar-row">
+          <div class="label">${axisName[k]}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${v}%"></div></div>
+          <div class="num">${v}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="detail-section">
+      <h4>멘탈 유형 — ${escapeHtml(rec.mentalName || '-')}</h4>
+      ${Object.entries(rec.big5 || {}).map(([k, v]) => `
+        <div class="bar-row">
+          <div class="label">${big5Names[k]}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${v}%"></div></div>
+          <div class="num">${v}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="detail-section">
+      <h4>고교 유형 추천 순위</h4>
+      ${(rec.ranking || []).map((r, i) => `
+        <div class="bar-row">
+          <div class="label">${i+1}. ${r.type}</div>
+          <div class="bar-track"><div class="bar-fill ${i===0?'':(i===1?'amber':'')}" style="width:${r.score}%"></div></div>
+          <div class="num">${r.score}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="detail-section">
+      <h4>전체 응답 (1=전혀 그렇지 않다 ~ 5=매우 그렇다)</h4>
+      <div style="max-height:300px;overflow-y:auto;padding:4px">
+        ${ansRows}
+      </div>
+    </div>
+
+    <div style="margin-top:18px;display:flex;gap:8px">
+      <button class="btn btn-ghost" id="btnDeleteRec" style="flex:1;color:var(--rose);border-color:var(--rose)">이 응답 삭제</button>
+      <button class="btn btn-primary" id="btnExportRec" style="flex:1">JSON 내보내기</button>
+    </div>
+  `;
+
+  document.getElementById('modalBg').classList.add('open');
+  document.getElementById('modalCloseBtn').onclick = closeModal;
+  document.getElementById('btnExportRec').onclick = () => {
+    const blob = new Blob([JSON.stringify(rec, null, 2)], {type:'application/json'});
+    downloadBlob(blob, `${rec.name}_${rec.id}.json`);
+  };
+  document.getElementById('btnDeleteRec').onclick = async () => {
+    if (!confirm(`${rec.name}님의 응답을 삭제하시겠습니까?`)) return;
+    if (isCloudEnabled() && currentAdminPassword) {
+      try {
+        await cloudDelete(currentAdminPassword, rec.id);
+      } catch(e) {
+        alert('클라우드 삭제 실패: ' + e.message);
+        return;
+      }
+    }
+    adminData = adminData.filter(x => x.id !== rec.id);
+    saveAllResponsesSync(adminData);
+    closeModal();
+    renderAdmin();
+  };
+}
+
+function closeModal() {
+  document.getElementById('modalBg').classList.remove('open');
+}
+
+document.getElementById('modalBg').onclick = (e) => {
+  if (e.target.id === 'modalBg') closeModal();
+};
+
+// ── 내보내기 ───────────────────────────────────────────────
+function exportCsv(data) {
+  const headers = [
+    'id','name','grade','school','completedAt',
+    'mentalName','top1_type','top1_score','top2_type','top2_score','top3_type','top3_score',
+    'A','B','C','D','E','F',
+    'big5_N','big5_E','big5_C','big5_O','big5_A',
+    'careerSelections','answersJson'
+  ];
+  const rows = data.map(d => {
+    const careerNames = {};
+    CAREER_TRACKS.forEach(c => careerNames[c.id] = c.name);
+    const careers = (d.careerSelections || []).map(id => careerNames[id] || id).join('|');
+    return [
+      d.id, d.name, d.grade, d.school, d.completedAt,
+      d.mentalName,
+      d.ranking?.[0]?.type, d.ranking?.[0]?.score,
+      d.ranking?.[1]?.type, d.ranking?.[1]?.score,
+      d.ranking?.[2]?.type, d.ranking?.[2]?.score,
+      d.axisScore?.A, d.axisScore?.B, d.axisScore?.C, d.axisScore?.D, d.axisScore?.E, d.axisScore?.F,
+      d.big5?.N, d.big5?.E, d.big5?.C, d.big5?.O, d.big5?.A,
+      careers,
+      JSON.stringify(d.answers || {})
+    ].map(v => csvEscape(v));
+  });
+  const csv = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  downloadBlob(blob, `responses_${new Date().toISOString().slice(0,10)}.csv`);
+}
+function csvEscape(v) {
+  if (v == null) return '';
+  const s = String(v);
+  if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+  return s;
+}
+function exportJson(data) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  downloadBlob(blob, `responses_${new Date().toISOString().slice(0,10)}.json`);
+}
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+}
+
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+// ============================================================
+// Pinpad 이벤트
+// ============================================================
+document.getElementById('adminKeyBtn').onclick = () => {
+  document.getElementById('pinpadShell').classList.add('open');
+  document.getElementById('pinInput').value = '';
+  document.getElementById('pinErr').textContent = '\u00A0';
+  setTimeout(() => document.getElementById('pinInput').focus(), 100);
+};
+document.getElementById('pinCancel').onclick = () => {
+  document.getElementById('pinpadShell').classList.remove('open');
+};
+document.getElementById('pinOk').onclick = tryPin;
+document.getElementById('pinInput').onkeydown = (e) => {
+  if (e.key === 'Enter') tryPin();
+};
+async function tryPin() {
+  const v = document.getElementById('pinInput').value;
+  const errEl = document.getElementById('pinErr');
+  const okBtn = document.getElementById('pinOk');
+  if (!v) { errEl.textContent = '비밀번호를 입력하세요'; return; }
+
+  if (isCloudEnabled()) {
+    // 클라우드 모드: 서버에 비밀번호 검증 요청
+    errEl.textContent = '서버 확인 중…';
+    okBtn.disabled = true;
+    try {
+      await cloudList(v);  // 성공하면 비밀번호 정상
+      currentAdminPassword = v;
+      document.getElementById('pinpadShell').classList.remove('open');
+      state.view = 'admin';
+      render();
+    } catch(e) {
+      if (e.message === 'Unauthorized') {
+        errEl.textContent = '비밀번호가 올바르지 않습니다.';
+      } else {
+        errEl.textContent = '서버 연결 실패: ' + e.message;
+      }
+    } finally {
+      okBtn.disabled = false;
+    }
+  } else {
+    // 로컬 모드
+    if (v === ADMIN_PASSWORD) {
+      currentAdminPassword = v;
+      document.getElementById('pinpadShell').classList.remove('open');
+      state.view = 'admin';
+      render();
+    } else {
+      errEl.textContent = '비밀번호가 올바르지 않습니다.';
+    }
+  }
+}
+
+// ============================================================
+// 부팅
+// ============================================================
+render();
+</script>
+</body>
+</html>

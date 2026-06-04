@@ -1,0 +1,24 @@
+# 비밀번호가 평문으로 들어있는 SQL 파일들 — Supabase 대시보드에 직접 붙여넣어 실행하고
+# GitHub에는 절대 올리지 않는다. 백업은 1Password/iCloud Keychain 등 비밀번호 관리도구에.
+SUPABASE_바로붙여넣기.sql
+SUPABASE_토큰_마이그레이션.sql
+SUPABASE_설정.sql
+
+# macOS
+.DS_Store
+
+# 아카이브
+*.zip
+
+# 에디터 임시
+.vscode/
+.idea/
+*.swp
+*~
+
+# Claude Code / oh-my-claudecode 세션 (대화 로그 — 공개 금지)
+.omc/
+.claude/
+
+# 노드(향후 회귀 테스트 추가 시)
+node_modules/
