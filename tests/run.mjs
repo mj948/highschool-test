@@ -103,7 +103,7 @@ T('20. T와 Q에서 서로 다른 특성이 동시에 → 일관성 오류로 �
   const f=sincerity(a,600000);
   return f.length===0?true:'오탐: '+f;});
 
-console.log('\n═══ 불변식 22 ═══');
+console.log('\n═══ 불변식 23 ═══');
 T('I1. 초등에 유형 순위 없음',()=>['e34','e56'].every(g=>RULES.gradeFrames[g].typeRanking===false)?true:'초등 순위 존재');
 T('I2. 고1 이상에 신규 진학 순위 없음',()=>RULES.gradeFrames.h1.typeRanking===false?true:'고1 순위 존재');
 T('I3. 정보 없음에 중간값을 주지 않음',()=>{
@@ -224,6 +224,12 @@ T('I22. 아이 문항이 짧고 어려운 말이 없다',()=>{
   QUESTIONS.questions.filter(q=>q.by==='child').forEach(q=>{
     (q.options||[]).forEach(o=>{if(HARD.test(o.label)) bad.push(q.id+' 선지 어휘');});});
   return bad.length===0?true:bad.join(', ');});
+
+T('I23. 진입 비밀번호가 평문이 아니라 해시로 들어 있다',()=>{
+  const plain=/['\"]2608['\"]/.test(SRC);
+  const hash=/GATE_HASH='[0-9a-f]{64}'/.test(SRC);
+  const gated=/phase:'gate'/.test(SRC)&&SRC.includes('gateHTML');
+  return (!plain&&hash&&gated)?true:`plain:${plain} hash:${hash} gated:${gated}`;});
 
 console.log('\n═══ 결과 ═══');
 console.log(`  PASS ${pass} · FAIL ${fail}`);

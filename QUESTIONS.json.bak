@@ -1,0 +1,1454 @@
+{
+  "meta": {
+    "version": "v3.1",
+    "lastModified": "2026-08-21",
+    "note": "v3.0 전면 개정. 판정에 쓰이지 않던 문항을 삭제하고 한 축에 섞인 개념을 분리했다. 문항이 깔고 있는 전제는 requires로 적고, 학년의 has와 맞지 않으면 띄우지 않는다.",
+    "sourceOfTruth": [
+      "SPEC.md",
+      "QUESTIONS.json",
+      "RULES.json",
+      "index.html"
+    ],
+    "deprecated": [
+      "WEIGHTS.json"
+    ]
+  },
+  "scales": {
+    "freq5": {
+      "kind": "frequency",
+      "n": 5,
+      "labels": [
+        "거의 매번",
+        "자주",
+        "가끔",
+        "드물게",
+        "전혀 없다"
+      ],
+      "note": "순수 빈도로 통일했다. 강도('매우 그렇다')와 섞지 않는다. 가운데인 '가끔'은 도피 선택지가 아니라 실제 답이다."
+    },
+    "interest4": {
+      "kind": "desire",
+      "n": 4,
+      "labels": [
+        "하고 싶지 않아요",
+        "조금 하고 싶어요",
+        "많이 하고 싶어요",
+        "꼭 하고 싶어요"
+      ],
+      "note": "'보통이다'를 두지 않는다. 초등 저학년도 읽을 수 있게 짧게 쓴다."
+    },
+    "binary": {
+      "kind": "forced-choice",
+      "n": 2,
+      "note": "양쪽 모두 정상적인 성향으로 읽히게 쓴다."
+    },
+    "ordinal4": {
+      "kind": "ordinal",
+      "n": 4
+    },
+    "choice": {
+      "kind": "single",
+      "note": "noInfo가 붙은 선지는 중간값으로 점수화하지 않는다."
+    },
+    "multi": {
+      "kind": "multiple"
+    },
+    "number-grid": {
+      "kind": "numeric"
+    },
+    "region": {
+      "kind": "composite"
+    },
+    "text": {
+      "kind": "freetext"
+    }
+  },
+  "constructs": {
+    "basic": "학년",
+    "realistic": "실제로 선택 가능한 범위",
+    "academic": "현재 학력 위치",
+    "exam_fit": "범위가 있는 시험과 없는 시험에서의 차이",
+    "self_standard": "자기 기준에 미달했을 때의 반응",
+    "competition": "주변의 잘하는 아이를 공부 동력으로 바꾸는 정도",
+    "recovery": "결과가 나쁜 뒤 공부 행동으로 돌아오는 속도",
+    "self_management": "공부 순서와 계획을 스스로 잡는 정도",
+    "peer_pref": "또래 환경 선호",
+    "interest": "관심 분야",
+    "branch": "별도 전형 분기",
+    "priority": "조건 충돌 시 우선순위",
+    "context": "상담 참고"
+  },
+  "grades": [
+    {
+      "id": "e12",
+      "label": "초등 1·2학년",
+      "academic": false,
+      "typeRanking": false,
+      "frame": "early",
+      "has": [],
+      "note": "정기 지필고사도 성적표도 없다. 시험을 전제한 문항을 띄우지 않는다."
+    },
+    {
+      "id": "e34",
+      "label": "초등 3·4학년",
+      "academic": false,
+      "typeRanking": false,
+      "frame": "observe",
+      "has": []
+    },
+    {
+      "id": "e56",
+      "label": "초등 5·6학년",
+      "academic": false,
+      "typeRanking": false,
+      "frame": "observe_plus",
+      "has": []
+    },
+    {
+      "id": "m1",
+      "label": "중학교 1학년",
+      "academic": "optional",
+      "typeRanking": true,
+      "frame": "provisional",
+      "has": [
+        "exam"
+      ],
+      "note": "자유학년제면 성적표가 없을 수 있어 report_card를 넣지 않는다."
+    },
+    {
+      "id": "m2",
+      "label": "중학교 2학년",
+      "academic": true,
+      "typeRanking": true,
+      "frame": "full",
+      "has": [
+        "exam",
+        "report_card"
+      ]
+    },
+    {
+      "id": "m3",
+      "label": "중학교 3학년",
+      "academic": true,
+      "typeRanking": true,
+      "frame": "full",
+      "has": [
+        "exam",
+        "report_card"
+      ]
+    },
+    {
+      "id": "h1",
+      "label": "고등학교 1학년 이상",
+      "academic": false,
+      "typeRanking": false,
+      "frame": "review",
+      "has": [
+        "exam",
+        "report_card"
+      ]
+    }
+  ],
+  "tracks": [
+    {
+      "id": "eng",
+      "name": "이공",
+      "examples": "기계·전자·컴퓨터·화학 같은 분야"
+    },
+    {
+      "id": "med",
+      "name": "메디컬",
+      "examples": "의학·치의학·약학·수의학 같은 분야"
+    },
+    {
+      "id": "soc",
+      "name": "인문·사회",
+      "examples": "경영·경제·심리·교육·법 같은 분야"
+    },
+    {
+      "id": "lang",
+      "name": "외국어",
+      "examples": "외국어를 중심으로 배우는 분야"
+    },
+    {
+      "id": "intl",
+      "name": "국제",
+      "examples": "국제관계·국제학 같은 분야"
+    },
+    {
+      "id": "art",
+      "name": "예술·콘텐츠",
+      "examples": "디자인·영상·문예창작 같은 분야"
+    }
+  ],
+  "removedInV31": {
+    "note": "판정에 쓰이지 않거나 개념이 섞여 있어 삭제한 문항. 과거 응답 열람 시 참조용으로만 남긴다.",
+    "ids": [
+      "0-3",
+      "T2",
+      "T3",
+      "T5",
+      "P1-2",
+      "P4",
+      "Q1",
+      "Q3",
+      "R3",
+      "R4",
+      "S3",
+      "E1",
+      "E2",
+      "D1",
+      "D2",
+      "D3",
+      "W1",
+      "F1~F12(구조 교체)"
+    ]
+  },
+  "questions": [
+    {
+      "id": "A1",
+      "block": "A",
+      "construct": "basic",
+      "by": "mo",
+      "scale": "choice",
+      "text": "아이 학년을 골라 주세요.",
+      "options": [
+        {
+          "value": "e12",
+          "label": "초등 1·2학년"
+        },
+        {
+          "value": "e34",
+          "label": "초등 3·4학년"
+        },
+        {
+          "value": "e56",
+          "label": "초등 5·6학년"
+        },
+        {
+          "value": "m1",
+          "label": "중학교 1학년"
+        },
+        {
+          "value": "m2",
+          "label": "중학교 2학년"
+        },
+        {
+          "value": "m3",
+          "label": "중학교 3학년"
+        },
+        {
+          "value": "h1",
+          "label": "고등학교 1학년 이상"
+        }
+      ],
+      "decisionUse": [
+        "stage_gate",
+        "result_frame"
+      ]
+    },
+    {
+      "id": "A2",
+      "block": "A",
+      "construct": "realistic",
+      "by": "mo",
+      "scale": "region",
+      "text": "지금 살고 계신 곳을 알려 주세요.",
+      "hint": "통학 가능한 범위를 볼 때 씁니다. 해외에 계시면 마지막을 고르시고 귀국 예정 지역을 적어 주세요.",
+      "fields": [
+        {
+          "key": "sido",
+          "label": "시·도",
+          "type": "select",
+          "options": [
+            "서울",
+            "부산",
+            "대구",
+            "인천",
+            "광주",
+            "대전",
+            "울산",
+            "세종",
+            "경기",
+            "강원",
+            "충북",
+            "충남",
+            "전북",
+            "전남",
+            "경북",
+            "경남",
+            "제주",
+            "해외 거주"
+          ]
+        },
+        {
+          "key": "sigungu",
+          "label": "시·군·구",
+          "type": "text"
+        }
+      ],
+      "decisionUse": [
+        "hard_filter",
+        "result_explanation"
+      ]
+    },
+    {
+      "id": "A3",
+      "block": "A",
+      "construct": "realistic",
+      "by": "mo",
+      "scale": "choice",
+      "text": "고등학교 통학은 편도 몇 분까지 현실적으로 가능한가요?",
+      "options": [
+        {
+          "value": "A",
+          "label": "30분 이내",
+          "maxMin": 30
+        },
+        {
+          "value": "B",
+          "label": "31~45분",
+          "maxMin": 45
+        },
+        {
+          "value": "C",
+          "label": "46~60분",
+          "maxMin": 60
+        },
+        {
+          "value": "D",
+          "label": "60분이 넘어도 가능",
+          "maxMin": 999
+        }
+      ],
+      "decisionUse": [
+        "hard_filter",
+        "result_explanation"
+      ]
+    },
+    {
+      "id": "A4",
+      "block": "A",
+      "construct": "realistic",
+      "by": "mo",
+      "scale": "choice",
+      "text": "기숙사 생활은 어떠신가요?",
+      "options": [
+        {
+          "value": "A",
+          "label": "가능하다"
+        },
+        {
+          "value": "B",
+          "label": "아이가 원하면 가능하다"
+        },
+        {
+          "value": "C",
+          "label": "어렵다"
+        }
+      ],
+      "decisionUse": [
+        "hard_filter",
+        "result_explanation"
+      ]
+    },
+    {
+      "id": "A5",
+      "block": "A",
+      "construct": "realistic",
+      "by": "mo",
+      "scale": "choice",
+      "text": "학비와 기숙사비를 합쳐 연 1,000만 원 이상이 드는 학교도 검토할 수 있나요?",
+      "hint": "같은 유형 안에서도 학교마다 차이가 큽니다. 대략의 범위만 골라 주세요.",
+      "options": [
+        {
+          "value": "A",
+          "label": "부담 없이 검토할 수 있다"
+        },
+        {
+          "value": "B",
+          "label": "다른 교육비나 지출을 조정하면 가능하다"
+        },
+        {
+          "value": "C",
+          "label": "현실적으로 어렵다"
+        }
+      ],
+      "decisionUse": [
+        "soft_filter",
+        "result_explanation"
+      ]
+    },
+    {
+      "id": "A6",
+      "block": "A",
+      "construct": "realistic",
+      "by": "mo",
+      "scale": "binary",
+      "text": "고교 진학을 위해 이사하는 것도 고려할 수 있나요?",
+      "options": [
+        {
+          "value": "A",
+          "label": "학교에 따라 고려할 수 있다"
+        },
+        {
+          "value": "B",
+          "label": "현재 거주지를 유지해야 한다"
+        }
+      ],
+      "decisionUse": [
+        "hard_filter",
+        "result_explanation"
+      ]
+    },
+    {
+      "id": "B1",
+      "block": "B",
+      "construct": "academic",
+      "by": "mo",
+      "scale": "binary",
+      "showIf": {
+        "grade": [
+          "m1",
+          "m2",
+          "m3"
+        ]
+      },
+      "text": "아이 성적표를 지금 확인하실 수 있나요?",
+      "options": [
+        {
+          "value": "A",
+          "label": "네, 보면서 숫자를 넣겠습니다",
+          "hint": "3분쯤 더 걸리고 결과가 정확해집니다."
+        },
+        {
+          "value": "B",
+          "label": "아니요, 대략의 점수대로 답하겠습니다",
+          "hint": "바로 진행됩니다."
+        }
+      ],
+      "decisionUse": [
+        "academic_path"
+      ]
+    },
+    {
+      "id": "B2",
+      "block": "B",
+      "construct": "academic",
+      "by": "mo",
+      "scale": "number-grid",
+      "showIf": {
+        "B1": "A"
+      },
+      "text": "가장 최근 학기 성적표에서 두 숫자만 옮겨 주세요.",
+      "hint": "과목평균은 원점수 옆에 함께 적혀 있습니다.",
+      "rows": [
+        "국어",
+        "영어",
+        "수학",
+        "사회",
+        "과학"
+      ],
+      "cols": [
+        {
+          "key": "raw",
+          "label": "원점수",
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "mean",
+          "label": "과목평균",
+          "min": 0,
+          "max": 100
+        }
+      ],
+      "decisionUse": [
+        "academic_position"
+      ],
+      "requires": [
+        "report_card"
+      ]
+    },
+    {
+      "id": "B3",
+      "block": "B",
+      "construct": "academic",
+      "by": "mo",
+      "scale": "choice",
+      "showIf": {
+        "B1": "B"
+      },
+      "text": "최근 학기 국어·영어·수학 세 과목의 평균 점수는 어느 구간인가요?",
+      "options": [
+        {
+          "value": "A",
+          "label": "95점 이상",
+          "score": 95
+        },
+        {
+          "value": "B",
+          "label": "90~94점",
+          "score": 92
+        },
+        {
+          "value": "C",
+          "label": "85~89점",
+          "score": 87
+        },
+        {
+          "value": "D",
+          "label": "80~84점",
+          "score": 82
+        },
+        {
+          "value": "E",
+          "label": "70~79점",
+          "score": 75
+        },
+        {
+          "value": "F",
+          "label": "70점 미만",
+          "score": 60
+        },
+        {
+          "value": "X",
+          "label": "정확히 모르겠다",
+          "noInfo": true
+        },
+        {
+          "value": "N",
+          "label": "아직 성적표가 없다",
+          "noInfo": true
+        }
+      ],
+      "decisionUse": [
+        "academic_position"
+      ],
+      "hint": "중학교 1학년이라 아직 지필평가 성적이 없으면 마지막을 고르시면 됩니다."
+    },
+    {
+      "id": "B4",
+      "block": "B",
+      "construct": "academic",
+      "by": "mo",
+      "scale": "choice",
+      "showIf": {
+        "B1": "B"
+      },
+      "text": "그중 가장 낮은 과목의 점수는 어느 구간인가요?",
+      "hint": "한 과목이 크게 낮으면 학교를 고를 때 영향이 다릅니다.",
+      "options": [
+        {
+          "value": "A",
+          "label": "95점 이상",
+          "score": 95
+        },
+        {
+          "value": "B",
+          "label": "90~94점",
+          "score": 92
+        },
+        {
+          "value": "C",
+          "label": "85~89점",
+          "score": 87
+        },
+        {
+          "value": "D",
+          "label": "80~84점",
+          "score": 82
+        },
+        {
+          "value": "E",
+          "label": "70~79점",
+          "score": 75
+        },
+        {
+          "value": "F",
+          "label": "70점 미만",
+          "score": 60
+        },
+        {
+          "value": "X",
+          "label": "정확히 모르겠다",
+          "noInfo": true
+        },
+        {
+          "value": "N",
+          "label": "아직 성적표가 없다",
+          "noInfo": true
+        }
+      ],
+      "decisionUse": [
+        "academic_position",
+        "result_explanation"
+      ]
+    },
+    {
+      "id": "B5",
+      "block": "B",
+      "construct": "exam_fit",
+      "by": "mo",
+      "scale": "binary",
+      "showIf": {
+        "grade": [
+          "m1",
+          "m2",
+          "m3"
+        ]
+      },
+      "text": "고등학교 1학년 3월 모의고사를 시간을 재고 풀려 본 적이 있나요?",
+      "options": [
+        {
+          "value": "A",
+          "label": "있다"
+        },
+        {
+          "value": "B",
+          "label": "없다"
+        }
+      ],
+      "followUp": {
+        "A": {
+          "fields": [
+            {
+              "key": "kor",
+              "label": "국어 등급"
+            },
+            {
+              "key": "mat",
+              "label": "수학 등급"
+            },
+            {
+              "key": "eng",
+              "label": "영어 등급"
+            }
+          ],
+          "optional": true,
+          "hint": "기억나는 과목만 적으셔도 됩니다"
+        }
+      },
+      "decisionUse": [
+        "exam_fit_measured",
+        "next_action"
+      ]
+    },
+    {
+      "id": "C1",
+      "block": "C",
+      "construct": "exam_fit",
+      "by": "mo",
+      "scale": "binary",
+      "text": "시험 범위가 정해지고 준비할 시간이 충분할 때, 평소보다 점수가 확실히 좋아지는 편인가요?",
+      "options": [
+        {
+          "value": "A",
+          "label": "준비한 만큼 결과가 좋아지는 편이다",
+          "pole": "prepared"
+        },
+        {
+          "value": "B",
+          "label": "범위가 정해져 있어도 평소 실력과 결과 차이가 크지 않다",
+          "pole": "unbounded"
+        }
+      ],
+      "decisionUse": [
+        "environment_fit",
+        "result_explanation"
+      ],
+      "requires": [
+        "exam"
+      ]
+    },
+    {
+      "id": "C2",
+      "block": "C",
+      "construct": "exam_fit",
+      "by": "mo",
+      "scale": "binary",
+      "text": "학교 시험과, 범위를 따로 알려 주지 않는 학원 레벨테스트를 비교하면 어떤가요?",
+      "options": [
+        {
+          "value": "A",
+          "label": "학교 시험에서 상대적으로 더 강한 편이다",
+          "pole": "prepared"
+        },
+        {
+          "value": "B",
+          "label": "두 시험의 차이가 크지 않거나 레벨테스트가 더 잘 나오는 편이다",
+          "pole": "unbounded"
+        }
+      ],
+      "decisionUse": [
+        "environment_fit",
+        "result_explanation"
+      ],
+      "requires": [
+        "exam"
+      ]
+    },
+    {
+      "id": "D1",
+      "block": "D",
+      "construct": "self_standard",
+      "by": "mo",
+      "scale": "freq5",
+      "text": "시험을 잘 봐도 틀린 몇 문제 때문에 결과 전체가 마음에 안 든다고 한다.",
+      "options": [
+        {
+          "value": "5",
+          "label": "거의 매번"
+        },
+        {
+          "value": "4",
+          "label": "자주"
+        },
+        {
+          "value": "3",
+          "label": "가끔"
+        },
+        {
+          "value": "2",
+          "label": "드물게"
+        },
+        {
+          "value": "1",
+          "label": "전혀 없다"
+        }
+      ],
+      "decisionUse": [
+        "environment_fit",
+        "result_explanation"
+      ]
+    },
+    {
+      "id": "D2",
+      "block": "D",
+      "construct": "self_standard",
+      "by": "mo",
+      "scale": "freq5",
+      "text": "이미 끝낸 숙제나 과제를 마음에 들지 않는다는 이유로 필요 이상 다시 한다.",
+      "options": [
+        {
+          "value": "5",
+          "label": "거의 매번"
+        },
+        {
+          "value": "4",
+          "label": "자주"
+        },
+        {
+          "value": "3",
+          "label": "가끔"
+        },
+        {
+          "value": "2",
+          "label": "드물게"
+        },
+        {
+          "value": "1",
+          "label": "전혀 없다"
+        }
+      ],
+      "decisionUse": [
+        "environment_fit",
+        "result_explanation"
+      ]
+    },
+    {
+      "id": "D3",
+      "block": "D",
+      "construct": "self_standard",
+      "by": "mo",
+      "scale": "freq5",
+      "text": "잘 못할 것 같다는 생각 때문에 시작 자체를 미룬다.",
+      "options": [
+        {
+          "value": "5",
+          "label": "거의 매번"
+        },
+        {
+          "value": "4",
+          "label": "자주"
+        },
+        {
+          "value": "3",
+          "label": "가끔"
+        },
+        {
+          "value": "2",
+          "label": "드물게"
+        },
+        {
+          "value": "1",
+          "label": "전혀 없다"
+        }
+      ],
+      "decisionUse": [
+        "environment_fit",
+        "result_explanation"
+      ],
+      "note": "단순한 미루기와 구분하려고 '잘 못할 것 같아서'라는 원인을 문항에 넣었다."
+    },
+    {
+      "id": "E1",
+      "block": "E",
+      "construct": "competition",
+      "by": "mo",
+      "scale": "freq5",
+      "text": "자기보다 잘하는 친구가 있으면 공부량이나 집중도가 실제로 올라간다.",
+      "options": [
+        {
+          "value": "5",
+          "label": "거의 매번"
+        },
+        {
+          "value": "4",
+          "label": "자주"
+        },
+        {
+          "value": "3",
+          "label": "가끔"
+        },
+        {
+          "value": "2",
+          "label": "드물게"
+        },
+        {
+          "value": "1",
+          "label": "전혀 없다"
+        }
+      ],
+      "decisionUse": [
+        "environment_fit",
+        "result_explanation"
+      ]
+    },
+    {
+      "id": "E2",
+      "block": "E",
+      "construct": "competition",
+      "by": "mo",
+      "scale": "binary",
+      "text": "잘하는 아이가 많은 반에 있을 때 아이는 어떤 편인가요?",
+      "options": [
+        {
+          "value": "A",
+          "label": "따라가고 싶다는 마음이 더 생긴다",
+          "pole": "fuel"
+        },
+        {
+          "value": "B",
+          "label": "내가 잘하고 있다는 느낌이 있을 때 더 안정적으로 공부한다",
+          "pole": "steady"
+        }
+      ],
+      "decisionUse": [
+        "environment_fit",
+        "result_explanation"
+      ]
+    },
+    {
+      "id": "F1",
+      "block": "F",
+      "construct": "recovery",
+      "by": "mo",
+      "scale": "ordinal4",
+      "text": "시험이든 숙제든 결과가 기대보다 안 좋았을 때, 아이가 평소 공부 리듬으로 돌아오기까지 보통 얼마나 걸리나요?",
+      "options": [
+        {
+          "value": "A",
+          "label": "그날 또는 다음 날",
+          "lvl": 4
+        },
+        {
+          "value": "B",
+          "label": "2~3일",
+          "lvl": 3
+        },
+        {
+          "value": "C",
+          "label": "일주일 정도",
+          "lvl": 2
+        },
+        {
+          "value": "D",
+          "label": "일주일이 넘게 영향을 받는다",
+          "lvl": 1
+        }
+      ],
+      "decisionUse": [
+        "environment_fit",
+        "result_explanation"
+      ]
+    },
+    {
+      "id": "F2",
+      "block": "F",
+      "construct": "recovery",
+      "by": "mo",
+      "scale": "ordinal4",
+      "text": "결과가 기대보다 좋지 않았던 과목의 공부나 숙제를 피한 적은 어느 정도인가요?",
+      "options": [
+        {
+          "value": "A",
+          "label": "거의 없다",
+          "lvl": 4
+        },
+        {
+          "value": "B",
+          "label": "한두 번 있었다",
+          "lvl": 3
+        },
+        {
+          "value": "C",
+          "label": "며칠 피한 적이 있다",
+          "lvl": 2
+        },
+        {
+          "value": "D",
+          "label": "한동안 그 과목 자체를 피한 적이 있다",
+          "lvl": 1
+        }
+      ],
+      "decisionUse": [
+        "environment_fit",
+        "result_explanation"
+      ]
+    },
+    {
+      "id": "G1",
+      "block": "G",
+      "construct": "self_management",
+      "by": "mo",
+      "scale": "binary",
+      "text": "해야 할 공부가 밀렸을 때 아이는 어떤 편인가요?",
+      "options": [
+        {
+          "value": "A",
+          "label": "스스로 순서를 다시 정해서 처리하는 편이다",
+          "pole": "self"
+        },
+        {
+          "value": "B",
+          "label": "부모나 선생님이 무엇부터 할지 정해 줘야 움직이는 편이다",
+          "pole": "guided"
+        }
+      ],
+      "decisionUse": [
+        "environment_fit",
+        "result_explanation",
+        "gap_report"
+      ]
+    },
+    {
+      "id": "G2",
+      "block": "G",
+      "construct": "self_management",
+      "by": "mo",
+      "scale": "binary",
+      "text": "방학이나 시험이 없는 기간에는 어떤가요?",
+      "options": [
+        {
+          "value": "A",
+          "label": "할 공부를 어느 정도 스스로 정한다",
+          "pole": "self"
+        },
+        {
+          "value": "B",
+          "label": "부모나 학원에서 계획을 정해 줘야 공부가 유지된다",
+          "pole": "guided"
+        }
+      ],
+      "decisionUse": [
+        "environment_fit",
+        "result_explanation",
+        "gap_report"
+      ]
+    },
+    {
+      "id": "G3",
+      "block": "G",
+      "construct": "self_management",
+      "by": "mo",
+      "scale": "ordinal4",
+      "text": "지난 한 주 동안, 그날 하기로 한 공부나 숙제를 대부분 끝낸 날은 얼마나 되나요?",
+      "options": [
+        {
+          "value": "A",
+          "label": "거의 매일",
+          "lvl": 4
+        },
+        {
+          "value": "B",
+          "label": "절반보다 많았다",
+          "lvl": 3
+        },
+        {
+          "value": "C",
+          "label": "절반 정도였다",
+          "lvl": 2
+        },
+        {
+          "value": "D",
+          "label": "절반보다 적었다",
+          "lvl": 1
+        }
+      ],
+      "decisionUse": [
+        "environment_fit",
+        "result_explanation"
+      ],
+      "textByGrade": {
+        "m2": "시험 기간 2주 동안, 그날 하기로 한 공부를 대부분 끝낸 날은 얼마나 되나요?",
+        "m3": "시험 기간 2주 동안, 그날 하기로 한 공부를 대부분 끝낸 날은 얼마나 되나요?"
+      }
+    },
+    {
+      "id": "H1",
+      "block": "H",
+      "construct": "branch",
+      "by": "mo",
+      "scale": "choice",
+      "conditional": true,
+      "showIf": {
+        "grade": [
+          "m2",
+          "m3"
+        ]
+      },
+      "text": "과학고나 영재학교 준비는 어느 단계인가요?",
+      "options": [
+        {
+          "value": "A",
+          "label": "이미 준비 중이거나 지원을 계획하고 있다"
+        },
+        {
+          "value": "B",
+          "label": "관심은 있지만 아직 준비를 시작하지 않았다"
+        },
+        {
+          "value": "C",
+          "label": "고려하지 않고 있다"
+        }
+      ],
+      "note": "이 두 학교는 내신 등급이 아니라 별도 전형으로 뽑는다. 준비 여부로 분기한다.",
+      "decisionUse": [
+        "branch",
+        "result_explanation"
+      ]
+    },
+    {
+      "id": "I1",
+      "block": "I",
+      "construct": "context",
+      "by": "mo",
+      "scale": "text",
+      "optional": true,
+      "maxLength": 200,
+      "text": "지금 고교 선택에서 가장 고민되는 점을 한 가지만 적어 주세요.",
+      "decisionUse": [
+        "result_explanation"
+      ]
+    },
+    {
+      "id": "I2",
+      "block": "I",
+      "construct": "context",
+      "by": "mo",
+      "scale": "text",
+      "optional": true,
+      "maxLength": 200,
+      "text": "최근 1년 사이 아이의 공부나 학교생활에서 크게 달라진 점이 있다면 적어 주세요.",
+      "decisionUse": [
+        "result_explanation"
+      ]
+    },
+    {
+      "id": "K1",
+      "block": "K",
+      "construct": "competition",
+      "by": "child",
+      "scale": "binary",
+      "text": "둘 중 어느 반에서 공부가 더 잘될 것 같나요?",
+      "options": [
+        {
+          "value": "A",
+          "label": "나보다 잘하는 친구가 많은 반",
+          "pole": "fuel"
+        },
+        {
+          "value": "B",
+          "label": "내가 잘하는 편인 반",
+          "pole": "steady"
+        }
+      ],
+      "decisionUse": [
+        "environment_fit",
+        "gap_report"
+      ]
+    },
+    {
+      "id": "K2",
+      "block": "K",
+      "construct": "self_management",
+      "by": "child",
+      "scale": "binary",
+      "text": "오늘 무엇을 공부할지는 보통 어떻게 정하나요?",
+      "options": [
+        {
+          "value": "A",
+          "label": "대부분 내가 정해요",
+          "pole": "self"
+        },
+        {
+          "value": "B",
+          "label": "부모님이나 학원에서 정해 줘요",
+          "pole": "guided"
+        }
+      ],
+      "decisionUse": [
+        "gap_report",
+        "result_explanation"
+      ]
+    },
+    {
+      "id": "K3",
+      "block": "K",
+      "construct": "peer_pref",
+      "by": "child",
+      "scale": "binary",
+      "text": "공부할 때 더 편한 반은 어느 쪽인가요?",
+      "options": [
+        {
+          "value": "A",
+          "label": "다들 공부에 집중하는 반",
+          "pole": "homogeneous"
+        },
+        {
+          "value": "B",
+          "label": "여러 가지에 관심 있는 친구들이 섞인 반",
+          "pole": "diverse"
+        }
+      ],
+      "decisionUse": [
+        "environment_fit",
+        "result_explanation"
+      ]
+    },
+    {
+      "id": "K4",
+      "block": "K",
+      "construct": "interest",
+      "by": "child",
+      "scale": "multi",
+      "showIf": {
+        "grade": [
+          "m1",
+          "m2",
+          "m3"
+        ]
+      },
+      "text": "지금 관심 있는 분야를 모두 골라 주세요.",
+      "hint": "여러 개 골라도 됩니다. 없으면 마지막을 고르시면 됩니다.",
+      "options": [
+        {
+          "value": "eng",
+          "label": "이공",
+          "examples": "기계·전자·컴퓨터·화학 같은 분야"
+        },
+        {
+          "value": "med",
+          "label": "메디컬",
+          "examples": "의학·치의학·약학·수의학 같은 분야"
+        },
+        {
+          "value": "soc",
+          "label": "인문·사회",
+          "examples": "경영·경제·심리·교육·법 같은 분야"
+        },
+        {
+          "value": "lang",
+          "label": "외국어",
+          "examples": "외국어를 중심으로 배우는 분야"
+        },
+        {
+          "value": "intl",
+          "label": "국제",
+          "examples": "국제관계·국제학 같은 분야"
+        },
+        {
+          "value": "art",
+          "label": "예술·콘텐츠",
+          "examples": "디자인·영상·문예창작 같은 분야"
+        },
+        {
+          "value": "none",
+          "label": "아직 없다"
+        }
+      ],
+      "decisionUse": [
+        "curriculum_fit",
+        "result_explanation"
+      ]
+    },
+    {
+      "id": "K5-eng",
+      "block": "K",
+      "construct": "interest",
+      "by": "child",
+      "scale": "interest4",
+      "track": "eng",
+      "text": "물건을 만들거나 고치고, 어떻게 움직이는지 알아보기",
+      "stem": "이런 건 어떤가요?",
+      "options": [
+        {
+          "value": "1",
+          "label": "하고 싶지 않아요"
+        },
+        {
+          "value": "2",
+          "label": "조금 하고 싶어요"
+        },
+        {
+          "value": "3",
+          "label": "많이 하고 싶어요"
+        },
+        {
+          "value": "4",
+          "label": "꼭 하고 싶어요"
+        }
+      ],
+      "decisionUse": [
+        "curriculum_fit",
+        "result_explanation"
+      ],
+      "hint": "글이 어려우면 보호자가 읽어 주세요.",
+      "examples": "블록·로봇·컴퓨터·실험"
+    },
+    {
+      "id": "K5-med",
+      "block": "K",
+      "construct": "interest",
+      "by": "child",
+      "scale": "interest4",
+      "track": "med",
+      "text": "몸이 어떻게 움직이는지, 아프면 왜 아픈지 알아보기",
+      "stem": "이런 건 어떤가요?",
+      "options": [
+        {
+          "value": "1",
+          "label": "하고 싶지 않아요"
+        },
+        {
+          "value": "2",
+          "label": "조금 하고 싶어요"
+        },
+        {
+          "value": "3",
+          "label": "많이 하고 싶어요"
+        },
+        {
+          "value": "4",
+          "label": "꼭 하고 싶어요"
+        }
+      ],
+      "decisionUse": [
+        "curriculum_fit",
+        "result_explanation"
+      ],
+      "hint": "글이 어려우면 보호자가 읽어 주세요.",
+      "examples": "사람 몸·동물·병원"
+    },
+    {
+      "id": "K5-soc",
+      "block": "K",
+      "construct": "interest",
+      "by": "child",
+      "scale": "interest4",
+      "track": "soc",
+      "text": "사람들이 왜 그렇게 하는지 알아보고 이야기 나누기",
+      "stem": "이런 건 어떤가요?",
+      "options": [
+        {
+          "value": "1",
+          "label": "하고 싶지 않아요"
+        },
+        {
+          "value": "2",
+          "label": "조금 하고 싶어요"
+        },
+        {
+          "value": "3",
+          "label": "많이 하고 싶어요"
+        },
+        {
+          "value": "4",
+          "label": "꼭 하고 싶어요"
+        }
+      ],
+      "decisionUse": [
+        "curriculum_fit",
+        "result_explanation"
+      ],
+      "hint": "글이 어려우면 보호자가 읽어 주세요.",
+      "examples": "친구·역사·뉴스·토론"
+    },
+    {
+      "id": "K5-lang",
+      "block": "K",
+      "construct": "interest",
+      "by": "child",
+      "scale": "interest4",
+      "track": "lang",
+      "text": "다른 나라 말을 배우고 직접 써 보기",
+      "stem": "이런 건 어떤가요?",
+      "options": [
+        {
+          "value": "1",
+          "label": "하고 싶지 않아요"
+        },
+        {
+          "value": "2",
+          "label": "조금 하고 싶어요"
+        },
+        {
+          "value": "3",
+          "label": "많이 하고 싶어요"
+        },
+        {
+          "value": "4",
+          "label": "꼭 하고 싶어요"
+        }
+      ],
+      "decisionUse": [
+        "curriculum_fit",
+        "result_explanation"
+      ],
+      "hint": "글이 어려우면 보호자가 읽어 주세요.",
+      "examples": "영어·중국어·자막 없이 보기"
+    },
+    {
+      "id": "K5-intl",
+      "block": "K",
+      "construct": "interest",
+      "by": "child",
+      "scale": "interest4",
+      "track": "intl",
+      "text": "다른 나라는 우리와 뭐가 다른지 알아보기",
+      "stem": "이런 건 어떤가요?",
+      "options": [
+        {
+          "value": "1",
+          "label": "하고 싶지 않아요"
+        },
+        {
+          "value": "2",
+          "label": "조금 하고 싶어요"
+        },
+        {
+          "value": "3",
+          "label": "많이 하고 싶어요"
+        },
+        {
+          "value": "4",
+          "label": "꼭 하고 싶어요"
+        }
+      ],
+      "decisionUse": [
+        "curriculum_fit",
+        "result_explanation"
+      ],
+      "hint": "글이 어려우면 보호자가 읽어 주세요.",
+      "examples": "세계 지도·다른 나라 소식"
+    },
+    {
+      "id": "K5-art",
+      "block": "K",
+      "construct": "interest",
+      "by": "child",
+      "scale": "interest4",
+      "track": "art",
+      "text": "그림이나 영상, 글로 내 생각을 나타내기",
+      "stem": "이런 건 어떤가요?",
+      "options": [
+        {
+          "value": "1",
+          "label": "하고 싶지 않아요"
+        },
+        {
+          "value": "2",
+          "label": "조금 하고 싶어요"
+        },
+        {
+          "value": "3",
+          "label": "많이 하고 싶어요"
+        },
+        {
+          "value": "4",
+          "label": "꼭 하고 싶어요"
+        }
+      ],
+      "decisionUse": [
+        "curriculum_fit",
+        "result_explanation"
+      ],
+      "hint": "글이 어려우면 보호자가 읽어 주세요.",
+      "examples": "그리기·영상 편집·글쓰기"
+    },
+    {
+      "id": "TB1",
+      "block": "TB",
+      "construct": "priority",
+      "by": "mo",
+      "scale": "binary",
+      "conditional": true,
+      "text": "두 조건이 충돌한다면 어느 쪽을 조금 더 우선하고 싶으신가요?",
+      "hint": "둘 다 중요한 조건입니다. 학교 후보가 둘 이상 남았을 때만 우선순위를 확인하려고 묻습니다.",
+      "options": [
+        {
+          "value": "A",
+          "label": "아이가 원하는 과목과 활동을 충분히 선택할 수 있는 환경",
+          "pole": "curriculum"
+        },
+        {
+          "value": "B",
+          "label": "현재 성적 위치를 지키기 상대적으로 수월한 환경",
+          "pole": "position"
+        }
+      ],
+      "decisionUse": [
+        "final_order"
+      ]
+    },
+    {
+      "id": "TB2",
+      "block": "TB",
+      "construct": "priority",
+      "by": "mo",
+      "scale": "binary",
+      "conditional": true,
+      "text": "외국어 관련 학교가 둘 이상 남았다면 아이는 어느 쪽에 더 관심이 있나요?",
+      "options": [
+        {
+          "value": "A",
+          "label": "외국어 자체를 배우고, 읽고 듣고 말하는 활동",
+          "pole": "language"
+        },
+        {
+          "value": "B",
+          "label": "국제정치·경제·사회 문제를 외국어와 함께 배우는 활동",
+          "pole": "international"
+        }
+      ],
+      "decisionUse": [
+        "final_order"
+      ]
+    }
+  ],
+  "requiresVocab": {
+    "exam": "정기 지필고사를 치르는 학년",
+    "report_card": "과목별 원점수·과목평균이 적힌 성적표"
+  }
+}

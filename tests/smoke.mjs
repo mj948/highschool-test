@@ -16,6 +16,10 @@ globalThis.localStorage={getItem:k=>store[k]??null,setItem:(k,v)=>{store[k]=v},r
 globalThis.window={scrollTo(){},print(){}};
 globalThis.confirm=()=>true; globalThis.prompt=()=>null; globalThis.alert=()=>{};
 globalThis.setTimeout=f=>{f();return 0}; globalThis.fetch=()=>Promise.resolve({ok:true});
+globalThis.crypto={subtle:{digest:async(_,buf)=>{
+  const c=require('crypto');const h=c.createHash('sha256').update(Buffer.from(buf)).digest();
+  return h.buffer.slice(h.byteOffset,h.byteOffset+h.byteLength);}}};
+globalThis.TextEncoder=require('util').TextEncoder;
 globalThis.Blob=class{constructor(){}}; globalThis.URL={createObjectURL:()=>'',revokeObjectURL(){}};
 globalThis.document={querySelector:s=>s==='#app'?APPEL:(els[s]||null),
   getElementById:id=>id==='app'?APPEL:(els['#'+id]||mk()),
@@ -23,6 +27,7 @@ globalThis.document={querySelector:s=>s==='#app'?APPEL:(els[s]||null),
 new Function(SRC.replace(/document\.getElementById\('admBtn'\)\.onclick=adminOpen;/,''))();
 const press=id=>{const e=els['#'+id]; if(!e) throw new Error('버튼 없음 '+id); e.onclick();};
 let steps=0, seen=[];
+(async()=>{
 press('start');
 for(let g=0; g<400; g++){
   steps++;
@@ -55,3 +60,4 @@ console.log('  유형 순위 표시:', rank?'있음':'없음', (GRADE<=2||GRADE=
 const RULES=JSON.parse(SRC.match(/^const RULES=(\{.*\});$/m)[1]);
 const leak=RULES.outputPolicy.bannedWords.filter(w=>OUT.includes(w));
 console.log('  결과 화면 금지어:', leak.length?leak.join(', '):'없음');
+})();

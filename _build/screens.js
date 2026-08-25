@@ -1,3 +1,25 @@
+function gateHTML(A){
+  A.innerHTML=`<div class="bar"></div><main class="center">
+   <div class="mark"></div><h1 class="big">고교선택검사</h1>
+   <div class="lead">대치동 송쌤 아카데미 회원용 검사입니다.<br>안내받으신 비밀번호를 넣어 주세요.</div>
+   <div style="margin-top:30px">
+     <input class="txt" id="gpw" inputmode="numeric" autocomplete="off" placeholder="비밀번호"
+       style="text-align:center;letter-spacing:.3em;font-size:20px;font-family:var(--mono)">
+     <div class="fine" id="gmsg" style="min-height:1.4em;margin-top:10px;color:var(--rose)"></div>
+   </div></main>
+   <div style="padding:0 0 24px"><button class="btn" id="genter">들어가기</button></div>`;
+  const inp=$('#gpw'), msg=$('#gmsg');
+  setTimeout(()=>{try{inp.focus()}catch(e){}},60);
+  const submit=async()=>{
+    const v=(inp.value||'').trim();
+    if(!v){ return; }
+    let ok=false; try{ ok=(await sha256(v))===GATE_HASH; }catch(e){ ok=false; }
+    if(ok){ S.gate=1; S.phase='intro'; save(); render(); }
+    else{ msg.textContent='비밀번호가 다릅니다.'; inp.value=''; inp.focus(); }
+  };
+  $('#genter').onclick=submit;
+  inp.onkeydown=e=>{ if(e.key==='Enter') submit(); };
+}
 /* ═══ 시작·전환·확인·결과 ═══ */
 function introHTML(A){
   const g=S.a.A1;
@@ -6,7 +28,7 @@ function introHTML(A){
    <div class="lead">아이가 어떤 조건에서 공부가 잘 유지되는지 정리하고,<br>학교를 비교할 때 무엇을 확인해야 하는지 알려 드립니다.</div>
    <div class="facts"><div class="rule"></div>
     <div class="fact"><span class="k">대상</span><span class="v">초등 1학년 ~ 중학교 3학년</span></div><div class="rule"></div>
-    <div class="fact"><span class="k">문항</span><span class="v tnum">24 ~ 31개</span></div><div class="rule"></div>
+    <div class="fact"><span class="k">문항</span><span class="v tnum">27 ~ 35개</span></div><div class="rule"></div>
     <div class="fact"><span class="k">걸리는 시간</span><span class="v">10분 안팎</span></div><div class="rule"></div>
     <div class="fact"><span class="k">답하는 사람</span><span class="v">보호자와 아이</span></div><div class="rule"></div></div>
    <div class="fine">${esc(RULES.outputPolicy.disclaimer)}<br><br>
@@ -15,7 +37,7 @@ function introHTML(A){
    <div style="padding:0 0 18px"><button class="btn" id="start">시작하기</button>
    ${Object.keys(S.a).length?'<button class="btn ghost" id="reset">처음부터 다시</button>':''}</div>`;
   $('#start').onclick=()=>{S.phase='mo';S.i=0;S.t0=Date.now();save();render();};
-  const r=$('#reset'); if(r) r.onclick=()=>{S={a:{},i:0,phase:'intro',t0:0,ms:0};save();render();};
+  const r=$('#reset'); if(r) r.onclick=()=>{S={a:{},i:0,phase:'intro',t0:0,ms:0,gate:1};save();render();};
 }
 function handoffHTML(A){
   const n=KID.filter(visible).length;
@@ -112,7 +134,7 @@ function resultHTML(A){
   const k=$('#kid'); if(k) k.onclick=()=>{S.phase='kid';S.i=0;save();render();};
   $('#prt').onclick=doPrint;
   $('#again2').onclick=()=>{ if(confirm('답을 모두 지우고 처음부터 진행할까요?')){
-    S={a:{},i:0,phase:'intro',t0:0,ms:0};save();render();}};
+    S={a:{},i:0,phase:'intro',t0:0,ms:0,gate:1};save();render();}};
   persist(r);
 }
 function nextAction(r){

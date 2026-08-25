@@ -2,7 +2,12 @@
 const $=s=>document.querySelector(s), APP=()=>document.getElementById('app');
 const esc=s=>String(s==null?'':s).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
 const KEY='hsc_v31';
-let S={a:{},i:0,phase:'intro',t0:0,ms:0};
+const GATE_HASH='32ea6aa8091a36e8779df25bed19f857a402b1f3862c8c07212928f0f2ea886d';   // SHA-256(검사 비밀번호). 평문은 소스에 두지 않는다.
+async function sha256(t){
+  const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+let S={a:{},i:0,phase:'gate',t0:0,ms:0};
 try{const r=localStorage.getItem(KEY); if(r) S=Object.assign(S,JSON.parse(r));}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const MO=['A1','A2','A3','A4','A5','A6','B1','B2','B3','B4','B5','C1','C2','D1','D2','D3',
@@ -101,6 +106,8 @@ function qHTML(q){
 function render(){
   window.scrollTo(0,0);
   const A=APP();
+  if(S.phase==='gate'&&!S.gate) return gateHTML(A);
+  if(S.phase==='gate') S.phase='intro';
   if(S.phase==='intro') return introHTML(A);
   if(S.phase==='handoff') return handoffHTML(A);
   if(S.phase==='check') return checkHTML(A);
