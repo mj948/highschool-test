@@ -62,7 +62,7 @@ const title=(RULES0.gradeFrames[gid]||{}).title||'답변에서 확인된 공부 
 const want=[title,'아이가 더 관심을 보인 활동','학교별로 반드시 확인할 것','이번 학기에 할 일'];
 const miss=want.filter(w=>!OUT.includes(w));
 console.log('  결과 구획:', miss.length?('빠짐 '+miss.join(', ')):'전부 있음');
-const rank=OUT.includes('세 묶음으로 정리했습니다');
+const rank=OUT.includes('이 유형들을 놓고 보시면');
 console.log('  유형 순위 표시:', rank?'있음':'없음', (GRADE<=2||GRADE===6)?(rank?'  ← ⚠ 초등·고1인데 순위가 나옴':'  ← 정상'):(rank?'  ← 정상':'  ← ⚠ 중등인데 순위가 없음'));
 const RULES=JSON.parse(SRC.match(/^const RULES=(\{.*\});$/m)[1]);
 const leak=RULES.outputPolicy.bannedWords.filter(w=>OUT.includes(w));

@@ -58,20 +58,21 @@ T('7. 고1 → 신규 고교 진학 순위 없음',()=>{
   return (r.frame.typeRanking===false&&r.frame.frame==='review')?true:'고1 프레임 부적절';});
 T('8. 비용 어려움 → 성적이 아니라 현실 조건 때문임이 이유에 남는다',()=>{
   const r=evaluate(base({A5:'C'}));
-  const t=['광역 자사고','외고·국제고','전국 자사고'].every(x=>{
-    const b=anyB(r,x); const rs=r.buckets[b].find(y=>y.id===x).reasons;
-    return rs.some(y=>y.kind==='tuition');});
-  return t?true:'비용 사유 누락';});
+  // 후보로 남은 자사고 계열에 비용 사유가 붙어야 한다
+  const cand=['광역 자사고','전국 자사고'].filter(x=>anyB(r,x));
+  const t=cand.every(x=>{const b=anyB(r,x);return r.buckets[b].find(y=>y.id===x).reasons.some(y=>y.kind==='tuition');});
+  return (cand.length&&t)?true:'비용 사유 누락';});
 T('9. 통학 30분 + 이사 불가 → 원거리 유형이 low',()=>{
-  const r=evaluate(base({A3:'A',A6:'B'}));
-  return (inB(r,'low','전국 자사고')&&inB(r,'low','외고·국제고'))?true:'통학 조건 미반영';});
+  const r=evaluate(base({A3:'A',A6:'B',K4:['lang'],'K5-lang':'4'}));
+  return (inB(r,'low','전국 자사고')&&inB(r,'low','외고'))?true:'통학 조건 미반영';});
 T('10. 보호자는 관리 필요 / 아이는 자기주도 → 차이를 결과에 적는다',()=>{
   const r=evaluate(base({G1:'B',G2:'B',K2:'A'}));
   return r.gaps.length>0?true:'차이 미기록';});
-T('11. 외국어 관심 뚜렷 → 외고·국제고가 교육과정 사유로 밀리지 않는다',()=>{
-  const r=evaluate(base({K4:['lang','intl'],'K5-lang':'4','K5-intl':'4','K5-eng':'1'}));
-  const b=anyB(r,'외고·국제고');
-  const rs=r.buckets[b].find(x=>x.id==='외고·국제고').reasons;
+T('11. 외국어 관심 뚜렷 → 외고가 후보로 나오고 교육과정 사유로 안 밀린다',()=>{
+  const r=evaluate(base({K4:['lang','intl'],'K5-lang':'4','K5-intl':'4',
+    'K5-eng':'1','K5-med':'1','K5-soc':'1','K5-art':'1'}));
+  const b=anyB(r,'외고'); if(!b) return '외고가 후보에 없음 (제외: '+r.excluded.join(',')+')';
+  const rs=(r.buckets[b].find(x=>x.id==='외고')||{}).reasons||[];
   return !rs.some(x=>x.kind==='curriculum')?true:'교육과정 사유로 밀림';});
 T('12. 이공 관심 뚜렷 → 실제 개설 확인 안내가 나온다',()=>{
   const r=evaluate(base({K4:['eng']}));
@@ -103,7 +104,7 @@ T('20. T와 Q에서 서로 다른 특성이 동시에 → 일관성 오류로 �
   const f=sincerity(a,600000);
   return f.length===0?true:'오탐: '+f;});
 
-console.log('\n═══ 불변식 23 ═══');
+console.log('\n═══ 불변식 27 ═══');
 T('I1. 초등에 유형 순위 없음',()=>['e34','e56'].every(g=>RULES.gradeFrames[g].typeRanking===false)?true:'초등 순위 존재');
 T('I2. 고1 이상에 신규 진학 순위 없음',()=>RULES.gradeFrames.h1.typeRanking===false?true:'고1 순위 존재');
 T('I3. 정보 없음에 중간값을 주지 않음',()=>{
@@ -230,6 +231,39 @@ T('I23. 진입 비밀번호가 평문이 아니라 해시로 들어 있다',()=>
   const hash=/GATE_HASH='[0-9a-f]{64}'/.test(SRC);
   const gated=/phase:'gate'/.test(SRC)&&SRC.includes('gateHTML');
   return (!plain&&hash&&gated)?true:`plain:${plain} hash:${hash} gated:${gated}`;});
+
+T('I24. 학교 유형이 전부(일반고·자사고·외고·국제고·과학고·영재학교) 정의돼 있다',()=>{
+  const ids=RULES.types.map(t=>t.id);
+  const want=['일반고','광역 자사고','전국 자사고','외고','국제고','과학고','영재학교'];
+  const miss=want.filter(x=>!ids.includes(x));
+  return miss.length===0?true:'빠진 유형: '+miss.join(', ');});
+T('I25. 관심·준비가 맞는 아이에게 해당 유형이 후보로 나온다',()=>{
+  const base={A1:'m3',A2:{sido:'서울'},A3:'D',A4:'A',A5:'A',A6:'A',B1:'B',B3:'A',B4:'A',B5:'B',
+    C1:'A',C2:'A',D1:'3',D2:'3',D3:'3',E1:'4',E2:'A',F1:'A',F2:'A',G1:'A',G2:'A',G3:'A',H1:'C',
+    K1:'A',K2:'A',K3:'A',K4:['eng'],'K5-eng':'4','K5-med':'2','K5-soc':'2','K5-lang':'1','K5-intl':'1','K5-art':'2'};
+  const all=r=>['primary','conditional','low'].flatMap(k=>r.buckets[k].map(x=>x.id));
+  // 외국어 관심 → 외고 후보
+  const langKid={...base,K4:['lang'],'K5-lang':'4','K5-eng':'1'};
+  if(!all(evaluate(langKid)).includes('외고')) return '외국어 관심인데 외고 없음';
+  // 과학고 준비+이공+최상위 → 과학고 후보
+  const sciKid={...base,B1:'A',B2:{국어:{raw:'98',mean:'75'},영어:{raw:'99',mean:'78'},수학:{raw:'100',mean:'70'},사회:{raw:'97',mean:'76'},과학:{raw:'99',mean:'72'}},B5:'A',B5f:{kor:'1',mat:'1',eng:'1'},H1:'A'};
+  const r=evaluate(sciKid);
+  if(!r.buckets.primary.some(x=>x.id==='과학고')) return '과학고 준비·최상위인데 과학고가 지금 검토에 없음';
+  return true;});
+T('I26. 관심 없는 특목고는 후보에서 제외돼 이유가 붙는다',()=>{
+  const base={A1:'m3',A2:{sido:'서울'},A3:'D',A4:'A',A5:'A',A6:'A',B1:'B',B3:'C',B4:'C',B5:'B',
+    C1:'A',C2:'A',D1:'3',D2:'3',D3:'3',E1:'3',E2:'A',F1:'A',F2:'A',G1:'A',G2:'A',G3:'A',H1:'C',
+    K1:'A',K2:'A',K3:'A',K4:['soc'],'K5-eng':'2','K5-med':'2','K5-soc':'4','K5-lang':'1','K5-intl':'1','K5-art':'2'};
+  const r=evaluate(base);
+  return (r.excluded.includes('외고')&&r.excluded.includes('과학고'))?true:'제외 처리 안 됨: '+r.excluded.join(',');});
+T('I27. 과학고·영재는 내신 등급 컷으로 우선순위낮음에 처박히지 않는다',()=>{
+  const base={A1:'m3',A2:{sido:'서울'},A3:'D',A4:'A',A5:'A',A6:'A',B1:'A',
+    B2:{국어:{raw:'96',mean:'80'},영어:{raw:'95',mean:'82'},수학:{raw:'97',mean:'78'},사회:{raw:'94',mean:'80'},과학:{raw:'96',mean:'79'}},
+    B5:'A',B5f:{kor:'1',mat:'2',eng:'1'},C1:'A',C2:'A',D1:'3',D2:'3',D3:'3',E1:'5',E2:'A',F1:'A',F2:'A',G1:'A',G2:'A',G3:'A',H1:'A',
+    K1:'A',K2:'A',K3:'A',K4:['eng'],'K5-eng':'4','K5-med':'2','K5-soc':'2','K5-lang':'1','K5-intl':'1','K5-art':'2'};
+  const r=evaluate(base);
+  const sciLow=r.buckets.low.some(x=>x.id==='과학고'&&x.reasons.some(y=>y.kind==='position'));
+  return !sciLow?true:'과학고가 학력 컷으로 low에 감';});
 
 console.log('\n═══ 결과 ═══');
 console.log(`  PASS ${pass} · FAIL ${fail}`);

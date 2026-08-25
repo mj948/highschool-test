@@ -93,18 +93,23 @@ function resultHTML(A){
   } else h+=`<div class="note">아이 문항을 아직 하지 않으셨습니다. 관심 분야는 아이가 직접 답해야 나옵니다.</div>`;
   h+=`</section>`;
   if(gf.typeRanking){
-    h+=`<section><div class="eyebrow">학교 유형</div><h2>세 묶음으로 정리했습니다</h2>
-        <div class="fine" style="margin-top:10px">묶음 안에서 순위를 매기지 않습니다. 점수도 매기지 않습니다.</div>`;
+    h+=`<section><div class="eyebrow">학교 유형</div><h2>이 유형들을 놓고 보시면 됩니다</h2>
+        <div class="fine" style="margin-top:10px">순위나 점수를 매기지 않습니다. 세 묶음으로 나눠, 각 유형이 왜 그 자리에 있는지 적었습니다.</div>`;
+    const BTAG={primary:'지금 바로 검토', conditional:'조건을 확인한 뒤 검토', low:'현재는 우선순위 낮음'};
     RULES.stage5.buckets.forEach(b=>{
       const list=r.buckets[b.id]; if(!list.length) return;
-      h+=`<div class="rule top" style="margin-top:20px"></div><div class="bucket"><div class="tag">${esc(b.title)}</div>`;
-      list.forEach(x=>{h+=`<div class="bt">${esc(x.id)}</div>`;
+      h+=`<div class="rule top" style="margin-top:20px"></div><div class="bucket"><div class="tag">${esc(BTAG[b.id]||b.title)}</div>`;
+      list.forEach(x=>{ h+=`<div class="bt">${esc(x.id)}</div>`;
         if(x.reasons.length) x.reasons.forEach(rs=>{h+=`<div class="bd">${esc(rs.text)}</div>`;});
-        else h+=`<div class="bd">현재 조건에서 특별히 걸리는 부분이 없었습니다.</div>`;});
+        else h+=`<div class="bd">지금 조건에서 특별히 걸리는 부분이 없습니다.</div>`;});
       h+=`</div>`;});
-    h+=`<div class="rule"></div>`;
+    if(r.excluded&&r.excluded.length){
+      const EX={'외고':'외국어','국제고':'국제','과학고':'이공·메디컬 관심과 준비','영재학교':'이공·메디컬 관심과 준비'};
+      h+=`<div class="rule top" style="margin-top:20px"></div><div class="bucket"><div class="tag">이번엔 후보에서 뺀 유형</div>`;
+      r.excluded.forEach(t=>{h+=`<div class="bd" style="padding:3px 0"><b style="color:var(--ink)">${esc(t)}</b> — ${esc(EX[t]||'관심')}이 뚜렷하지 않아 뺐습니다. 아이 관심이 달라지면 다시 후보가 됩니다.</div>`;});
+      h+=`</div>`;}
     if(S.a.TB1){const p=(QI.TB1.options.find(o=>o.value===S.a.TB1)||{}).pole;
-      h+=`<div class="note">${p==='curriculum'?'과목과 활동 선택 폭을 조금 더 우선하겠다고 하셨습니다. 남은 후보 중 개설 과목이 넓은 학교부터 비교해 보세요.':'현재 성적 위치를 지키는 쪽을 조금 더 우선하겠다고 하셨습니다. 남은 후보 중 같은 성적대 학생이 많은 학교부터 비교해 보세요.'}</div>`;}
+      h+=`<div class="note">${p==='curriculum'?'과목과 활동 선택 폭을 조금 더 우선하겠다고 하셨습니다. 위 후보 중 개설 과목이 넓은 학교부터 비교해 보세요.':'현재 성적 위치를 지키는 쪽을 조금 더 우선하겠다고 하셨습니다. 위 후보 중 같은 성적대 학생이 많은 학교부터 비교해 보세요.'}</div>`;}
     if(S.a.TB2){const p=(QI.TB2.options.find(o=>o.value===S.a.TB2)||{}).pole;
       h+=`<div class="note">${p==='language'?'아이는 외국어 자체를 배우는 활동에 더 관심을 보였습니다. 외국어고 교육과정을 먼저 비교해 볼 이유가 있습니다.':'아이는 외국어로 국제 문제를 다루는 활동에 더 관심을 보였습니다. 국제고 교육과정을 먼저 비교해 볼 이유가 있습니다.'}</div>`;}
     h+=`</section>`;
@@ -112,9 +117,7 @@ function resultHTML(A){
     h+=`<section><div class="eyebrow">학교 유형</div><h2>${esc(gf.title||'지금 살펴볼 것')}</h2>
         <div class="note">${esc(gf.note||'')}</div></section>`;
   }
-  if(r.branch) h+=`<section><div class="eyebrow">별도 전형</div><h2>과학고·영재학교</h2>
-      <div class="note">${esc(r.branch.text)}</div></section>`;
-  if(r.gaps.length){h+=`<section><div class="eyebrow">응답 차이</div><h2>보호자와 아이의 답이 다른 부분</h2>`;
+    if(r.gaps.length){h+=`<section><div class="eyebrow">응답 차이</div><h2>보호자와 아이의 답이 다른 부분</h2>`;
     r.gaps.forEach(g=>h+=`<div class="note">${esc(g)}</div>`); h+=`</section>`;}
   h+=`<section><div class="eyebrow">확인</div><h2>학교별로 반드시 확인할 것</h2><div class="rule top" style="margin-top:18px"></div>`;
   RULES.checklist.forEach(c=>{h+=`<div class="bucket"><div class="bt">${esc(c.t)}</div><div class="bd">${esc(c.d)}</div></div><div class="rule"></div>`;});
