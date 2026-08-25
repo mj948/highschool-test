@@ -22,3 +22,11 @@ SUPABASE_설정.sql
 
 # 노드(향후 회귀 테스트 추가 시)
 node_modules/
+
+# 배포 산출물 — 전에는 저장소 밖에 있던 폴더다
+_배포/
+
+# 보관용 v2.1 구현 — 관리자 비밀번호로 Supabase RPC를 호출하는 코드가 들어 있다.
+# 로컬에만 두고 공개 사이트에 올리지 않는다.
+_archive_v2/index_v2.1_DEPRECATED.html
+_archive_v2/handoff_v2.1/

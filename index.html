@@ -1,3799 +1,696 @@
 <!doctype html>
-<html lang="ko">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>고교선택 적성검사(생기부추월차선)</title>
-<meta property="og:title" content="고교선택 적성검사(생기부추월차선)" />
-<meta property="og:description" content="내 아이의 성향에 맞는 고교 유형을 찾아드립니다." />
-<meta property="og:type" content="website" />
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="고교선택 적성검사(생기부추월차선)" />
-<style>
-/* ===== Design Tokens ===== */
-:root {
-  --ink: #0E2A3D;
-  --ink-soft: #2A4A60;
-  --paper: #FAFAF6;
-  --paper-2: #F1F5F4;
-  --line: #D7DDDC;
-  --teal: #0E8F86;
-  --teal-deep: #0A6E66;
-  --teal-soft: #E3F1EF;
-  --amber: #C98A2B;
-  --amber-soft: #FBF1DD;
-  --rose: #B14A5A;
-  --rose-soft: #F7E3E6;
-  --good: #2D7A4F;
-  --warn: #B14A5A;
-  --shadow-sm: 0 1px 2px rgba(14,42,61,.06), 0 1px 1px rgba(14,42,61,.04);
-  --shadow-md: 0 4px 12px rgba(14,42,61,.08), 0 2px 4px rgba(14,42,61,.04);
-  --shadow-lg: 0 18px 40px rgba(14,42,61,.12), 0 6px 14px rgba(14,42,61,.06);
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 22px;
-  --font-display: "Noto Serif KR", "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", serif;
-  --font-body: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Segoe UI", sans-serif;
+<html lang="ko"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>고교선택검사</title>
+<meta name="description" content="아이가 어떤 조건에서 공부가 잘 유지되는지 정리하고, 학교를 비교할 때 확인할 것을 알려 주는 검사입니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>:root{
+  --paper:#FFFFFF;--ink:#0E2A3D;--muted:#5B6E78;--faint:#8A9AA3;--ghost:#B4BEBB;
+  --line:#E4E7E4;--line-mid:#C9D0CD;--teal:#0A6E66;--teal-wash:#EAF3F1;
+  --amber:#C98A2B;--amber-wash:#FBF3E4;--rose:#B14A5A;
+  --serif:"Noto Serif KR",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Malgun Gothic","Noto Sans KR",sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;
+     line-height:1.7;word-break:keep-all;-webkit-font-smoothing:antialiased}
+.app{max-width:430px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding:0 24px}
+.tnum{font-variant-numeric:tabular-nums}
+.bar{padding:40px 0 0;flex-shrink:0}
+.bar-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.bar-ax{font-size:11px;letter-spacing:.14em;color:var(--faint);font-weight:500}
+.bar-ax.kid{color:var(--amber)}
+.bar-n{font-size:11px;color:var(--faint);white-space:nowrap}
+.bar-t{display:flex;gap:2px;margin-top:9px}
+.bar-f{height:2px;background:var(--ink);transition:flex .25s ease}
+.bar-f.kid{background:var(--amber)}
+.bar-r{height:2px;background:var(--line);transition:flex .25s ease}
+main{flex-grow:1;display:flex;flex-direction:column;padding:34px 0 0}
+h1.q{margin:0;font-size:20px;font-weight:700;line-height:1.6;letter-spacing:-.01em;text-wrap:pretty}
+.q-stem{font-size:13px;color:var(--amber);font-weight:500;margin-bottom:9px}
+.q-hint{font-size:13px;color:var(--faint);line-height:1.7;margin-top:10px}
+.q-ex{font-size:14px;color:var(--muted);line-height:1.7;margin-top:9px}
+.opts{list-style:none;margin:28px 0 0;padding:0;display:flex;flex-direction:column}
+.rule{height:1px;background:var(--line);flex-shrink:0}
+.rule.top{height:1.5px;background:var(--ink)}
+.opt{display:flex;gap:14px;align-items:flex-start;padding:17px 2px;cursor:pointer;transition:background .12s}
+.opt:active{background:var(--teal-wash)}
+.dot{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line-mid);flex-shrink:0;
+     margin-top:3px;transition:border-width .12s,border-color .12s}
+.dot.sq{border-radius:3px}
+.opt.on .dot{border-color:var(--teal);border-width:6px}
+.opt.on .dot.sq{border-width:1.5px;background:var(--teal);box-shadow:inset 0 0 0 2px #fff}
+.opt .lab{font-size:16px;line-height:1.6;flex-grow:1}
+.opt.on .lab{font-weight:600}
+.opt .sub{display:block;font-size:12.5px;color:var(--faint);margin-top:3px;font-weight:400}
+.grid{margin-top:22px}
+.ghead,.grow{display:grid;grid-template-columns:56px minmax(0,1fr) minmax(0,1fr);gap:9px}
+.ghead{padding-bottom:8px;font-size:11px;letter-spacing:.06em;color:var(--faint)}
+.ghead span:not(:first-child){text-align:center}
+.grow{align-items:center;padding:9px 0}
+.grow .sb{font-size:15px;font-weight:500}
+.grid input,input.txt,select{width:100%;border:1px solid var(--line-mid);border-radius:4px;
+  padding:11px 10px;font-size:16px;background:var(--paper);color:var(--ink);font-family:var(--sans)}
+.grid input{text-align:center;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.grid input:focus,input.txt:focus,select:focus,textarea:focus{outline:none;border-color:var(--teal);border-width:1.5px}
+textarea{width:100%;border:1px solid var(--line-mid);border-radius:4px;padding:13px;font-family:var(--sans);
+  font-size:15px;line-height:1.7;background:var(--paper);color:var(--ink);resize:vertical;min-height:104px;margin-top:20px}
+.foot{display:flex;justify-content:space-between;align-items:center;padding:20px 0 34px;flex-shrink:0;gap:12px}
+.back{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--faint);cursor:pointer}
+.back.off{opacity:.25;pointer-events:none}
+.tip{font-size:12px;color:var(--ghost);text-align:right}
+.btn{background:var(--ink);color:var(--paper);text-align:center;padding:17px 0;border-radius:4px;
+  font-size:16px;font-weight:500;cursor:pointer;border:none;width:100%;font-family:var(--sans);display:block}
+.btn[disabled]{background:var(--line);color:var(--ghost);cursor:default}
+.btn.ghost{background:transparent;color:var(--muted);font-size:14px;padding:12px 0;font-weight:400;margin-top:6px}
+.center{flex-grow:1;display:flex;flex-direction:column;justify-content:center}
+.mark{width:44px;height:1.5px;background:var(--ink)}
+.mark.amber{background:var(--amber)}
+h1.big{margin:20px 0 0;font-family:var(--serif);font-size:25px;font-weight:700;line-height:1.5;letter-spacing:-.02em}
+.lead{font-size:15px;color:var(--muted);line-height:1.8;margin-top:13px}
+.facts{display:flex;flex-direction:column;margin-top:30px}
+.fact{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:baseline;padding:13px 0;gap:10px}
+.fact .k{font-size:14px;color:var(--muted)}
+.fact .v{font-size:15px;font-weight:500;text-align:right}
+.fine{font-size:12.5px;color:var(--faint);line-height:1.75;margin-top:20px}
+.res section{padding:32px 0 0}
+.res h2{font-family:var(--serif);font-size:21px;font-weight:700;line-height:1.5;margin:0;letter-spacing:-.015em}
+.res .eyebrow{font-size:11px;letter-spacing:.14em;color:var(--faint);font-weight:500;margin-bottom:9px}
+.obs{padding:16px 0;font-size:14.5px;line-height:1.8}
+.obs b{font-weight:700}
+.bucket{padding:16px 0}
+.bucket .bt{font-size:16px;font-weight:700;margin-bottom:4px}
+.bucket .bd{font-size:13.5px;color:var(--muted);line-height:1.75}
+.bucket .tag{font-size:11px;letter-spacing:.06em;color:var(--faint);margin-bottom:8px}
+.trk{display:grid;grid-template-columns:86px minmax(0,1fr);gap:11px;align-items:center;padding:11px 0;color:var(--faint)}
+.trk.on{color:var(--ink)} .trk.on .n{font-weight:700}
+.trk .n{font-size:14.5px}
+.pips{display:flex;gap:3px}
+.pip{height:8px;flex:1;background:#EDEFEC;border-radius:1px}
+.pip.f{background:var(--line-mid)} .trk.on .pip.f{background:var(--ink)}
+.note{border-left:2px solid var(--ink);padding:2px 0 2px 14px;margin-top:18px;font-size:13.5px;color:var(--muted);line-height:1.75}
+.note.amber{border-left-color:var(--amber)}
+.disclaim{font-size:12.5px;color:var(--faint);line-height:1.75;margin-top:26px;padding-top:18px;border-top:1px solid var(--line)}
+.adm{position:fixed;top:10px;right:10px;font-size:11px;color:var(--ghost);background:transparent;
+     border:1px solid var(--line);border-radius:3px;padding:5px 9px;cursor:pointer;font-family:var(--sans);z-index:50}
+.sheet{position:fixed;inset:0;background:var(--paper);z-index:100;overflow-y:auto;padding:24px}
+.sheet .wrap{max-width:960px;margin:0 auto}
+.sheet table{width:100%;border-collapse:collapse;font-size:13px}
+.sheet th,.sheet td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.sheet th{font-size:11px;letter-spacing:.06em;color:var(--faint);font-weight:600;white-space:nowrap}
+.sheet tr{cursor:pointer}
+.badge{font-family:var(--mono);font-size:10px;border:1px solid var(--line-mid);border-radius:3px;padding:1px 5px;color:var(--muted)}
+.badge.old{color:var(--rose);border-color:var(--rose)}
+:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:380px){
+  .app{padding:0 16px}
+  h1.q{font-size:18px} .opt .lab{font-size:15px}
+  .ghead,.grow{grid-template-columns:44px minmax(0,1fr) minmax(0,1fr);gap:6px}
+  .grid input{padding:10px 4px;font-size:15px}
+  .fact{grid-template-columns:1fr auto}
+}
+@media print{
+  @page{margin:14mm 12mm}
+  html,body{background:#fff!important;color:#000!important;font-size:10.5pt;line-height:1.65}
+  .bar,.foot,.btn,.adm,.sheet{display:none!important}
+  .app{max-width:none;padding:0;min-height:0}
+  .print-head{display:block!important}
+  .res section{padding:14pt 0 0;break-inside:avoid;page-break-inside:avoid}
+  .res h2{font-size:13pt;margin:0 0 6pt}
+  .res .eyebrow{font-size:7.5pt;letter-spacing:.12em;color:#555}
+  .obs,.bucket,.note,.fine,.disclaim{break-inside:avoid;page-break-inside:avoid}
+  .obs{font-size:10.5pt;padding:7pt 0}
+  .bucket{padding:7pt 0}
+  .bucket .bt{font-size:11pt}
+  .bucket .bd,.note{font-size:9.5pt;color:#222}
+  .note{border-left:2pt solid #000;padding-left:8pt;margin-top:8pt}
+  .note.amber{border-left-color:#8a6b1f}
+  .rule{background:#bbb;height:.4pt}
+  .rule.top{background:#000;height:.9pt}
+  .trk{padding:5pt 0;color:#555}
+  .trk.on{color:#000}
+  .pip{background:#e5e5e5;height:6pt}
+  .pip.f{background:#999} .trk.on .pip.f{background:#000}
+  .disclaim{margin-top:14pt;padding-top:8pt;border-top:.4pt solid #bbb;font-size:8.5pt;color:#444}
+  a[href]:after{content:""}
+}
+.print-head{display:none}
+@media print{
+  .print-head{margin:0 0 10pt;padding-bottom:6pt;border-bottom:1pt solid #000}
+  .print-head .t{font-family:var(--serif);font-size:15pt;font-weight:700;margin:0}
+  .print-head .m{font-size:8.5pt;color:#555;margin-top:3pt;display:flex;gap:10pt;flex-wrap:wrap}
 }
-
-* { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; }
-body {
-  font-family: var(--font-body);
-  background: var(--paper);
-  color: var(--ink);
-  line-height: 1.55;
-  font-size: 16px;
-  -webkit-font-smoothing: antialiased;
-  -webkit-tap-highlight-color: transparent;
-  min-height: 100vh;
-  background-image:
-    radial-gradient(ellipse at top right, rgba(14,143,134,.05), transparent 40%),
-    radial-gradient(ellipse at bottom left, rgba(201,138,43,.04), transparent 40%);
-}
-
-/* ===== Layout ===== */
-.shell {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 0 18px 80px;
-  position: relative;
-}
-
-header.top {
-  padding: 22px 0 14px;
-  border-bottom: 1px solid var(--line);
-  margin-bottom: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-header.top .brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.logo-mark {
-  width: 36px; height: 36px;
-  border-radius: 9px;
-  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-deep) 100%);
-  display: grid;
-  place-items: center;
-  color: white;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 17px;
-  letter-spacing: -.5px;
-  box-shadow: var(--shadow-sm);
-}
-.brand-text {
-  display: flex; flex-direction: column; line-height: 1.15;
-}
-.brand-text strong {
-  font-family: var(--font-display);
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -.3px;
-}
-.brand-text span {
-  font-size: 11px;
-  color: var(--ink-soft);
-  letter-spacing: .5px;
-}
-
-.admin-key {
-  font-size: 11px;
-  color: var(--ink-soft);
-  background: var(--paper-2);
-  border: 1px solid var(--line);
-  padding: 6px 10px;
-  border-radius: 999px;
-  cursor: pointer;
-  font-family: var(--font-body);
-  transition: all .15s;
-}
-.admin-key:hover { background: white; border-color: var(--teal); color: var(--teal-deep); }
-
-/* ===== Headings ===== */
-h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -.5px; margin: 0; }
-h1 { font-size: 28px; font-weight: 700; line-height: 1.25; }
-h2 { font-size: 22px; font-weight: 700; line-height: 1.3; margin-bottom: 6px; }
-h3 { font-size: 17px; font-weight: 700; line-height: 1.35; }
-.eyebrow {
-  font-size: 12px;
-  letter-spacing: 2px;
-  color: var(--teal-deep);
-  font-weight: 600;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-.lede {
-  font-size: 16px;
-  color: var(--ink-soft);
-  line-height: 1.65;
-  margin: 12px 0 0;
-}
-
-/* ===== Cards ===== */
-.card {
-  background: white;
-  border-radius: var(--radius-lg);
-  padding: 28px 24px;
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--line);
-  margin-bottom: 16px;
-}
-.card.flat {
-  background: var(--paper-2);
-  box-shadow: none;
-  border: 1px dashed var(--line);
-}
-.card.tinted {
-  background: var(--teal-soft);
-  border-color: rgba(14,143,134,.2);
-}
-
-/* ===== Buttons ===== */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-family: var(--font-body);
-  font-size: 16px;
-  font-weight: 600;
-  padding: 14px 22px;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: all .18s cubic-bezier(.2,.7,.3,1);
-  text-decoration: none;
-  letter-spacing: -.2px;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-.btn-primary {
-  background: var(--ink);
-  color: white;
-}
-.btn-primary:hover { background: var(--teal-deep); transform: translateY(-1px); }
-.btn-primary:active { transform: translateY(0); }
-.btn-primary:disabled {
-  background: var(--line); color: var(--ink-soft); cursor: not-allowed; transform: none;
-}
-.btn-ghost {
-  background: transparent;
-  color: var(--ink);
-  border-color: var(--line);
-}
-.btn-ghost:hover { background: var(--paper-2); border-color: var(--ink-soft); }
-.btn-block { width: 100%; }
-.btn-sm { padding: 9px 14px; font-size: 14px; }
-
-/* ===== Form fields ===== */
-.field { margin-bottom: 16px; }
-.field label {
-  display: block;
-  font-size: 13px;
-  color: var(--ink-soft);
-  margin-bottom: 7px;
-  font-weight: 500;
-}
-.field input, .field select {
-  width: 100%;
-  padding: 13px 15px;
-  font-size: 16px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  background: white;
-  font-family: var(--font-body);
-  color: var(--ink);
-  transition: border-color .15s;
-}
-.field input:focus, .field select:focus {
-  outline: none;
-  border-color: var(--teal);
-  box-shadow: 0 0 0 3px var(--teal-soft);
-}
-
-/* ===== Welcome screen ===== */
-.hero-decor {
-  position: relative;
-  padding: 32px 24px 28px;
-}
-.hero-decor::before {
-  content: '';
-  position: absolute;
-  top: 18px; right: 18px;
-  width: 72px; height: 72px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, var(--amber-soft), var(--amber) 80%);
-  opacity: .35;
-  filter: blur(2px);
-}
-.hero-decor h1 { position: relative; z-index: 1; }
-
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px;
-  margin-top: 18px;
-}
-.feature {
-  padding: 14px 13px;
-  background: var(--paper-2);
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  line-height: 1.45;
-}
-.feature strong {
-  display: block;
-  font-size: 13px;
-  margin-bottom: 3px;
-  color: var(--teal-deep);
-}
-
-/* ===== Progress ===== */
-.progress-shell {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  background: var(--paper);
-  padding: 12px 0 14px;
-  margin: -22px -18px 16px;
-  padding-left: 18px;
-  padding-right: 18px;
-  border-bottom: 1px solid var(--line);
-}
-.progress-meta {
-  display: flex; justify-content: space-between; align-items: center;
-  font-size: 12px; color: var(--ink-soft);
-  margin-bottom: 8px;
-  letter-spacing: .3px;
-}
-.progress-meta strong { color: var(--ink); font-weight: 600; }
-.progress-bar {
-  height: 6px;
-  background: var(--line);
-  border-radius: 999px;
-  overflow: hidden;
-  position: relative;
-}
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--teal), var(--teal-deep));
-  border-radius: 999px;
-  transition: width .35s cubic-bezier(.2,.7,.3,1);
-  width: 0%;
-}
-
-/* ===== Question ===== */
-.q-axis-tag {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  color: var(--teal-deep);
-  background: var(--teal-soft);
-  padding: 4px 10px;
-  border-radius: 999px;
-  margin-bottom: 14px;
-  text-transform: uppercase;
-}
-.q-text {
-  font-family: var(--font-display);
-  font-size: 21px;
-  font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: -.5px;
-  color: var(--ink);
-  margin: 0 0 24px;
-}
-.q-hint {
-  font-size: 13px;
-  color: var(--ink-soft);
-  margin: -16px 0 22px;
-  line-height: 1.5;
-  padding: 10px 12px;
-  background: var(--amber-soft);
-  border-radius: var(--radius-sm);
-  border-left: 3px solid var(--amber);
-}
-
-/* Likert scale */
-.likert {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-.likert-opt {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 16px 6px 12px;
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  background: white;
-  transition: all .15s;
-  text-align: center;
-}
-.likert-opt:hover { border-color: var(--teal); }
-.likert-opt input { display: none; }
-.likert-opt .dot {
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  background: var(--paper-2);
-  border: 2px solid var(--line);
-  transition: all .15s;
-}
-.likert-opt span {
-  font-size: 11px;
-  color: var(--ink-soft);
-  line-height: 1.2;
-  font-weight: 500;
-}
-.likert-opt.selected {
-  border-color: var(--teal);
-  background: var(--teal-soft);
-}
-.likert-opt.selected .dot {
-  background: var(--teal);
-  border-color: var(--teal);
-  box-shadow: 0 0 0 3px white inset;
-}
-.likert-opt.selected span { color: var(--teal-deep); font-weight: 600; }
-
-.likert-axis-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-  color: var(--ink-soft);
-  margin-top: 10px;
-  padding: 0 4px;
-}
-
-/* Single-choice list (G1 학력 위치, G3 영어 수준) — 세로 배열 */
-.choice-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 6px;
-}
-.choice-opt {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  background: white;
-  transition: all .15s;
-}
-.choice-opt:hover { border-color: var(--teal); }
-.choice-opt .dot {
-  width: 20px; height: 20px;
-  border-radius: 50%;
-  background: var(--paper-2);
-  border: 2px solid var(--line);
-  flex-shrink: 0;
-  transition: all .15s;
-}
-.choice-opt span {
-  font-size: 15px;
-  color: var(--ink);
-  line-height: 1.4;
-  font-weight: 500;
-}
-.choice-opt.selected {
-  border-color: var(--teal);
-  background: var(--teal-soft);
-}
-.choice-opt.selected .dot {
-  background: var(--teal);
-  border-color: var(--teal);
-  box-shadow: 0 0 0 4px white inset;
-}
-.choice-opt.selected span { color: var(--teal-deep); font-weight: 600; }
-
-/* 컨설팅 메모 — 결과 화면 */
-.memo-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-}
-.memo-row {
-  display: flex;
-  gap: 12px;
-  padding: 12px 14px;
-  background: var(--paper-2);
-  border-radius: var(--radius-sm);
-  align-items: center;
-}
-.memo-lbl {
-  flex: 0 0 96px;
-  font-size: 12px;
-  letter-spacing: .5px;
-  color: var(--ink-soft);
-  font-weight: 600;
-  text-transform: uppercase;
-}
-.memo-val {
-  flex: 1;
-  font-size: 14px;
-  color: var(--ink);
-  font-weight: 500;
-}
-.memo-ft {
-  margin-bottom: 12px;
-  padding: 12px 14px;
-  background: var(--paper-2);
-  border-radius: var(--radius-sm);
-  border-left: 3px solid var(--teal);
-}
-.memo-ft:last-child { margin-bottom: 0; }
-.memo-ft-lbl {
-  font-size: 12px;
-  letter-spacing: .5px;
-  color: var(--teal-deep);
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-.memo-ft-val {
-  font-size: 14px;
-  color: var(--ink);
-  line-height: 1.55;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-/* Multi-select (계열) */
-.ms-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-  margin-bottom: 6px;
-}
-.ms-card {
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-md);
-  padding: 14px 16px;
-  cursor: pointer;
-  background: white;
-  transition: all .15s;
-}
-.ms-card:hover { border-color: var(--teal); }
-.ms-card.selected {
-  border-color: var(--teal);
-  background: var(--teal-soft);
-}
-.ms-card-head {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 6px;
-}
-.ms-card-head strong {
-  font-family: var(--font-display);
-  font-size: 16px;
-}
-.ms-check {
-  width: 22px; height: 22px;
-  border: 2px solid var(--line);
-  border-radius: 6px;
-  display: grid; place-items: center;
-  flex-shrink: 0;
-}
-.ms-card.selected .ms-check {
-  background: var(--teal);
-  border-color: var(--teal);
-  color: white;
-}
-.ms-card.selected .ms-check::after {
-  content: '✓';
-  font-size: 14px;
-  font-weight: 700;
-}
-.ms-card .col { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
-.ms-card .col em { font-style: normal; color: var(--ink); font-weight: 500; }
-.ms-card.unsure {
-  background: var(--amber-soft);
-  border-color: rgba(201,138,43,.4);
-}
-.ms-card.unsure.selected {
-  border-color: var(--amber);
-  background: var(--amber-soft);
-}
-.ms-card.unsure.selected .ms-check {
-  background: var(--amber); border-color: var(--amber);
-}
-
-/* ===== Nav ===== */
-.q-nav {
-  display: flex;
-  gap: 10px;
-  margin-top: 22px;
-}
-.q-nav .btn { flex: 1; }
-
-/* ===== Result ===== */
-.cap-alert {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-  padding: 18px 18px;
-  border-radius: var(--radius-lg);
-  margin-bottom: 14px;
-  border: 1.5px solid;
-}
-.cap-alert.severe {
-  background: var(--rose-soft);
-  border-color: var(--rose);
-  color: var(--ink);
-}
-.cap-alert.moderate {
-  background: var(--amber-soft);
-  border-color: var(--amber);
-  color: var(--ink);
-}
-.cap-alert.info {
-  background: var(--teal-soft);
-  border-color: var(--teal);
-  color: var(--ink);
-}
-.cap-alert .cap-icon {
-  flex-shrink: 0;
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  display: grid; place-items: center;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 18px;
-  color: white;
-}
-.cap-alert.severe .cap-icon { background: var(--rose); }
-.cap-alert.moderate .cap-icon { background: var(--amber); }
-.cap-alert.info .cap-icon { background: var(--teal); }
-.cap-alert .cap-body strong {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 16px;
-  margin-bottom: 4px;
-}
-.cap-alert.severe .cap-body strong { color: var(--rose); }
-.cap-alert.moderate .cap-body strong { color: #8C5A0F; }
-.cap-alert.info .cap-body strong { color: var(--teal-deep); }
-.cap-alert .cap-body p {
-  margin: 0;
-  font-size: 13.5px;
-  line-height: 1.55;
-  color: var(--ink-soft);
-}
-.cap-alert .cap-body p strong { display: inline; font-size: inherit; color: var(--ink); margin: 0; }
-
-.result-hero {
-  padding: 32px 24px;
-  text-align: center;
-  background: linear-gradient(135deg, var(--ink) 0%, var(--teal-deep) 100%);
-  color: white;
-  border-radius: var(--radius-lg);
-  margin-bottom: 16px;
-  position: relative;
-  overflow: hidden;
-}
-.result-hero::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 20% 0%, rgba(255,255,255,.08), transparent 50%),
-    radial-gradient(circle at 80% 100%, rgba(201,138,43,.15), transparent 50%);
-  pointer-events: none;
-}
-.result-hero h1 {
-  color: white;
-  font-size: 24px;
-  position: relative;
-}
-.result-hero .sub {
-  color: rgba(255,255,255,.75);
-  font-size: 14px;
-  margin-top: 6px;
-  position: relative;
-}
-.result-hero .top-tag {
-  display: inline-block;
-  font-size: 11px;
-  letter-spacing: 2px;
-  color: rgba(255,255,255,.7);
-  background: rgba(255,255,255,.1);
-  padding: 5px 12px;
-  border-radius: 999px;
-  margin-bottom: 14px;
-  position: relative;
-}
-
-/* Hexagon chart */
-.hex-wrap {
-  display: flex;
-  justify-content: center;
-  margin: 14px 0 6px;
-}
-.hex-wrap svg { max-width: 100%; height: auto; }
-
-/* Rank list */
-.rank-item {
-  display: flex; align-items: center; gap: 14px;
-  padding: 18px 16px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  margin-bottom: 10px;
-  background: white;
-}
-.rank-item.r1 {
-  border-color: var(--teal);
-  background: var(--teal-soft);
-  border-width: 2px;
-}
-.rank-item.r2 {
-  border-color: var(--amber);
-  background: var(--amber-soft);
-}
-.rank-num {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  background: var(--ink);
-  color: white;
-  display: grid; place-items: center;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 16px;
-  flex-shrink: 0;
-}
-.rank-item.r1 .rank-num { background: var(--teal); }
-.rank-item.r2 .rank-num { background: var(--amber); }
-.rank-body { flex: 1; min-width: 0; }
-.rank-body strong {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 17px;
-  margin-bottom: 2px;
-}
-.rank-body .why {
-  font-size: 13px;
-  color: var(--ink-soft);
-  line-height: 1.45;
-}
-.rank-score {
-  font-family: var(--font-display);
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--ink-soft);
-  flex-shrink: 0;
-}
-.rank-item.r1 .rank-score { color: var(--teal-deep); }
-
-/* Mental type card */
-.mental-card {
-  padding: 24px 20px;
-  border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, var(--paper-2), white);
-  border: 1px solid var(--line);
-  margin-bottom: 16px;
-}
-.mental-icon {
-  display: inline-grid;
-  place-items: center;
-  width: 56px; height: 56px;
-  border-radius: 16px;
-  background: var(--teal-soft);
-  color: var(--teal-deep);
-  font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 800;
-  margin-bottom: 12px;
-}
-
-/* Bars */
-.bar-row {
-  display: grid;
-  grid-template-columns: 90px 1fr 40px;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-  font-size: 13px;
-}
-.bar-row .label { color: var(--ink-soft); font-weight: 500; }
-.bar-row .num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--ink); }
-.bar-track {
-  height: 8px;
-  background: var(--paper-2);
-  border-radius: 999px;
-  overflow: hidden;
-  position: relative;
-}
-.bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--teal), var(--teal-deep));
-  border-radius: 999px;
-  transition: width .8s cubic-bezier(.2,.7,.3,1);
-}
-.bar-fill.amber { background: linear-gradient(90deg, var(--amber), #A16910); }
-.bar-fill.rose { background: linear-gradient(90deg, var(--rose), #8C3441); }
-
-/* Section header */
-.section-h {
-  display: flex; align-items: baseline; gap: 8px;
-  margin: 24px 0 12px;
-  padding-left: 4px;
-}
-.section-h h2 { margin: 0; }
-.section-h .num {
-  font-family: var(--font-display);
-  font-size: 12px;
-  color: var(--teal-deep);
-  font-weight: 600;
-  letter-spacing: 2px;
-}
-
-/* ===== Admin panel ===== */
-.admin-shell {
-  background: var(--ink);
-  color: white;
-  min-height: 100vh;
-  padding: 22px 18px 60px;
-}
-.admin-top {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 22px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255,255,255,.12);
-}
-.admin-top h1 { color: white; font-size: 20px; }
-.admin-top .sub { font-size: 12px; color: rgba(255,255,255,.6); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-
-.src-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 9px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: .3px;
-}
-.src-badge.src-cloud { background: rgba(14,143,134,.18); color: #6FD9CD; border: 1px solid rgba(14,143,134,.4); }
-.src-badge.src-local { background: rgba(255,255,255,.08); color: rgba(255,255,255,.7); border: 1px solid rgba(255,255,255,.15); }
-.src-badge.src-fail  { background: rgba(177,74,90,.18); color: #FFB5BD; border: 1px solid rgba(177,74,90,.5); }
-.admin-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 10px;
-  margin-bottom: 22px;
-}
-.admin-stat {
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: var(--radius-md);
-  padding: 14px 14px 12px;
-}
-.admin-stat .num {
-  font-family: var(--font-display);
-  font-size: 26px;
-  font-weight: 700;
-  color: white;
-  line-height: 1.1;
-}
-.admin-stat .lbl {
-  font-size: 11px;
-  color: rgba(255,255,255,.6);
-  letter-spacing: 1px;
-  margin-top: 4px;
-}
-
-.admin-toolbar {
-  display: flex; gap: 8px; flex-wrap: wrap;
-  margin-bottom: 14px;
-}
-.admin-toolbar input {
-  flex: 1;
-  min-width: 140px;
-  padding: 10px 14px;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.15);
-  color: white;
-  border-radius: var(--radius-sm);
-  font-family: var(--font-body);
-  font-size: 14px;
-}
-.admin-toolbar input::placeholder { color: rgba(255,255,255,.4); }
-.admin-toolbar input:focus { outline: none; border-color: var(--teal); }
-.admin-toolbar .btn {
-  background: rgba(255,255,255,.08);
-  color: white;
-  border-color: rgba(255,255,255,.15);
-  padding: 10px 16px;
-  font-size: 13px;
-}
-.admin-toolbar .btn:hover { background: rgba(255,255,255,.15); }
-.admin-toolbar .btn.danger { background: var(--rose); border-color: var(--rose); }
-.admin-toolbar .btn.primary { background: var(--teal); border-color: var(--teal); }
-
-.admin-table {
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-}
-.admin-row {
-  display: grid;
-  grid-template-columns: 1fr;
-  padding: 14px 16px;
-  border-bottom: 1px solid rgba(255,255,255,.06);
-  cursor: pointer;
-  transition: background .15s;
-  gap: 6px;
-}
-.admin-row:hover { background: rgba(255,255,255,.04); }
-.admin-row:last-child { border-bottom: none; }
-.admin-row.head { background: rgba(255,255,255,.05); cursor: default; font-size: 11px; letter-spacing: 1px; color: rgba(255,255,255,.55); padding: 10px 16px; }
-.admin-row .name { font-weight: 600; color: white; font-size: 15px; }
-.admin-row .meta { font-size: 12px; color: rgba(255,255,255,.6); display: flex; flex-wrap: wrap; gap: 10px 14px; }
-.admin-row .meta span { display: inline-flex; align-items: center; gap: 4px; }
-.admin-row .top1 {
-  font-size: 12px;
-  color: var(--teal);
-  font-weight: 600;
-}
-
-.admin-empty {
-  padding: 40px 20px;
-  text-align: center;
-  color: rgba(255,255,255,.5);
-  font-size: 13px;
-}
-
-/* Detail modal */
-.modal-bg {
-  position: fixed;
-  inset: 0;
-  background: rgba(14,42,61,.7);
-  backdrop-filter: blur(4px);
-  z-index: 100;
-  display: none;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 20px 14px;
-  overflow-y: auto;
-}
-.modal-bg.open { display: flex; }
-.modal {
-  background: var(--paper);
-  color: var(--ink);
-  border-radius: var(--radius-lg);
-  max-width: 720px;
-  width: 100%;
-  padding: 24px 22px;
-  box-shadow: var(--shadow-lg);
-  margin-top: 20px;
-  margin-bottom: 40px;
-}
-.modal-head {
-  display: flex; justify-content: space-between; align-items: flex-start;
-  margin-bottom: 18px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--line);
-}
-.modal-close {
-  background: var(--paper-2);
-  border: none;
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 18px;
-  color: var(--ink-soft);
-  display: grid; place-items: center;
-  transition: all .15s;
-  flex-shrink: 0;
-}
-.modal-close:hover { background: var(--ink); color: white; }
-
-.detail-section {
-  margin-bottom: 20px;
-}
-.detail-section h4 {
-  font-size: 13px;
-  letter-spacing: 1px;
-  color: var(--teal-deep);
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-.detail-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px;
-}
-.detail-grid .row {
-  display: grid;
-  grid-template-columns: 100px 1fr;
-  gap: 12px;
-  font-size: 13px;
-  padding: 8px 0;
-  border-bottom: 1px dashed var(--line);
-}
-.detail-grid .row:last-child { border-bottom: none; }
-.detail-grid .row .lbl { color: var(--ink-soft); }
-.detail-grid .row .val { font-weight: 500; }
-
-/* cap badges (admin modal) */
-.cap-badge {
-  display: inline-block;
-  padding: 3px 8px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .3px;
-  background: rgba(255,255,255,.12);
-  color: white;
-}
-.cap-badge.severe { background: var(--rose); color: white; }
-.cap-badge.moderate { background: var(--amber); color: white; }
-.cap-badge.info { background: var(--teal); color: white; }
-
-.q-answer-row {
-  display: grid;
-  grid-template-columns: 50px 1fr 50px;
-  gap: 8px;
-  align-items: center;
-  font-size: 12px;
-  padding: 6px 8px;
-  border-radius: 6px;
-}
-.q-answer-row:nth-child(odd) { background: var(--paper-2); }
-.q-answer-row .qid { font-family: ui-monospace, monospace; color: var(--ink-soft); font-size: 11px; }
-.q-answer-row .qtext { color: var(--ink); line-height: 1.4; }
-.q-answer-row .qval {
-  text-align: center;
-  font-weight: 700;
-  font-family: var(--font-display);
-  background: white;
-  border-radius: 6px;
-  padding: 3px 0;
-  border: 1px solid var(--line);
-}
-.q-answer-row .qval.v5 { background: var(--teal); color: white; border-color: var(--teal); }
-.q-answer-row .qval.v4 { background: var(--teal-soft); color: var(--teal-deep); border-color: var(--teal); }
-.q-answer-row .qval.v3 { background: var(--amber-soft); color: var(--amber); }
-.q-answer-row .qval.v2 { background: var(--rose-soft); color: var(--rose); }
-.q-answer-row .qval.v1 { background: var(--rose); color: white; border-color: var(--rose); }
-
-/* Pinpad */
-.pinpad-shell {
-  position: fixed;
-  inset: 0;
-  background: linear-gradient(135deg, var(--ink) 0%, #061421 100%);
-  z-index: 200;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-.pinpad-shell.open { display: flex; }
-.pinpad {
-  max-width: 360px;
-  width: 100%;
-  text-align: center;
-  color: white;
-}
-.pinpad h2 { color: white; margin-bottom: 8px; }
-.pinpad .pin-sub { color: rgba(255,255,255,.5); font-size: 13px; margin-bottom: 26px; }
-.pinpad input {
-  width: 100%;
-  padding: 16px;
-  font-size: 18px;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.15);
-  color: white;
-  border-radius: var(--radius-md);
-  text-align: center;
-  letter-spacing: 4px;
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  margin-bottom: 14px;
-}
-.pinpad input:focus { outline: none; border-color: var(--teal); }
-.pinpad .err { color: var(--rose); font-size: 13px; height: 18px; margin-bottom: 8px; }
-.pinpad .actions { display: flex; gap: 10px; }
-.pinpad .actions .btn { flex: 1; }
-
-/* Notice strip */
-.notice {
-  font-size: 12px;
-  color: var(--ink-soft);
-  background: var(--amber-soft);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
-  margin-bottom: 12px;
-  border-left: 3px solid var(--amber);
-  line-height: 1.5;
-}
-
-/* 개인정보 동의 박스 */
-.privacy-box {
-  background: var(--paper-2);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  padding: 14px 16px;
-  margin-bottom: 14px;
-}
-.privacy-summary {
-  font-size: 12.5px;
-  color: var(--ink);
-  line-height: 1.55;
-}
-.privacy-summary strong:first-child {
-  display: block;
-  font-size: 13px;
-  margin-bottom: 8px;
-  color: var(--teal-deep);
-  letter-spacing: .3px;
-}
-.privacy-summary ul {
-  margin: 0 0 8px;
-  padding-left: 18px;
-}
-.privacy-summary li { margin-bottom: 3px; }
-.link-btn {
-  background: none;
-  border: none;
-  color: var(--teal-deep);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 4px 0;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  font-family: var(--font-body);
-}
-.link-btn:hover { color: var(--teal); }
-.consent-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin-top: 12px;
-  padding: 10px 12px;
-  background: white;
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: border-color .15s;
-}
-.consent-row:has(input:checked) {
-  border-color: var(--teal);
-  background: var(--teal-soft);
-}
-.consent-row input[type="checkbox"] {
-  width: 18px; height: 18px;
-  margin-top: 2px;
-  cursor: pointer;
-  accent-color: var(--teal-deep);
-  flex-shrink: 0;
-}
-.consent-row span {
-  font-size: 13px;
-  color: var(--ink);
-  line-height: 1.5;
-}
-
-/* 비활성 버튼 */
-.btn:disabled {
-  opacity: .45;
-  cursor: not-allowed;
-  filter: grayscale(.4);
-}
-
-/* 토큰 게이트 화면 */
-.gate-card { padding: 32px 28px; }
-.gate-card h1 { font-size: 24px; margin-bottom: 8px; line-height: 1.3; }
-.gate-card .lede { color: var(--ink-soft); margin: 6px 0 14px; font-size: 14px; }
-.gate-card.gate-amber { border-left: 4px solid var(--amber); }
-.gate-card.gate-amber h1 { color: var(--amber); }
-.gate-card.gate-rose { border-left: 4px solid var(--rose); }
-.gate-card.gate-rose h1 { color: var(--rose); }
-.gate-card.gate-teal { border-left: 4px solid var(--teal); }
-.gate-card.gate-teal h1 { color: var(--teal-deep); }
-.gate-list {
-  margin: 12px 0 0;
-  padding-left: 18px;
-  color: var(--ink);
-  font-size: 13.5px;
-  line-height: 1.7;
-}
-.gate-list li { margin-bottom: 4px; }
-
-/* 관리자 콘솔 — 토큰 발급 섹션 */
-.tokens-section {
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: var(--radius-md);
-  padding: 16px 18px;
-  margin-bottom: 18px;
-  color: white;
-}
-.tokens-section h3 {
-  font-size: 14px;
-  margin: 0 0 10px;
-  letter-spacing: .3px;
-  color: white;
-}
-.tokens-section .token-form {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-}
-.tokens-section .token-form input {
-  flex: 1;
-  min-width: 180px;
-  padding: 10px 12px;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.15);
-  border-radius: var(--radius-sm);
-  color: white;
-  font-family: var(--font-body);
-  font-size: 13px;
-}
-.tokens-section .token-form input::placeholder { color: rgba(255,255,255,.4); }
-.tokens-section .token-result {
-  background: rgba(14,143,134,.18);
-  border: 1px solid var(--teal);
-  border-radius: var(--radius-sm);
-  padding: 10px 12px;
-  margin-bottom: 12px;
-  font-size: 12.5px;
-  color: white;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-.tokens-section .token-result code {
-  background: rgba(0,0,0,.35);
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-family: ui-monospace, monospace;
-  font-size: 12px;
-  color: #B6F0E8;
-  word-break: break-all;
-  flex: 1;
-}
-.tokens-section .token-list {
-  max-height: 280px;
-  overflow-y: auto;
-  border-top: 1px solid rgba(255,255,255,.1);
-  padding-top: 10px;
-}
-.tokens-section .token-row {
-  display: grid;
-  grid-template-columns: 1fr 80px 130px 28px;
-  gap: 8px;
-  padding: 8px 4px;
-  font-size: 12px;
-  border-bottom: 1px dashed rgba(255,255,255,.08);
-  align-items: center;
-}
-.tokens-section .token-row:last-child { border-bottom: none; }
-.tokens-section .token-row .code {
-  font-family: ui-monospace, monospace;
-  font-size: 12px;
-  color: #B6F0E8;
-}
-.tokens-section .token-row .note {
-  font-size: 11px;
-  color: rgba(255,255,255,.6);
-  margin-top: 2px;
-}
-.tokens-section .badge-used {
-  background: rgba(177,74,90,.3); color: #FFB5BD;
-  padding: 2px 6px; border-radius: 999px; font-size: 10.5px;
-  text-align: center;
-}
-.tokens-section .badge-fresh {
-  background: rgba(45,122,79,.3); color: #B5E8C9;
-  padding: 2px 6px; border-radius: 999px; font-size: 10.5px;
-  text-align: center;
-}
-.tokens-section .copy-btn {
-  background: rgba(255,255,255,.08);
-  color: white;
-  border: 1px solid rgba(255,255,255,.15);
-  border-radius: 6px;
-  padding: 4px 6px;
-  font-size: 11px;
-  cursor: pointer;
-}
-.tokens-section .copy-btn:hover { background: rgba(255,255,255,.16); }
-.tokens-section .empty { color: rgba(255,255,255,.5); font-size: 12px; padding: 8px 0; }
-
-/* ===== Responsive ===== */
-@media (min-width: 600px) {
-  .ms-grid { grid-template-columns: 1fr 1fr; }
-  .admin-row { grid-template-columns: 200px 1fr 1fr 100px; align-items: center; }
-  .admin-row .meta { flex-direction: row; }
-  .detail-grid { grid-template-columns: 1fr 1fr; }
-  .detail-grid .row { grid-template-columns: 110px 1fr; }
-  h1 { font-size: 32px; }
-  .q-text { font-size: 23px; }
-  .likert-opt { padding: 18px 8px 14px; }
-  .likert-opt .dot { width: 26px; height: 26px; }
-}
-
-@media (max-width: 380px) {
-  .likert { gap: 5px; }
-  .likert-opt { padding: 12px 4px 10px; }
-  .likert-opt .dot { width: 18px; height: 18px; }
-  .likert-opt span { font-size: 10px; }
-  .q-text { font-size: 19px; }
-}
-
-/* Animations */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.fade-in { animation: fadeUp .35s cubic-bezier(.2,.7,.3,1); }
-
-/* ===== Token Gate (사용자 진입 화면) ===== */
-.gate-card { padding: 36px 28px; }
-.gate-card h1 { margin-bottom: 12px; }
-.gate-card .lede { font-size: 16px; line-height: 1.7; color: var(--ink-soft); margin-bottom: 14px; }
-.gate-list {
-  margin: 12px 0 0; padding: 0; list-style: none;
-  background: var(--paper-2); border-radius: var(--radius-md);
-  padding: 14px 18px;
-}
-.gate-list li {
-  position: relative; padding: 6px 0 6px 22px;
-  font-size: 14px; color: var(--ink-soft); line-height: 1.6;
-}
-.gate-list li::before {
-  content: ''; position: absolute; left: 4px; top: 13px;
-  width: 6px; height: 6px; border-radius: 50%; background: var(--teal);
-}
-.gate-card.gate-amber { border-left: 4px solid var(--amber); }
-.gate-card.gate-rose  { border-left: 4px solid var(--rose); }
-.gate-card.gate-teal  { border-left: 4px solid var(--teal); }
-.gate-card.gate-amber h1 { color: var(--amber); }
-.gate-card.gate-rose  h1 { color: var(--rose); }
-
-/* ===== Admin Token Panel ===== */
-.token-issue-card {
-  background: rgba(14,143,134,.08);
-  border: 1px solid rgba(14,143,134,.3);
-  border-radius: 14px;
-  padding: 18px 20px;
-  margin-bottom: 14px;
-  color: white;
-}
-.token-issue-head h3 {
-  font-size: 16px; color: white; margin-bottom: 4px;
-  font-family: var(--font-display);
-}
-.token-issue-head p {
-  font-size: 12px; color: rgba(255,255,255,.6); margin: 0 0 12px;
-}
-.token-issue-form {
-  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
-}
-.token-issue-form input {
-  flex: 1; min-width: 200px;
-  background: rgba(0,0,0,.3); color: white;
-  border: 1px solid rgba(255,255,255,.15); border-radius: 8px;
-  padding: 9px 12px; font-size: 13px;
-  font-family: var(--font-body);
-}
-.token-issue-form input::placeholder { color: rgba(255,255,255,.35); }
-.token-issue-result:empty { display: none; }
-.token-issue-success {
-  margin-top: 12px; padding: 14px;
-  background: rgba(14,143,134,.18);
-  border: 1px solid var(--teal); border-radius: 10px;
-}
-.token-issue-error {
-  margin-top: 12px; padding: 12px 14px;
-  background: rgba(177,74,90,.15);
-  border: 1px solid var(--rose); color: #FFB5BD;
-  border-radius: 10px; font-size: 13px;
-}
-.token-code-big {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 24px; letter-spacing: 3px;
-  color: white; margin: 4px 0 8px;
-  font-weight: 700;
-}
-.token-url {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 12px; color: rgba(255,255,255,.7);
-  word-break: break-all; padding: 8px 10px;
-  background: rgba(0,0,0,.25); border-radius: 6px;
-  margin-bottom: 10px;
-}
-.token-actions { display: flex; gap: 6px; flex-wrap: wrap; }
-.token-actions .btn {
-  font-size: 12px; padding: 7px 12px;
-}
-
-.token-list-card {
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 14px;
-  padding: 16px 18px;
-  margin-bottom: 18px;
-  color: white;
-}
-.token-list-head {
-  display: flex; align-items: baseline; justify-content: space-between;
-  margin-bottom: 10px; gap: 10px; flex-wrap: wrap;
-}
-.token-list-head h3 {
-  font-size: 14px; color: white;
-  font-family: var(--font-display);
-}
-.token-list-sub {
-  font-size: 11px; color: rgba(255,255,255,.4);
-}
-.token-empty {
-  padding: 18px 0; text-align: center;
-  color: rgba(255,255,255,.5); font-size: 13px;
-}
-.token-list { display: flex; flex-direction: column; gap: 1px; }
-.token-row {
-  display: grid; grid-template-columns: 110px 1fr 130px;
-  gap: 10px; padding: 9px 10px;
-  background: rgba(0,0,0,.15); border-radius: 6px;
-  font-size: 12px; color: rgba(255,255,255,.85);
-  align-items: center;
-}
-.token-row.head {
-  background: transparent;
-  font-size: 10px; letter-spacing: 1px;
-  color: rgba(255,255,255,.4); text-transform: uppercase;
-  padding-bottom: 4px;
-}
-.token-row .code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-weight: 700; letter-spacing: 1px; color: white;
-  font-size: 13px;
-}
-.token-row .meta {
-  font-size: 11px; color: rgba(255,255,255,.5);
-}
-.token-row .badge {
-  display: inline-block; padding: 2px 8px;
-  border-radius: 999px; font-size: 10px;
-  letter-spacing: .5px; font-weight: 600;
-  margin-bottom: 2px;
-}
-.token-row .badge.unused {
-  background: rgba(14,143,134,.25); color: #5EEAD4;
-}
-.token-row .badge.used {
-  background: rgba(255,255,255,.08); color: rgba(255,255,255,.5);
-}
-.token-row.used { cursor: pointer; }
-.token-row.used:hover { background: rgba(255,255,255,.06); }
-.link-copy {
-  background: transparent; border: 1px solid rgba(255,255,255,.2);
-  color: rgba(255,255,255,.8); border-radius: 5px;
-  padding: 3px 8px; font-size: 10px; cursor: pointer;
-  font-family: var(--font-body); margin-top: 3px;
-}
-.link-copy:hover {
-  background: rgba(255,255,255,.08); color: white;
-}
-@media (max-width: 540px) {
-  .token-row { grid-template-columns: 1fr 1fr; }
-  .token-row > :first-child { grid-column: 1 / -1; }
-}
-
-/* ===== Admin Toast ===== */
-.admin-toast {
-  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
-  background: rgba(14,42,61,.95); color: white;
-  padding: 11px 22px; border-radius: 999px;
-  font-size: 13px; font-family: var(--font-body);
-  box-shadow: 0 10px 28px rgba(0,0,0,.3);
-  opacity: 0; pointer-events: none; transition: all .25s;
-  z-index: 9999;
-}
-.admin-toast.show {
-  opacity: 1; transform: translateX(-50%) translateY(0);
-}
-
 </style>
-</head>
-<body>
-
-<div class="shell" id="shell">
-  <header class="top">
-    <div class="brand">
-      <div class="logo-mark">高</div>
-      <div class="brand-text">
-        <strong>고교선택 적성검사</strong>
-        <span>v2 · MENTAL TYPE EDITION</span>
-      </div>
-    </div>
-    <button class="admin-key" id="adminKeyBtn" title="관리자 모드">관리자</button>
-  </header>
-
-  <main id="main"></main>
-</div>
-
-<!-- Pinpad -->
-<div class="pinpad-shell" id="pinpadShell">
-  <div class="pinpad">
-    <h2>관리자 인증</h2>
-    <div class="pin-sub">검사 응답자 데이터를 조회하려면<br>관리자 비밀번호를 입력하세요</div>
-    <input type="password" id="pinInput" placeholder="비밀번호" inputmode="text" autocomplete="off" />
-    <div class="err" id="pinErr">&nbsp;</div>
-    <div class="actions">
-      <button class="btn btn-ghost" id="pinCancel" style="background:rgba(255,255,255,.05);color:white;border-color:rgba(255,255,255,.15)">취소</button>
-      <button class="btn btn-primary" id="pinOk">확인</button>
-    </div>
-  </div>
-</div>
-
-<!-- Detail modal -->
-<div class="modal-bg" id="modalBg">
-  <div class="modal" id="modalBody"></div>
-</div>
-
+</head><body>
+<button class="adm" id="admBtn" title="관리자">관리자</button>
+<div class="app" id="app"></div>
 <script>
-/* ============================================================
- * 고교선택 적성검사 v2
- *  - 5개 축(A~E) + 신규 축 F: 멘탈 유형(성격 5요인 기반)
- *  - 워크넷 직업심리검사 인터페이스 차용 (간결한 한 화면-한 문항)
- *  - 응답 데이터를 storage에 저장 → 관리자 모드에서 전체 조회
- * ============================================================ */
+/* 고교선택검사 v3.1 — QUESTIONS.json · RULES.json · SPEC.md 와 일치해야 한다 */
+const QUESTIONS={"meta":{"version":"v3.1","lastModified":"2026-08-21","note":"v3.0 전면 개정. 판정에 쓰이지 않던 문항을 삭제하고 한 축에 섞인 개념을 분리했다. 문항이 깔고 있는 전제는 requires로 적고, 학년의 has와 맞지 않으면 띄우지 않는다.","sourceOfTruth":["SPEC.md","QUESTIONS.json","RULES.json","index.html"],"deprecated":["WEIGHTS.json"]},"scales":{"freq5":{"kind":"frequency","n":5,"labels":["거의 매번","자주","가끔","드물게","전혀 없다"],"note":"순수 빈도로 통일했다. 강도('매우 그렇다')와 섞지 않는다. 가운데인 '가끔'은 도피 선택지가 아니라 실제 답이다."},"interest4":{"kind":"desire","n":4,"labels":["하고 싶지 않아요","조금 하고 싶어요","많이 하고 싶어요","꼭 하고 싶어요"],"note":"'보통이다'를 두지 않는다. 초등 저학년도 읽을 수 있게 짧게 쓴다."},"binary":{"kind":"forced-choice","n":2,"note":"양쪽 모두 정상적인 성향으로 읽히게 쓴다."},"ordinal4":{"kind":"ordinal","n":4},"choice":{"kind":"single","note":"noInfo가 붙은 선지는 중간값으로 점수화하지 않는다."},"multi":{"kind":"multiple"},"number-grid":{"kind":"numeric"},"region":{"kind":"composite"},"text":{"kind":"freetext"}},"constructs":{"basic":"학년","realistic":"실제로 선택 가능한 범위","academic":"현재 학력 위치","exam_fit":"범위가 있는 시험과 없는 시험에서의 차이","self_standard":"자기 기준에 미달했을 때의 반응","competition":"주변의 잘하는 아이를 공부 동력으로 바꾸는 정도","recovery":"결과가 나쁜 뒤 공부 행동으로 돌아오는 속도","self_management":"공부 순서와 계획을 스스로 잡는 정도","peer_pref":"또래 환경 선호","interest":"관심 분야","branch":"별도 전형 분기","priority":"조건 충돌 시 우선순위","context":"상담 참고"},"grades":[{"id":"e12","label":"초등 1·2학년","academic":false,"typeRanking":false,"frame":"early","has":[],"note":"정기 지필고사도 성적표도 없다. 시험을 전제한 문항을 띄우지 않는다."},{"id":"e34","label":"초등 3·4학년","academic":false,"typeRanking":false,"frame":"observe","has":[]},{"id":"e56","label":"초등 5·6학년","academic":false,"typeRanking":false,"frame":"observe_plus","has":[]},{"id":"m1","label":"중학교 1학년","academic":"optional","typeRanking":true,"frame":"provisional","has":["exam"],"note":"자유학년제면 성적표가 없을 수 있어 report_card를 넣지 않는다."},{"id":"m2","label":"중학교 2학년","academic":true,"typeRanking":true,"frame":"full","has":["exam","report_card"]},{"id":"m3","label":"중학교 3학년","academic":true,"typeRanking":true,"frame":"full","has":["exam","report_card"]},{"id":"h1","label":"고등학교 1학년 이상","academic":false,"typeRanking":false,"frame":"review","has":["exam","report_card"]}],"tracks":[{"id":"eng","name":"이공","examples":"기계·전자·컴퓨터·화학 같은 분야"},{"id":"med","name":"메디컬","examples":"의학·치의학·약학·수의학 같은 분야"},{"id":"soc","name":"인문·사회","examples":"경영·경제·심리·교육·법 같은 분야"},{"id":"lang","name":"외국어","examples":"외국어를 중심으로 배우는 분야"},{"id":"intl","name":"국제","examples":"국제관계·국제학 같은 분야"},{"id":"art","name":"예술·콘텐츠","examples":"디자인·영상·문예창작 같은 분야"}],"removedInV31":{"note":"판정에 쓰이지 않거나 개념이 섞여 있어 삭제한 문항. 과거 응답 열람 시 참조용으로만 남긴다.","ids":["0-3","T2","T3","T5","P1-2","P4","Q1","Q3","R3","R4","S3","E1","E2","D1","D2","D3","W1","F1~F12(구조 교체)"]},"questions":[{"id":"A1","block":"A","construct":"basic","by":"mo","scale":"choice","text":"아이 학년을 골라 주세요.","options":[{"value":"e12","label":"초등 1·2학년"},{"value":"e34","label":"초등 3·4학년"},{"value":"e56","label":"초등 5·6학년"},{"value":"m1","label":"중학교 1학년"},{"value":"m2","label":"중학교 2학년"},{"value":"m3","label":"중학교 3학년"},{"value":"h1","label":"고등학교 1학년 이상"}],"decisionUse":["stage_gate","result_frame"]},{"id":"A2","block":"A","construct":"realistic","by":"mo","scale":"region","text":"지금 살고 계신 곳을 알려 주세요.","hint":"통학 가능한 범위를 볼 때 씁니다. 해외에 계시면 마지막을 고르시고 귀국 예정 지역을 적어 주세요.","fields":[{"key":"sido","label":"시·도","type":"select","options":["서울","부산","대구","인천","광주","대전","울산","세종","경기","강원","충북","충남","전북","전남","경북","경남","제주","해외 거주"]},{"key":"sigungu","label":"시·군·구","type":"text"}],"decisionUse":["hard_filter","result_explanation"]},{"id":"A3","block":"A","construct":"realistic","by":"mo","scale":"choice","text":"고등학교 통학은 편도 몇 분까지 현실적으로 가능한가요?","options":[{"value":"A","label":"30분 이내","maxMin":30},{"value":"B","label":"31~45분","maxMin":45},{"value":"C","label":"46~60분","maxMin":60},{"value":"D","label":"60분이 넘어도 가능","maxMin":999}],"decisionUse":["hard_filter","result_explanation"]},{"id":"A4","block":"A","construct":"realistic","by":"mo","scale":"choice","text":"기숙사 생활은 어떠신가요?","options":[{"value":"A","label":"가능하다"},{"value":"B","label":"아이가 원하면 가능하다"},{"value":"C","label":"어렵다"}],"decisionUse":["hard_filter","result_explanation"]},{"id":"A5","block":"A","construct":"realistic","by":"mo","scale":"choice","text":"학비와 기숙사비를 합쳐 연 1,000만 원 이상이 드는 학교도 검토할 수 있나요?","hint":"같은 유형 안에서도 학교마다 차이가 큽니다. 대략의 범위만 골라 주세요.","options":[{"value":"A","label":"부담 없이 검토할 수 있다"},{"value":"B","label":"다른 교육비나 지출을 조정하면 가능하다"},{"value":"C","label":"현실적으로 어렵다"}],"decisionUse":["soft_filter","result_explanation"]},{"id":"A6","block":"A","construct":"realistic","by":"mo","scale":"binary","text":"고교 진학을 위해 이사하는 것도 고려할 수 있나요?","options":[{"value":"A","label":"학교에 따라 고려할 수 있다"},{"value":"B","label":"현재 거주지를 유지해야 한다"}],"decisionUse":["hard_filter","result_explanation"]},{"id":"B1","block":"B","construct":"academic","by":"mo","scale":"binary","showIf":{"grade":["m1","m2","m3"]},"text":"아이 성적표를 지금 확인하실 수 있나요?","options":[{"value":"A","label":"네, 보면서 숫자를 넣겠습니다","hint":"3분쯤 더 걸리고 결과가 정확해집니다."},{"value":"B","label":"아니요, 대략의 점수대로 답하겠습니다","hint":"바로 진행됩니다."}],"decisionUse":["academic_path"]},{"id":"B2","block":"B","construct":"academic","by":"mo","scale":"number-grid","showIf":{"B1":"A"},"text":"가장 최근 학기 성적표에서 두 숫자만 옮겨 주세요.","hint":"과목평균은 원점수 옆에 함께 적혀 있습니다.","rows":["국어","영어","수학","사회","과학"],"cols":[{"key":"raw","label":"원점수","min":0,"max":100},{"key":"mean","label":"과목평균","min":0,"max":100}],"decisionUse":["academic_position"],"requires":["report_card"]},{"id":"B3","block":"B","construct":"academic","by":"mo","scale":"choice","showIf":{"B1":"B"},"text":"최근 학기 국어·영어·수학 세 과목의 평균 점수는 어느 구간인가요?","options":[{"value":"A","label":"95점 이상","score":95},{"value":"B","label":"90~94점","score":92},{"value":"C","label":"85~89점","score":87},{"value":"D","label":"80~84점","score":82},{"value":"E","label":"70~79점","score":75},{"value":"F","label":"70점 미만","score":60},{"value":"X","label":"정확히 모르겠다","noInfo":true},{"value":"N","label":"아직 성적표가 없다","noInfo":true}],"decisionUse":["academic_position"],"hint":"중학교 1학년이라 아직 지필평가 성적이 없으면 마지막을 고르시면 됩니다."},{"id":"B4","block":"B","construct":"academic","by":"mo","scale":"choice","showIf":{"B1":"B"},"text":"그중 가장 낮은 과목의 점수는 어느 구간인가요?","hint":"한 과목이 크게 낮으면 학교를 고를 때 영향이 다릅니다.","options":[{"value":"A","label":"95점 이상","score":95},{"value":"B","label":"90~94점","score":92},{"value":"C","label":"85~89점","score":87},{"value":"D","label":"80~84점","score":82},{"value":"E","label":"70~79점","score":75},{"value":"F","label":"70점 미만","score":60},{"value":"X","label":"정확히 모르겠다","noInfo":true},{"value":"N","label":"아직 성적표가 없다","noInfo":true}],"decisionUse":["academic_position","result_explanation"]},{"id":"B5","block":"B","construct":"exam_fit","by":"mo","scale":"binary","showIf":{"grade":["m1","m2","m3"]},"text":"고등학교 1학년 3월 모의고사를 시간을 재고 풀려 본 적이 있나요?","options":[{"value":"A","label":"있다"},{"value":"B","label":"없다"}],"followUp":{"A":{"fields":[{"key":"kor","label":"국어 등급"},{"key":"mat","label":"수학 등급"},{"key":"eng","label":"영어 등급"}],"optional":true,"hint":"기억나는 과목만 적으셔도 됩니다"}},"decisionUse":["exam_fit_measured","next_action"]},{"id":"C1","block":"C","construct":"exam_fit","by":"mo","scale":"binary","text":"시험 범위가 정해지고 준비할 시간이 충분할 때, 평소보다 점수가 확실히 좋아지는 편인가요?","options":[{"value":"A","label":"준비한 만큼 결과가 좋아지는 편이다","pole":"prepared"},{"value":"B","label":"범위가 정해져 있어도 평소 실력과 결과 차이가 크지 않다","pole":"unbounded"}],"decisionUse":["environment_fit","result_explanation"],"requires":["exam"]},{"id":"C2","block":"C","construct":"exam_fit","by":"mo","scale":"binary","text":"학교 시험과, 범위를 따로 알려 주지 않는 학원 레벨테스트를 비교하면 어떤가요?","options":[{"value":"A","label":"학교 시험에서 상대적으로 더 강한 편이다","pole":"prepared"},{"value":"B","label":"두 시험의 차이가 크지 않거나 레벨테스트가 더 잘 나오는 편이다","pole":"unbounded"}],"decisionUse":["environment_fit","result_explanation"],"requires":["exam"]},{"id":"D1","block":"D","construct":"self_standard","by":"mo","scale":"freq5","text":"시험을 잘 봐도 틀린 몇 문제 때문에 결과 전체가 마음에 안 든다고 한다.","options":[{"value":"5","label":"거의 매번"},{"value":"4","label":"자주"},{"value":"3","label":"가끔"},{"value":"2","label":"드물게"},{"value":"1","label":"전혀 없다"}],"decisionUse":["environment_fit","result_explanation"]},{"id":"D2","block":"D","construct":"self_standard","by":"mo","scale":"freq5","text":"이미 끝낸 숙제나 과제를 마음에 들지 않는다는 이유로 필요 이상 다시 한다.","options":[{"value":"5","label":"거의 매번"},{"value":"4","label":"자주"},{"value":"3","label":"가끔"},{"value":"2","label":"드물게"},{"value":"1","label":"전혀 없다"}],"decisionUse":["environment_fit","result_explanation"]},{"id":"D3","block":"D","construct":"self_standard","by":"mo","scale":"freq5","text":"잘 못할 것 같다는 생각 때문에 시작 자체를 미룬다.","options":[{"value":"5","label":"거의 매번"},{"value":"4","label":"자주"},{"value":"3","label":"가끔"},{"value":"2","label":"드물게"},{"value":"1","label":"전혀 없다"}],"decisionUse":["environment_fit","result_explanation"],"note":"단순한 미루기와 구분하려고 '잘 못할 것 같아서'라는 원인을 문항에 넣었다."},{"id":"E1","block":"E","construct":"competition","by":"mo","scale":"freq5","text":"자기보다 잘하는 친구가 있으면 공부량이나 집중도가 실제로 올라간다.","options":[{"value":"5","label":"거의 매번"},{"value":"4","label":"자주"},{"value":"3","label":"가끔"},{"value":"2","label":"드물게"},{"value":"1","label":"전혀 없다"}],"decisionUse":["environment_fit","result_explanation"]},{"id":"E2","block":"E","construct":"competition","by":"mo","scale":"binary","text":"잘하는 아이가 많은 반에 있을 때 아이는 어떤 편인가요?","options":[{"value":"A","label":"따라가고 싶다는 마음이 더 생긴다","pole":"fuel"},{"value":"B","label":"내가 잘하고 있다는 느낌이 있을 때 더 안정적으로 공부한다","pole":"steady"}],"decisionUse":["environment_fit","result_explanation"]},{"id":"F1","block":"F","construct":"recovery","by":"mo","scale":"ordinal4","text":"시험이든 숙제든 결과가 기대보다 안 좋았을 때, 아이가 평소 공부 리듬으로 돌아오기까지 보통 얼마나 걸리나요?","options":[{"value":"A","label":"그날 또는 다음 날","lvl":4},{"value":"B","label":"2~3일","lvl":3},{"value":"C","label":"일주일 정도","lvl":2},{"value":"D","label":"일주일이 넘게 영향을 받는다","lvl":1}],"decisionUse":["environment_fit","result_explanation"]},{"id":"F2","block":"F","construct":"recovery","by":"mo","scale":"ordinal4","text":"결과가 기대보다 좋지 않았던 과목의 공부나 숙제를 피한 적은 어느 정도인가요?","options":[{"value":"A","label":"거의 없다","lvl":4},{"value":"B","label":"한두 번 있었다","lvl":3},{"value":"C","label":"며칠 피한 적이 있다","lvl":2},{"value":"D","label":"한동안 그 과목 자체를 피한 적이 있다","lvl":1}],"decisionUse":["environment_fit","result_explanation"]},{"id":"G1","block":"G","construct":"self_management","by":"mo","scale":"binary","text":"해야 할 공부가 밀렸을 때 아이는 어떤 편인가요?","options":[{"value":"A","label":"스스로 순서를 다시 정해서 처리하는 편이다","pole":"self"},{"value":"B","label":"부모나 선생님이 무엇부터 할지 정해 줘야 움직이는 편이다","pole":"guided"}],"decisionUse":["environment_fit","result_explanation","gap_report"]},{"id":"G2","block":"G","construct":"self_management","by":"mo","scale":"binary","text":"방학이나 시험이 없는 기간에는 어떤가요?","options":[{"value":"A","label":"할 공부를 어느 정도 스스로 정한다","pole":"self"},{"value":"B","label":"부모나 학원에서 계획을 정해 줘야 공부가 유지된다","pole":"guided"}],"decisionUse":["environment_fit","result_explanation","gap_report"]},{"id":"G3","block":"G","construct":"self_management","by":"mo","scale":"ordinal4","text":"지난 한 주 동안, 그날 하기로 한 공부나 숙제를 대부분 끝낸 날은 얼마나 되나요?","options":[{"value":"A","label":"거의 매일","lvl":4},{"value":"B","label":"절반보다 많았다","lvl":3},{"value":"C","label":"절반 정도였다","lvl":2},{"value":"D","label":"절반보다 적었다","lvl":1}],"decisionUse":["environment_fit","result_explanation"],"textByGrade":{"m2":"시험 기간 2주 동안, 그날 하기로 한 공부를 대부분 끝낸 날은 얼마나 되나요?","m3":"시험 기간 2주 동안, 그날 하기로 한 공부를 대부분 끝낸 날은 얼마나 되나요?"}},{"id":"H1","block":"H","construct":"branch","by":"mo","scale":"choice","conditional":true,"showIf":{"grade":["m2","m3"]},"text":"과학고나 영재학교 준비는 어느 단계인가요?","options":[{"value":"A","label":"이미 준비 중이거나 지원을 계획하고 있다"},{"value":"B","label":"관심은 있지만 아직 준비를 시작하지 않았다"},{"value":"C","label":"고려하지 않고 있다"}],"note":"이 두 학교는 내신 등급이 아니라 별도 전형으로 뽑는다. 준비 여부로 분기한다.","decisionUse":["branch","result_explanation"]},{"id":"I1","block":"I","construct":"context","by":"mo","scale":"text","optional":true,"maxLength":200,"text":"지금 고교 선택에서 가장 고민되는 점을 한 가지만 적어 주세요.","decisionUse":["result_explanation"]},{"id":"I2","block":"I","construct":"context","by":"mo","scale":"text","optional":true,"maxLength":200,"text":"최근 1년 사이 아이의 공부나 학교생활에서 크게 달라진 점이 있다면 적어 주세요.","decisionUse":["result_explanation"]},{"id":"K1","block":"K","construct":"competition","by":"child","scale":"binary","text":"둘 중 어느 반에서 공부가 더 잘될 것 같나요?","options":[{"value":"A","label":"나보다 잘하는 친구가 많은 반","pole":"fuel"},{"value":"B","label":"내가 잘하는 편인 반","pole":"steady"}],"decisionUse":["environment_fit","gap_report"]},{"id":"K2","block":"K","construct":"self_management","by":"child","scale":"binary","text":"오늘 무엇을 공부할지는 보통 어떻게 정하나요?","options":[{"value":"A","label":"대부분 내가 정해요","pole":"self"},{"value":"B","label":"부모님이나 학원에서 정해 줘요","pole":"guided"}],"decisionUse":["gap_report","result_explanation"]},{"id":"K3","block":"K","construct":"peer_pref","by":"child","scale":"binary","text":"공부할 때 더 편한 반은 어느 쪽인가요?","options":[{"value":"A","label":"다들 공부에 집중하는 반","pole":"homogeneous"},{"value":"B","label":"여러 가지에 관심 있는 친구들이 섞인 반","pole":"diverse"}],"decisionUse":["environment_fit","result_explanation"]},{"id":"K4","block":"K","construct":"interest","by":"child","scale":"multi","showIf":{"grade":["m1","m2","m3"]},"text":"지금 관심 있는 분야를 모두 골라 주세요.","hint":"여러 개 골라도 됩니다. 없으면 마지막을 고르시면 됩니다.","options":[{"value":"eng","label":"이공","examples":"기계·전자·컴퓨터·화학 같은 분야"},{"value":"med","label":"메디컬","examples":"의학·치의학·약학·수의학 같은 분야"},{"value":"soc","label":"인문·사회","examples":"경영·경제·심리·교육·법 같은 분야"},{"value":"lang","label":"외국어","examples":"외국어를 중심으로 배우는 분야"},{"value":"intl","label":"국제","examples":"국제관계·국제학 같은 분야"},{"value":"art","label":"예술·콘텐츠","examples":"디자인·영상·문예창작 같은 분야"},{"value":"none","label":"아직 없다"}],"decisionUse":["curriculum_fit","result_explanation"]},{"id":"K5-eng","block":"K","construct":"interest","by":"child","scale":"interest4","track":"eng","text":"물건을 만들거나 고치고, 어떻게 움직이는지 알아보기","stem":"이런 건 어떤가요?","options":[{"value":"1","label":"하고 싶지 않아요"},{"value":"2","label":"조금 하고 싶어요"},{"value":"3","label":"많이 하고 싶어요"},{"value":"4","label":"꼭 하고 싶어요"}],"decisionUse":["curriculum_fit","result_explanation"],"hint":"글이 어려우면 보호자가 읽어 주세요.","examples":"블록·로봇·컴퓨터·실험"},{"id":"K5-med","block":"K","construct":"interest","by":"child","scale":"interest4","track":"med","text":"몸이 어떻게 움직이는지, 아프면 왜 아픈지 알아보기","stem":"이런 건 어떤가요?","options":[{"value":"1","label":"하고 싶지 않아요"},{"value":"2","label":"조금 하고 싶어요"},{"value":"3","label":"많이 하고 싶어요"},{"value":"4","label":"꼭 하고 싶어요"}],"decisionUse":["curriculum_fit","result_explanation"],"hint":"글이 어려우면 보호자가 읽어 주세요.","examples":"사람 몸·동물·병원"},{"id":"K5-soc","block":"K","construct":"interest","by":"child","scale":"interest4","track":"soc","text":"사람들이 왜 그렇게 하는지 알아보고 이야기 나누기","stem":"이런 건 어떤가요?","options":[{"value":"1","label":"하고 싶지 않아요"},{"value":"2","label":"조금 하고 싶어요"},{"value":"3","label":"많이 하고 싶어요"},{"value":"4","label":"꼭 하고 싶어요"}],"decisionUse":["curriculum_fit","result_explanation"],"hint":"글이 어려우면 보호자가 읽어 주세요.","examples":"친구·역사·뉴스·토론"},{"id":"K5-lang","block":"K","construct":"interest","by":"child","scale":"interest4","track":"lang","text":"다른 나라 말을 배우고 직접 써 보기","stem":"이런 건 어떤가요?","options":[{"value":"1","label":"하고 싶지 않아요"},{"value":"2","label":"조금 하고 싶어요"},{"value":"3","label":"많이 하고 싶어요"},{"value":"4","label":"꼭 하고 싶어요"}],"decisionUse":["curriculum_fit","result_explanation"],"hint":"글이 어려우면 보호자가 읽어 주세요.","examples":"영어·중국어·자막 없이 보기"},{"id":"K5-intl","block":"K","construct":"interest","by":"child","scale":"interest4","track":"intl","text":"다른 나라는 우리와 뭐가 다른지 알아보기","stem":"이런 건 어떤가요?","options":[{"value":"1","label":"하고 싶지 않아요"},{"value":"2","label":"조금 하고 싶어요"},{"value":"3","label":"많이 하고 싶어요"},{"value":"4","label":"꼭 하고 싶어요"}],"decisionUse":["curriculum_fit","result_explanation"],"hint":"글이 어려우면 보호자가 읽어 주세요.","examples":"세계 지도·다른 나라 소식"},{"id":"K5-art","block":"K","construct":"interest","by":"child","scale":"interest4","track":"art","text":"그림이나 영상, 글로 내 생각을 나타내기","stem":"이런 건 어떤가요?","options":[{"value":"1","label":"하고 싶지 않아요"},{"value":"2","label":"조금 하고 싶어요"},{"value":"3","label":"많이 하고 싶어요"},{"value":"4","label":"꼭 하고 싶어요"}],"decisionUse":["curriculum_fit","result_explanation"],"hint":"글이 어려우면 보호자가 읽어 주세요.","examples":"그리기·영상 편집·글쓰기"},{"id":"TB1","block":"TB","construct":"priority","by":"mo","scale":"binary","conditional":true,"text":"두 조건이 충돌한다면 어느 쪽을 조금 더 우선하고 싶으신가요?","hint":"둘 다 중요한 조건입니다. 학교 후보가 둘 이상 남았을 때만 우선순위를 확인하려고 묻습니다.","options":[{"value":"A","label":"아이가 원하는 과목과 활동을 충분히 선택할 수 있는 환경","pole":"curriculum"},{"value":"B","label":"현재 성적 위치를 지키기 상대적으로 수월한 환경","pole":"position"}],"decisionUse":["final_order"]},{"id":"TB2","block":"TB","construct":"priority","by":"mo","scale":"binary","conditional":true,"text":"외국어 관련 학교가 둘 이상 남았다면 아이는 어느 쪽에 더 관심이 있나요?","options":[{"value":"A","label":"외국어 자체를 배우고, 읽고 듣고 말하는 활동","pole":"language"},{"value":"B","label":"국제정치·경제·사회 문제를 외국어와 함께 배우는 활동","pole":"international"}],"decisionUse":["final_order"]}],"requiresVocab":{"exam":"정기 지필고사를 치르는 학년","report_card":"과목별 원점수·과목평균이 적힌 성적표"}};
+const RULES={"meta":{"version":"v3.1","lastModified":"2026-08-21","replaces":"WEIGHTS.json (v2 적합도 행렬 — 사용 중지)","note":"학교 유형에 점수를 매기지 않는다. 순차로 걸러 세 묶음으로 나눈다. 성향 하나만으로 유형을 탈락시키지 않는다."},"outputPolicy":{"neverShow":["예상 내신 등급","상위 몇 퍼센트","적합도 점수","집단 안 위치 퍼센트","심리 유형 이름","직업·학과 확정","흥미검사 1위 계열 확정","검증되지 않은 정밀 수치"],"bannedWords":["연료형","자극형","자책형","취약형","소진형","관리형","강철 멘탈","탐험형","균형형","회복·보호형","빛납니다","붙잡으세요","환경 자체가 위험","안전한 선택지","가장 흔한 자리","종합 적합도"],"disclaimer":"이 검사는 고교 진학 후 내신 등급을 예측하지 않습니다. 현재 성적과 공부 성향, 통학·비용 등의 조건을 바탕으로 어떤 학교 환경을 먼저 살펴볼지 정리하는 검사입니다."},"types":[{"id":"일반고","groupPct":100,"dense":false,"tuitionHigh":false,"boardingCommon":false,"neverDrop":true,"note":"자율형 공립고를 포함한다. 집단 퍼센트가 같아 따로 두면 영원히 동점이 된다."},{"id":"광역 자사고","groupPct":25,"dense":true,"tuitionHigh":true,"boardingCommon":false},{"id":"외고·국제고","groupPct":10,"dense":true,"tuitionHigh":true,"boardingCommon":true},{"id":"전국 자사고","groupPct":5,"dense":true,"tuitionHigh":true,"boardingCommon":true}],"branch":{"과학고·영재학교":{"from":"H1","note":"내신 등급이 아니라 별도 전형으로 뽑는다. 유형 비교에 넣지 않고 따로 안내한다."}},"stage1":{"name":"실제로 선택 가능한 범위","hard":[{"if":{"A6":"B","A3":["A"]},"limit":["전국 자사고","외고·국제고"],"reason":"commute","text":"통학을 30분 이내로 잡으셨고 이사도 어렵다고 하셔서 통학권 밖입니다."},{"if":{"A4":"C","A3":["A","B"]},"limit":["전국 자사고"],"reason":"boarding","text":"기숙사가 어렵다고 하셨는데 통학으로 닿기 어려운 거리입니다."}],"soft":[{"if":{"A5":"C"},"flag":["광역 자사고","외고·국제고","전국 자사고"],"reason":"tuition","text":"학비가 현실적으로 어렵다고 하셔서 우선순위를 낮췄습니다. 다만 같은 유형 안에서도 학비 차이가 크고 장학금이 있는 학교도 있어, 관심 있는 학교는 개별 확인이 필요합니다."},{"if":{"A5":"B"},"flag":["전국 자사고"],"reason":"tuition_adjust","text":"학비를 조정하면 가능하다고 하셨습니다. 학교별 실제 비용을 확인해 보세요."}],"note":"하드 필터는 통학·기숙처럼 유형 전체에 물리적으로 적용되는 조건만 쓴다. 비용은 학교마다 달라 하드 탈락시키지 않는다."},"stage2":{"name":"현재 학력 위치","skipGrades":["e34","e56","h1"],"showNumbers":false,"measured":{"formula":"평균(원점수 − 과목평균), 다섯 과목","bands":[{"delta":30,"minRaw":97,"pos":2},{"delta":25,"minRaw":95,"pos":5},{"delta":25,"pos":8},{"delta":18,"pos":15},{"delta":10,"pos":30},{"delta":5,"pos":40},{"delta":0,"pos":50}]},"simple":{"from":"B3","map":{"60":78,"75":55,"82":34,"87":22,"92":12,"95":6},"lowestAdjust":{"from":"B4","rule":"가장 낮은 과목이 평균보다 두 구간 이상 아래면 위치를 한 구간 뒤로 민다","note":"한 과목이 무너지면 밀집 학교에서 특히 불리하다. 결과에는 '한 과목을 먼저 올리는 편이 낫다'는 안내로 쓴다."},"noInfo":["X"]},"cut":{"inside":34,"outOfGroup":100},"note":"계산 결과를 화면에 숫자로 내지 않는다. 유형을 어느 묶음에 넣을지 정하는 데만 쓴다.","inputs":{"path":"B1","measured":"B2","simpleAverage":"B3","simpleLowest":"B4","examMeasured":"B5","note":"B1이 A면 B2(숫자 그리드), B면 B3·B4(간이 구간)로 간다. 두 경로는 동시에 뜨지 않는다."}},"stage3":{"name":"그 환경에서 공부가 유지될 가능성","dropsTypes":false,"note":"이 단계는 유형을 탈락시키지 않는다. '조건 확인' 묶음으로 옮기고 이유 문장을 붙인다. 성향 하나로 학교를 없애지 않는다.","signals":[{"id":"recovery","from":["F1","F2"],"role":"결과가 나쁜 뒤 공부로 돌아오는 속도","low":{"when":"두 문항 평균 lvl 2 이하","affects":"dense","move":"conditional","text":"시험 결과가 좋지 않을 때 공부 리듬을 되찾는 데 시간이 걸린다고 답하셨습니다. 경쟁이 강한 학교를 볼 때는 성적보다 먼저 이 반응을 확인할 필요가 있습니다."}},{"id":"self_standard","from":["D1","D2","D3"],"role":"자기 기준에 미달했을 때의 반응","high":{"when":"'거의 매번' 또는 '자주'가 두 개 이상","affects":"dense","move":"conditional","text":"잘한 시험에서도 아쉬운 부분을 오래 마음에 두는 편이라고 답하셨습니다. 상위권이 몰린 학교에서는 이 성향이 부담으로 작용할 수 있습니다."}},{"id":"competition","from":["E1","E2","K1"],"role":"주변의 잘하는 아이를 공부 동력으로 바꾸는 정도","fuel":{"when":"E1이 '자주' 이상이고 E2가 A","affects":"dense","move":"keep","text":"잘하는 친구가 있을 때 공부량이 늘어난다고 답하셨습니다. 경쟁이 부담으로만 작용하는 아이는 아닙니다. 학업 수준이 높은 학교를 볼 때 이 점은 장점이 될 수 있습니다."},"steady":{"when":"E2가 B","affects":"dense","move":"conditional","text":"자기가 잘하고 있다는 느낌이 있을 때 공부가 안정적이라고 답하셨습니다. 상위권이 몰린 학교에서는 초반 성적 위치를 먼저 확인해 보세요."}},{"id":"exam_fit","from":["C1","C2","B5"],"role":"범위가 있는 시험과 없는 시험에서의 차이","measuredFirst":{"from":"B5.followUp","rule":"학력 위치가 20퍼센트 안쪽인데 3월 모의 평균이 3등급 이상이면 prepared, 위치가 50퍼센트 밖인데 2등급 이하면 unbounded"},"prepared":{"text":"범위가 정해진 시험에서 준비한 만큼 결과가 나오는 편이라고 답하셨습니다. 학교를 볼 때 한 과목당 수강 인원이 충분해 등급이 나오는 구조인지 확인해 보세요."},"unbounded":{"text":"범위를 주지 않는 시험에서도 결과 차이가 크지 않다고 답하셨습니다. 자습 시간이 확보되는지도 함께 보시면 좋습니다."},"notMeasured":{"when":"C1·C2를 묻지 않은 학년이다","action":"이 항목을 결과에 넣지 않는다"}},{"id":"self_management","from":["G1","G2","G3","K2"],"role":"공부 순서와 계획을 스스로 잡는 정도","guided":{"when":"G1과 G2가 모두 B이거나 G3이 lvl 2 이하","affects":"all","move":"note","text":"공부 순서와 방학 계획을 부모나 학원에서 정해 주는 경우가 많다고 답하셨습니다. 학교를 고를 때는 자율성만 강조하는 곳보다 일정한 학습 관리가 있는지 확인하는 편이 좋습니다."},"self":{"text":"공부 순서와 계획을 아이가 직접 정하는 편이라고 답하셨습니다. 자율 학습 시간이 많은 학교도 무리 없이 볼 수 있습니다."}},{"id":"peer_pref","from":["K3"],"role":"또래 환경 선호","homogeneous":{"text":"아이는 대부분 공부에 집중하는 분위기의 반이 편하다고 했습니다."},"diverse":{"text":"아이는 관심사가 다양한 아이들이 섞인 반이 편하다고 했습니다. 학업 분위기가 균질한 학교를 볼 때는 이 점을 함께 고려해 보세요."}}],"gapReport":{"pairs":[["G1","K2"],["G2","K2"],["E2","K1"]],"note":"부모 응답과 아이 응답이 다를 때 어느 쪽도 정답으로 처리하지 않는다. 차이만 적는다.","text":"아이는 스스로 정한다고 답했고 보호자는 일정한 관리가 필요하다고 보셨습니다. 고교 선택 전에 실제 일주일 계획을 누가 세우는지 한 번 확인해 보세요."}},"stage4":{"name":"교육과정과 관심 분야","interest":{"from":"K5-*","scale":"interest4","accept":"'꼭 해보고 싶다' 또는 '꽤 해보고 싶다'","relative":true,"rule":"상위 두 계열까지만 '상대적으로 더 관심을 보인 활동'으로 표시한다. 1위 하나를 적성으로 확정하지 않는다.","flat":{"when":"모든 계열이 같은 값이거나 accept가 하나도 없다","text":"활동별 관심의 차이가 크지 않았습니다. 지금 한쪽으로 정할 필요는 없습니다."}},"stated":{"from":"K4","priority":"아이가 고른 관심 분야를 우선한다. 흥미 문항은 대조 정보로만 쓴다.","mismatch":"아이는 {stated}를 관심 분야로 골랐지만, 활동 선택에서는 {measured} 쪽에도 관심이 나타났습니다. 지금 한쪽으로 정할 필요는 없고 두 방향의 실제 활동을 모두 경험해 보는 편이 좋겠습니다."},"curriculum":[{"if":"외국어·국제 어느 쪽도 관심에 없다","affects":["외고·국제고"],"move":"conditional","text":"외국어나 국제 분야에 대한 관심이 뚜렷하지 않았습니다. 교육과정이 아이 관심과 맞는지 먼저 확인해 보세요."},{"if":"이공 또는 메디컬에 관심이 있다","affects":"all","move":"note","text":"물리·화학과 심화 과목이 실제로 개설되는지, 그 과목을 듣는 인원이 충분한지 학교별로 확인해 보세요."},{"if":"인문·사회에 관심이 있다","affects":"all","move":"note","text":"사회 과목 개설 범위와 선택 인원을 학교별로 확인해 보세요."}],"branch":{"from":"H1","A":{"text":"과학고나 영재학교를 준비 중이라고 하셨습니다. 이 두 학교는 내신 등급이 아니라 별도 전형으로 뽑기 때문에 이 검사의 유형 비교와는 다른 준비가 필요합니다.","excludeFromCompare":true},"B":{"text":"과학고나 영재학교에 관심이 있다고 하셨습니다. 전형 방식과 준비 기간이 일반 고교 선택과 크게 다르니 먼저 전형 일정을 확인해 보세요."},"C":{}}},"stage5":{"name":"최종 분류","buckets":[{"id":"primary","title":"현재 우선 검토할 수 있는 유형","when":"현실 조건을 통과하고, 학력 위치가 안쪽이며, 환경 우려 표시가 없다"},{"id":"conditional","title":"조건을 확인한 뒤 검토할 유형","when":"통과했지만 환경 우려나 비용 조정, 학력 위치 바깥, 교육과정 확인이 필요하다"},{"id":"low","title":"현재 우선순위가 낮은 유형","when":"통학·기숙으로 닿지 않거나, 현재 학력 위치가 지원자 범위 밖이다"}],"noRanking":true,"note":"묶음 안에서 점수로 줄 세우지 않는다. 후보가 둘 이상이면 TB로 순서만 확인한다.","tie":{"askTB1":"primary 묶음에 유형이 둘 이상","askTB2":"외고·국제고가 남았고 외국어·국제 관심이 함께 있다","note":"TB1의 A·B를 특정 학교 유형에 1대 1로 대응시키지 않는다. 남아 있는 실제 후보의 성격과 연결한다.","questions":{"TB1":"primary 묶음에 유형이 둘 이상일 때","TB2":"외고·국제고가 남았고 외국어·국제 관심이 함께 있을 때"}}},"gradeFrames":{"e34":{"typeRanking":false,"sections":["study_profile","management","competition","interest","observe"],"title":"지금 살펴볼 것","note":"학교 유형을 좁히지 않는다.","caveat":"이 학년에서는 시험을 전제한 문항을 묻지 않았습니다. 시험 특성에 대한 항목은 결과에 나오지 않습니다."},"e56":{"typeRanking":false,"sections":["study_profile","management","competition","interest","observe","middle_school_check"],"note":"중학교에서 확인할 것 2~3개를 덧붙인다.","caveat":"이 학년에서는 시험을 전제한 문항을 묻지 않았습니다. 시험 특성에 대한 항목은 결과에 나오지 않습니다."},"m1":{"typeRanking":true,"caveat":"중학교 1학년 성적은 아직 변동 폭이 큽니다. 1년 뒤에 다시 확인해 보세요."},"m2":{"typeRanking":true},"m3":{"typeRanking":true},"h1":{"typeRanking":false,"frame":"review","title":"현재 학교에서 확인할 것","note":"새 고교 선택 순위를 내지 않는다. 전학·재입학을 검토 중이라면 그 관점으로 안내한다."},"e12":{"typeRanking":false,"sections":["study_profile","management","interest","observe"],"title":"지금 살펴볼 것","frame":"early","note":"고교 선택을 정할 시기가 아닙니다. 지금은 공부 습관이 자리를 잡는 때라, 아래 관찰 항목만 참고하시면 됩니다.","caveat":"이 학년에서는 시험을 전제한 문항을 묻지 않았습니다. 시험 특성에 대한 항목은 결과에 나오지 않습니다."}},"sincerity":{"flagAt":1,"checks":[{"id":"pace","name":"응답 속도","rule":"문항당 평균 3초 미만","note":"이것만 단독으로도 재확인 안내를 띄운다."},{"id":"straight","name":"같은 위치 직진","rule":"freq5 문항 네 개가 모두 같은 값이고 동시에 interest4 여섯 개도 모두 같은 값","note":"둘 다 성립할 때만 표시한다. 한쪽만으로는 불성실로 보지 않는다."}],"removedPairs":["T1↔T4","Q2↔Q4","P1-1↔P1-2"],"removedReason":"서로 다른 상황·개념이라 같은 답을 기대할 근거가 없다. 모순 쌍이 아니다.","screen":{"title":"확인이 필요한 문항이 있습니다","text":"답변이 빠르게 진행된 문항이 몇 개 있습니다. 결과를 보기 전에 이 문항들만 한 번 확인해 주세요.","skip":"그대로 결과 보기"}},"resultSections":[{"id":"study_profile","title":"답변에서 확인된 공부 성향","style":"응답 → 해석 → 학교 선택에 미치는 영향"},{"id":"interest","title":"아이가 더 관심을 보인 활동"},{"id":"buckets","title":"학교 유형 세 묶음"},{"id":"checklist","title":"학교별로 반드시 확인할 것"},{"id":"next","title":"이번 학기에 할 일"},{"id":"gap","title":"보호자와 아이의 응답이 다른 부분","optional":true},{"id":"context","title":"적어 주신 내용","optional":true}],"checklist":[{"t":"아이 관심 분야와 문·이과 색이 반대인 학교","d":"선택 과목마다 이수 인원이 적어 손해를 볼 수 있습니다. 설명회나 입학처에서 문·이과 대략의 비율을 물어보세요."},{"t":"졸업생 진로 현황","d":"학교알리미에서 학교 이름을 넣으면 졸업생이 어디로 갔는지 공시됩니다."},{"t":"관심 과목의 실제 개설 여부","d":"편제표에서 그 과목이 열리는지, 듣는 인원이 몇 명인지 확인하세요."}],"legacy":{"v2SchemaKey":"guide_v2_responses","readOnly":true,"note":"과거 v2 응답은 관리자 화면에서 버전 표시 후 구버전 형식으로 열람만 한다. 새 판정 로직을 적용하지 않는다."},"visibility":{"requires":"문항의 requires가 학년의 has에 모두 들어 있어야 띄운다.","note":"전제를 못 채우는 학년에게 그 문항을 보여 주지 않는다. 답할 수 없는 질문을 만들지 않기 위한 규칙이다."}};
+/* ═══ 판정 엔진 — RULES.json 만 읽는다. 하드코딩 금지 ═══ */
+const QI={}; QUESTIONS.questions.forEach(q=>QI[q.id]=q);
+const TRACKS=QUESTIONS.tracks, TN={}; TRACKS.forEach(t=>TN[t.id]=t.name);
+const FREQ=QUESTIONS.scales.freq5.labels;           // 거의 매번 … 전혀 없다
+const fval=v=>Number(v);                            // 5=거의 매번 … 1=전혀 없다
+const lvl=(id,v)=>{const o=(QI[id].options||[]).find(o=>o.value===v);return o?(o.lvl||0):0;};
+const pole=(id,v)=>{const o=(QI[id].options||[]).find(o=>o.value===v);return o?o.pole:null;};
 
-// 관리자 비밀번호 (코드에서 직접 변경하세요)
-// ※ 클라우드 모드를 쓰면 이 값은 사용하지 않고 Supabase에 저장된 비밀번호로 검증됩니다.
-const ADMIN_PASSWORD = "guide2026";
-
-// ============================================================
-// ★ 클라우드 동기화 설정 (선택)
-// ============================================================
-// • 비워두면: 이 기기의 localStorage에만 저장 (오프라인 모드)
-// • 채워두면: Supabase 클라우드에 자동 저장 → 어느 기기에서나
-//             관리자 비밀번호로 모든 응답을 한 번에 조회 가능
-// 설정 방법은 SUPABASE_설정가이드.md 파일 참고
-// ============================================================
-const SUPABASE_URL = "https://ihiuzfufngmbbresizzo.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_ohhFuQTtx3p7yWjPLXhZxg_2tZ3t67x";
-
-// 관리자 콘솔의 "🔑 검사 링크 발급" 섹션 표시 여부.
-// 게이트가 비활성 상태이고 토큰 RPC가 DB에 없으면 false. 다시 켜려면 true로.
-const TOKENS_UI_ENABLED = false;
-// ============================================================
-
-const isCloudEnabled = () => Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
-let currentAdminPassword = null;  // 관리자 인증 후 세션에 임시 저장
-
-// 7개 고교 유형
-const HS_TYPES = {
-  '일반고':       { sub: '지역 기반 일반고', desc: '내신 중심 전형 접근성 우수, 통학·비용 부담 최소' },
-  '자공고2.0':    { sub: '자율형 공립고',   desc: '일반고 관리시스템 + 학점제 선택과목 확대의 절충형' },
-  '자사고':       { sub: '자율형 사립고',   desc: '내신·학교생활 활동·수능 동시 공략, 강한 또래 효과, 높은 학업 강도' },
-  '외고':         { sub: '외국어고',         desc: '어문·인문·사회·국제 계열 특화, 학교생활 활동 평가에 강점' },
-  '국제고':       { sub: '국제고',           desc: '국제관계·영어·제2외국어 중심, 국제·사회 계열' },
-  '과학고':       { sub: '과학고',           desc: '이공계 진학 전제, 의대 진학 페널티 있음' },
-  '영재학교':     { sub: '영재학교(8교)',   desc: '전국 모집, 이공 심화의 최고 강도, 연구 중심' }
-};
-
-// ============================================================
-// 문항 정의
-// ============================================================
-const QUESTIONS = [
-  // ── 축 A. 학업 성향·학습 체력 (8문항)
-  { id:'A1-1', axis:'A', text:'매일 정해진 양의 공부를 일정하게 끝까지 해낸다.' },
-  { id:'A1-2', axis:'A', text:'숙제·과제가 많아져도 미루지 않고 처리한다.' },
-  { id:'A2-1', axis:'A', text:'친구들과 등수를 비교당해도 흔들리지 않고 내 페이스를 지킨다.' },
-  { id:'A2-2', axis:'A', text:'시험이 자주 있어도 스트레스를 잘 관리할 수 있다.' },
-  { id:'A3-1', axis:'A', text:'누가 시키지 않아도 스스로 공부 계획을 세우고 실행한다.' },
-  { id:'A3-2', axis:'A', text:'모르는 문제를 만나면 검색·질문·인강으로 직접 해결한다.' },
-  { id:'A4-1', axis:'A', text:'또래보다 한 학기~1년 정도 앞선 내용도 어렵지 않게 이해한다.' },
-  { id:'A4-2', axis:'A', text:'한 가지 주제를 깊게 파고드는 것을 좋아한다.' },
-
-  // ── 축 B. 진로 명확도 (5문항 + 계열 선택은 별도)
-  { id:'B1-1', axis:'B', text:'내가 가고 싶은 직업이나 분야가 명확하다.' },
-  { id:'B1-2', axis:'B', text:'그 분야를 위해 지금 무엇을 해야 하는지 알고 있다.' },
-  { id:'B2',   axis:'B', text:'아래 중 관심 있는 학과/직업을 모두 골라주세요.', type:'multi-career', hint:'2개 이상 골라도 됩니다. 잘 모르겠으면 마지막 항목을 선택하세요.' },
-  { id:'B3-1', axis:'B', text:'한 분야에 꾸준히 관심을 두고 활동(독서·동아리·봉사)을 이어간다.' },
-  { id:'B3-2', axis:'B', text:'내 진로와 관련된 활동·대회 경험이 있다.' },
-
-  // ── 축 C. 입시 전략 (5문항)
-  { id:'C1-1', axis:'C', text:'학교 시험에서 내신을 안정적으로 관리할 자신이 있다.' },
-  { id:'C2-1', axis:'C', text:'큰 시험(중간·기말)에서 평소 실력보다 더 잘 보는 편이다.' },
-  { id:'C3-1', axis:'C', text:'수업 중 발표·과제·보고서(수행평가)에 따로 시간을 투자할 여력이 있다.', hint:'고등학교에서는 시험 점수 외에 수업 활동 기록도 입시에서 큰 비중을 차지해요.' },
-  { id:'C4-1', axis:'C', text:'의대·SKY 같은 최상위권 진학을 목표로 한다.' },
-  { id:'C4-2', axis:'C', text:'한 번의 큰 시험으로 평가받는 것보다, 평소 수업 활동을 꾸준히 잘하는 게 더 잘 맞다.', hint:'대학에 가는 길은 크게 두 가지예요 — ① 시험 한 번으로 평가받는 길 ② 학교에서의 평소 활동·성적 누적으로 평가받는 길.' },
-
-  // ── 축 D. 환경·생활·비용 (5문항, 보호자 응답 권장)
-  { id:'D1-1', axis:'D', text:'통학시간이 편도 60분이 넘어도 감당할 수 있다.', hint:'주로 보호자가 함께 답해주세요.' },
-  { id:'D2-1', axis:'D', text:'기숙사 생활(빨래·식사·일정관리)을 잘 적응할 것 같다.' },
-  { id:'D3-1', axis:'D', text:'연 1,000만원 이상의 학비·기숙사비도 가계 부담 가능하다.' },
-  { id:'D3-2', axis:'D', text:'사교육비를 추가로 감당할 여력이 있다.' },
-  { id:'D4-1', axis:'D', text:'비용은 우리 가정의 핵심 결정 변수가 아니다.' },
-
-  // ── 축 E. 심리·사회성·분위기 (6문항)
-  { id:'E1-1', axis:'E', text:'우열반·등수 공개 같은 경쟁 환경이 오히려 동기부여가 된다.' },
-  { id:'E2-1', axis:'E', text:'비슷한 성적·관심사의 친구들과 어울릴 때 더 편하다.' },
-  { id:'E2-2', axis:'E', text:'다양한 배경의 친구들이 있는 환경을 더 선호한다.', reverse:true },
-  { id:'E3-1', axis:'E', text:'친구가 나보다 잘하면 자존감이 흔들리는 편이다.', reverse:true },
-  { id:'E3-2', axis:'E', text:'비교 상황에서 평정심을 유지할 수 있다.' },
-  { id:'E4-1', axis:'E', text:'선생님과 자주 상담·피드백 받는 환경이 필요하다.' },
-
-  // ── 축 F. 멘탈 유형 (성격 5요인, 10문항) ★신규
-  { id:'F-N1', axis:'F', sub:'N', text:'압박 상황에서도 침착함을 유지하는 편이다.' },
-  { id:'F-N2', axis:'F', sub:'N', text:'실패하거나 안 좋은 일이 있어도 회복이 빠르다.' },
-  { id:'F-E1', axis:'F', sub:'E', text:'사람들과 어울릴 때 에너지를 얻는다.' },
-  { id:'F-E2', axis:'F', sub:'E', text:'발표·토론·리더 역할을 즐기는 편이다.' },
-  { id:'F-C1', axis:'F', sub:'C', text:'약속·마감·계획을 지키는 것이 중요하다.' },
-  { id:'F-C2', axis:'F', sub:'C', text:'시작한 일은 끝까지 마무리해야 마음이 편하다.' },
-  { id:'F-O1', axis:'F', sub:'O', text:'새로운 것·낯선 분야에 도전하는 것을 좋아한다.' },
-  { id:'F-O2', axis:'F', sub:'O', text:'익숙한 방법보다 새로운 방법을 시도해보고 싶다.' },
-  { id:'F-A1', axis:'F', sub:'A', text:'협력·팀 작업에서 만족을 느낀다.' },
-  { id:'F-A2', axis:'F', sub:'A', text:'친구나 가족의 입장을 잘 헤아리는 편이다.' },
-
-  // ── 축 G. 배경 정보 (3문항, 점수 산출 제외 — 컨설팅 메모용)
-  { id:'G1', axis:'G', type:'academic-rank',
-    text:'현재 학교 시험에서 우리 아이의 위치는 어디쯤인가요?',
-    hint:'주로 보호자가 답해주세요. 정확한 등수가 아니어도 괜찮습니다.',
-    choices:[
-      { id:'top5',    label:'상위 5% 이내' },
-      { id:'top10',   label:'상위 10% 이내' },
-      { id:'top30',   label:'상위 30% 이내' },
-      { id:'top50',   label:'상위 50% 이내' },
-      { id:'below50', label:'하위 50%' },
-      { id:'unknown', label:'잘 모르겠어요' }
-    ] },
-  { id:'G2', axis:'G', type:'region',
-    text:'현재 거주지(통학 가능한 권역)를 알려주세요.',
-    hint:'추천된 학교 유형 중 실제로 통학 가능한 학교를 컨설팅에서 안내드릴 때 사용해요.' },
-  { id:'G3', axis:'G', type:'english-level',
-    text:'현재 영어 수준을 가장 잘 설명하는 것을 골라주세요.',
-    hint:'외고·국제고 적합 판단의 보조 자료로만 사용됩니다.',
-    choices:[
-      { id:'advanced', label:'원서·영자신문을 사전 없이 읽을 수 있다' },
-      { id:'upper',    label:'학교 시험뿐 아니라 토익/토플/오픽 같은 외부 시험에서도 잘한다' },
-      { id:'school',   label:'학교 영어 시험은 잘 보지만 외부 시험은 어렵다' },
-      { id:'average',  label:'또래 평균 정도' },
-      { id:'weak',     label:'영어가 약한 편' }
-    ] },
-  { id:'G4', axis:'G', type:'preferred-school',
-    text:'현재 마음에 두고 계신 학교가 있다면 알려주세요.',
-    hint:'학교명을 직접 입력하셔도 되고, "○○고", "외고", "자사고" 등 유형으로 적어도 OK. 비워두셔도 됩니다.',
-    optional:true, maxLength:120 },
-  { id:'G5', axis:'G', type:'relocation',
-    text:'추천된 학교로 진학을 위해 이사도 고려할 수 있나요?',
-    hint:'컨설팅에서 학교 후보 범위를 정할 때 사용됩니다.',
-    choices:[
-      { id:'yes',       label:'가능 — 학군이 좋은 곳으로 이사 고려 중' },
-      { id:'maybe',     label:'조건부 가능 — 학교에 따라 검토 가능' },
-      { id:'no',        label:'어려움 — 현 거주지 유지 예정' },
-      { id:'unknown',   label:'잘 모르겠어요' }
-    ] },
-
-  // ── 축 H. 자유서술 (3문항, 모두 선택입력 — 컨설팅 대화 트리거)
-  { id:'H1', axis:'H', type:'freetext', optional:true, maxLength:200,
-    text:'지금 고교 선택에서 가장 큰 고민은 무엇인가요?',
-    hint:'보호자가 한두 줄로 적어주세요. 200자 이내. (선택)' },
-  { id:'H2', axis:'H', type:'freetext', optional:true, maxLength:200,
-    text:'최근 1년간 아이에게 생긴 가장 큰 변화는 무엇인가요?',
-    hint:'공부, 친구관계, 진로, 정서 어느 쪽이든 좋습니다. 200자 이내. (선택)' },
-  { id:'H3', axis:'H', type:'freetext', optional:true, maxLength:200,
-    text:'내가 고등학교를 고를 때 가장 중요하게 생각하는 건 무엇인가요?',
-    hint:'아이가 직접 답해주세요. 한두 줄로 충분해요. (선택)' },
-];
-
-// ── 거주지 G2 — 시/도 옵션
-const SIDO_OPTIONS = [
-  '서울특별시', '부산광역시', '대구광역시', '인천광역시', '광주광역시',
-  '대전광역시', '울산광역시', '세종특별자치시',
-  '경기도', '강원특별자치도', '충청북도', '충청남도',
-  '전북특별자치도', '전라남도', '경상북도', '경상남도', '제주특별자치도'
-];
-
-// ── 학력 위치 → 학력 cap 정의 (멘탈 cap과 동일 패턴)
-const ACADEMIC_RANK_LABELS = {
-  top5:'상위 5% 이내', top10:'상위 10% 이내', top30:'상위 30% 이내',
-  top50:'상위 50% 이내', below50:'하위 50%', unknown:'잘 모르겠어요'
-};
-const ENGLISH_LEVEL_LABELS = {
-  advanced:'원서·영자신문 독해 가능',
-  upper:'외부 영어 시험에서도 우수',
-  school:'학교 영어 시험에 강함',
-  average:'또래 평균',
-  weak:'영어가 약한 편'
-};
-const RELOCATION_LABELS = {
-  yes:'이사 가능 (학군 고려 중)',
-  maybe:'조건부 가능',
-  no:'어려움 (현 거주지 유지)',
-  unknown:'잘 모르겠음'
-};
-
-// ── 계열 선택지 (B2 문항 — 가이드의 §2 표 그대로 임베드)
-const CAREER_TRACKS = [
-  { id:'eng', name:'이공 계열',
-    majors:'기계·전기전자·컴퓨터/AI·SW·화학·생명·수학·물리·건축·산업·의예/치의예/한의예·약학·간호·수의',
-    jobs:'엔지니어, 개발자/프로그래머, 연구원, 의사·치과의사·한의사·약사·간호사·수의사, 로봇·AI 개발자',
-    tracks:{eng:1.0} },
-  { id:'hum', name:'인문 계열',
-    majors:'국문·영문·사학·철학·문예창작·언어학·종교학·고고학',
-    jobs:'작가, 기자, 번역가, 학예연구사, 국어·영어 교사, 출판편집자',
-    tracks:{hum:1.0} },
-  { id:'soc', name:'사회 계열',
-    majors:'경영·경제·정치외교·행정·법학·사회학·심리·사회복지·교육·미디어/언론·광고홍보',
-    jobs:'회계사·변호사·판사·검사, 경영컨설턴트, 마케터, 심리상담사, 사회복지사, PD·기자·광고기획자',
-    tracks:{soc:1.0} },
-  { id:'lang', name:'외국어 계열',
-    majors:'중·일·스페인·프랑스·독일·아랍·러시아·베트남·태국어, 통번역, 지역학(유럽·중남미·아시아)',
-    jobs:'외교관, 통역사·번역가, 해외 영업/무역, 해외 공관·상사 주재원, 외국어 교사',
-    tracks:{lang:1.0} },
-  { id:'intl', name:'국제 계열',
-    majors:'국제학부·국제관계·외교학·국제통상·국제개발협력·글로벌 리더십·자유전공',
-    jobs:'외교관, 국제기구(UN·OECD) 직원, 국제변호사, 해외 NGO, 글로벌 기업 본사/해외지사',
-    tracks:{intl:1.0} },
-  { id:'mix-psy', name:'심리·교육 (인문·사회 혼합)',
-    majors:'심리학·교육학·아동학·상담학',
-    jobs:'심리상담사, 교사, 임상심리사, 청소년상담사',
-    tracks:{soc:0.7, hum:0.3} },
-  { id:'mix-cre', name:'예술·콘텐츠 (인문·이공 혼합)',
-    majors:'문화콘텐츠·디자인·미디어공학·게임공학·영상',
-    jobs:'콘텐츠 기획자, 디자이너, 게임 개발자, 영상 제작자',
-    tracks:{hum:0.5, eng:0.5} },
-  { id:'unsure', name:'아직 잘 모르겠어요', isUnsure:true,
-    majors:'지금 단계에서는 다양한 분야를 탐색하는 것이 더 중요해요.',
-    jobs:'천천히 찾아도 괜찮습니다. 일반고·자공고2.0 등 탐색 친화적인 환경이 추천됩니다.',
-    tracks:{} }
-];
-
-// 5점 척도
-const LIKERT_LABELS = ['전혀\n그렇지 않다', '그렇지\n않은 편', '보통이다', '그런\n편이다', '매우\n그렇다'];
-
-// ============================================================
-// 스코어링 가중치
-// ============================================================
-// ★ 축별 점수가 높을 때 각 고교 유형에 부여하는 보너스
-// 자사고/특목고가 압도적으로 유리하지 않도록 격차 완화. 일반고·자공고도 충분히 경쟁력 있게.
-const AXIS_TYPE_WEIGHTS = {
-  // 축 A: 학업 체력 高 → 강도 높은 학교만 살짝 우위
-  A: { '일반고': 0.8, '자공고2.0': 0.9, '자사고': 1.0, '외고': 0.7, '국제고': 0.7, '과학고': 1.0, '영재학교': 1.0 },
-  // 축 B: 진로 명확도
-  B: { '일반고': 0.6, '자공고2.0': 0.6, '자사고': 0.7, '외고': 0.9, '국제고': 0.9, '과학고': 1.0, '영재학교': 1.0 },
-  // 축 C: 입시 전략
-  C: { '일반고': 0.8, '자공고2.0': 0.9, '자사고': 1.0, '외고': 0.8, '국제고': 0.8, '과학고': 0.9, '영재학교': 0.9 },
-  // 축 D: 환경·비용 — 점수 높을수록 비용 큰 학교 가능
-  D: { '일반고': 0.3, '자공고2.0': 0.4, '자사고': 1.0, '외고': 0.8, '국제고': 0.8, '과학고': 0.5, '영재학교': 0.5 },
-  // 축 E: 심리·사회 — 경쟁 내성 高
-  E: { '일반고': 0.5, '자공고2.0': 0.7, '자사고': 1.0, '외고': 0.8, '국제고': 0.8, '과학고': 1.0, '영재학교': 1.0 },
-  // 축 F: 멘탈 유형 — 안정성 高
-  F: { '일반고': 0.7, '자공고2.0': 0.9, '자사고': 1.0, '외고': 0.8, '국제고': 0.8, '과학고': 1.0, '영재학교': 1.0 },
-};
-
-// 계열별 고교 유형 적합도
-// ★ 외고는 외국어(lang)·국제는 국제고에서만 압도적. 인문·사회·교육은 일반고/자공고/자사고가 메인.
-const TRACK_TYPE_BONUS = {
-  // 이공 — 과학고/영재학교 우위지만 일반고·자사고도 충분히 강한 옵션
-  eng:  { '과학고': 2.5, '영재학교': 2.5, '자사고': 1.2, '일반고': 0.8, '자공고2.0': 0.8, '외고': -2.0, '국제고': -1.5 },
-  // 인문(국문·영문·사학·철학·문예창작 등) — 일반고가 메인. 외고는 어문 한정(여기선 lang으로 분리)
-  hum:  { '일반고': 1.2, '자공고2.0': 1.2, '자사고': 1.0, '외고': 0.5, '국제고': 0.3, '과학고': -2.0, '영재학교': -2.5 },
-  // 사회·교육·심리(경영·경제·정외·법·심리·교육 등) — 일반고/자공고/자사고가 동등하게 강함
-  soc:  { '일반고': 1.2, '자공고2.0': 1.2, '자사고': 1.0, '국제고': 0.6, '외고': 0.5, '과학고': -1.5, '영재학교': -2.0 },
-  // 외국어 특화 — 외고가 압도적
-  lang: { '외고': 3.0, '국제고': 1.8, '자사고': 0.5, '일반고': 0.5, '자공고2.0': 0.5, '과학고': -2.0, '영재학교': -2.5 },
-  // 국제 — 국제고가 압도적
-  intl: { '국제고': 3.0, '외고': 1.5, '자사고': 1.0, '일반고': 0.6, '자공고2.0': 0.6, '과학고': -2.0, '영재학교': -2.5 },
-};
-
-// 멘탈 유형(F축 5요인) 매핑 → 고교 유형 추가 가중치
-// ★ 정서적 안정성(N)을 가장 결정적 변수로. 멘탈 약하면 강도 높은 학교 모두 페널티.
-function mentalTypeBonus(big5) {
-  // big5 = {N, E, C, O, A} 각 0~100
-  const bonus = {'일반고':0, '자공고2.0':0, '자사고':0, '외고':0, '국제고':0, '과학고':0, '영재학교':0};
-
-  // 정서적 안정성(N) — 가장 결정적. 회복형은 강도 높은 학교 모두 부적합.
-  if (big5.N < 35) {
-    // 매우 낮음: 강한 회복 우선
-    bonus['일반고']    += 2.5;
-    bonus['자공고2.0'] += 2.8;
-    bonus['자사고']    -= 4.0;
-    bonus['외고']      -= 3.5;
-    bonus['국제고']    -= 3.5;
-    bonus['과학고']    -= 3.5;
-    bonus['영재학교']  -= 4.5;
-  } else if (big5.N < 50) {
-    // 중하: ★ 사용자 케이스. 외고/국제고/자사고/특목 모두 부적합 신호.
-    bonus['일반고']    += 1.8;
-    bonus['자공고2.0'] += 2.0;
-    bonus['자사고']    -= 2.8;
-    bonus['외고']      -= 2.3;
-    bonus['국제고']    -= 2.3;
-    bonus['과학고']    -= 2.3;
-    bonus['영재학교']  -= 3.0;
-  } else if (big5.N < 60) {
-    // 평균: 약간의 보정만
-    bonus['일반고']    += 0.4;
-    bonus['자공고2.0'] += 0.4;
-    bonus['자사고']    -= 0.5;
-    bonus['영재학교']  -= 0.7;
-  } else if (big5.N >= 75) {
-    // 매우 높음: 강철 멘탈
-    bonus['자사고']    += 1.0;
-    bonus['영재학교']  += 1.0;
-    bonus['과학고']    += 1.0;
-    bonus['외고']      += 0.5;
-    bonus['국제고']    += 0.5;
+function position(a){
+  if(a.B1==='A'){
+    const g=a.B2||{}, ks=Object.keys(g);
+    if(ks.length===5&&ks.every(k=>g[k].raw!==''&&g[k].mean!=='')){
+      const ds=ks.map(k=>+g[k].raw-+g[k].mean), raws=ks.map(k=>+g[k].raw);
+      const d=ds.reduce((x,y)=>x+y,0)/5, mn=Math.min(...raws);
+      for(const b of RULES.stage2.measured.bands)
+        if(d>=b.delta&&(b.minRaw===undefined||mn>=b.minRaw)) return {pos:b.pos,src:'measured'};
+    } return null;
   }
-  // 외향성(E) — 높으면 다양한 또래 환경에서 강점
-  if (big5.E >= 65) {
-    bonus['외고']     += 0.8;
-    bonus['국제고']   += 0.8;
-    bonus['자사고']   += 0.4;
-  } else if (big5.E < 35) {
-    bonus['일반고']   += 0.4;
-    bonus['자공고2.0']+= 0.4;
-    bonus['과학고']   += 0.5;  // 내향+탐구 친화
+  const o=(QI.B3.options||[]).find(o=>o.value===a.B3);
+  if(!o||o.noInfo) return null;
+  const M=RULES.stage2.simple.map; let p=M[String(o.score)];
+  if(p===undefined) return null;
+  const lo=(QI.B4.options||[]).find(o=>o.value===a.B4);
+  let pushed=false;
+  if(lo&&!lo.noInfo){
+    const order=QI.B3.options.filter(x=>!x.noInfo).map(x=>x.value);
+    const gap=order.indexOf(a.B4)-order.indexOf(a.B3);
+    if(gap>=2){ const vals=Object.values(M); const i=vals.indexOf(p);
+      if(i>=0&&i<vals.length-1){p=vals[i+1];pushed=true;} }
   }
-  // 성실성(C) — 높으면 거의 모든 학교에 +
-  if (big5.C >= 65) {
-    bonus['자사고']   += 0.6;
-    bonus['과학고']   += 0.7;
-    bonus['영재학교'] += 0.7;
-    bonus['외고']     += 0.4;
-    bonus['국제고']   += 0.4;
-  } else if (big5.C < 40) {
-    bonus['자사고']   -= 0.8;
-    bonus['과학고']   -= 0.8;
-    bonus['영재학교'] -= 0.8;
-    bonus['일반고']   += 0.5;
-    bonus['자공고2.0']+= 0.7;
-  }
-  // 개방성(O) — 높으면 도전·다양성 환경
-  if (big5.O >= 65) {
-    bonus['외고']     += 0.5;
-    bonus['국제고']   += 0.6;
-    bonus['영재학교'] += 0.5;
-  }
-  // 우호성(A) — 높으면 협력적 환경, 낮으면 경쟁환경 가능
-  if (big5.A < 40) {
-    bonus['자사고']   += 0.3;
-    bonus['영재학교'] += 0.3;
-  }
-  return bonus;
+  return {pos:p,src:'simple',lowestPushed:pushed};
+}
+function signals(a){
+  const S={};
+  const rec=(lvl('F1',a.F1)+lvl('F2',a.F2))/2;
+  S.recovery={v:rec,low:rec>0&&rec<=2};
+  const hi=['D1','D2','D3'].filter(i=>fval(a[i])>=4).length;
+  S.selfStandard={n:hi,high:hi>=2};
+  const e1=fval(a.E1)>=4, e2=pole('E2',a.E2);
+  S.competition={fuel:e1&&e2==='fuel',steady:e2==='steady'};
+  let ef=null; const asked=a.C1!==undefined||a.C2!==undefined;
+  const g=a.B5f, pp=position(a);
+  if(g&&pp){const vs=Object.values(g).map(Number).filter(x=>x>0);
+    if(vs.length){const avg=vs.reduce((x,y)=>x+y,0)/vs.length;
+      if(pp.pos<=20&&avg>=3) ef='prepared'; if(pp.pos>50&&avg<=2) ef='unbounded';}}
+  if(!ef&&asked){const p1=pole('C1',a.C1),p2=pole('C2',a.C2);
+    ef=(p1==='prepared'||p2==='prepared')&&!(p1==='unbounded'&&p2==='unbounded')?'prepared':'unbounded';
+    if(p1===p2) ef=p1||'prepared';}
+  S.examFit={mode:ef,measured:!!(g&&pp),asked:asked};
+  const gd=(pole('G1',a.G1)==='guided'&&pole('G2',a.G2)==='guided')||lvl('G3',a.G3)<=2;
+  S.selfMgmt={guided:gd};
+  S.peer={mode:pole('K3',a.K3)};
+  return S;
+}
+function interest(a){
+  const w={},acc=[];
+  TRACKS.forEach(t=>{const v=a['K5-'+t.id]; w[t.id]=v?Number(v):0;});
+  const vals=Object.values(w);
+  const flat=vals.every(v=>v===vals[0])||!vals.some(v=>v>=3);
+  if(!flat){const s=TRACKS.map(t=>t.id).sort((x,y)=>w[y]-w[x]);
+    const top=w[s[0]];
+    s.forEach(t=>{if(w[t]>=3&&acc.length<2&&(w[t]===top||acc.length===0||w[t]===w[s[0]]))acc.push(t);});
+    if(!acc.length&&w[s[0]]>=3)acc.push(s[0]);
+    if(acc.length<2&&w[s[1]]>=3&&w[s[1]]===w[s[0]])acc.push(s[1]);}
+  return {w,acc,flat};
+}
+function evaluate(a){
+  const gid=a.A1, gf=RULES.gradeFrames[gid]||{};
+  const T={}; RULES.types.forEach(t=>T[t.id]=t);
+  const state={}; RULES.types.forEach(t=>state[t.id]={bucket:'primary',reasons:[]});
+  const match=c=>Object.keys(c).every(k=>{const w=c[k],g=a[k];return Array.isArray(w)?w.includes(g):g===w;});
+  RULES.stage1.hard.forEach(r=>{ if(match(r.if)) r.limit.forEach(t=>{
+    if(state[t]){state[t].bucket='low';state[t].reasons.push({kind:r.reason,text:r.text});}});});
+  RULES.stage1.soft.forEach(r=>{ if(match(r.if)) r.flag.forEach(t=>{
+    if(state[t]&&state[t].bucket==='primary'){state[t].bucket='conditional';state[t].reasons.push({kind:r.reason,text:r.text});}});});
+  const P=gf.typeRanking?position(a):null;
+  if(P) RULES.types.forEach(t=>{
+    if(state[t.id].bucket==='low')return;
+    const p=P.pos/t.groupPct*100;
+    if(p>RULES.stage2.cut.outOfGroup){state[t.id].bucket='low';
+      state[t.id].reasons.push({kind:'position',text:'현재 성적 위치로는 이 유형의 지원자 범위 밖입니다.'});}
+    else if(p>RULES.stage2.cut.inside&&state[t.id].bucket==='primary'){state[t.id].bucket='conditional';
+      state[t.id].reasons.push({kind:'position',text:'현재 성적 위치에서는 이 유형에 들어가더라도 상위권 유지가 쉽지 않을 수 있습니다. 한 학기 뒤 다시 확인해 보세요.'});}});
+  const S=signals(a), obs=[];
+  const push=(t,sec)=>obs.push({text:t,sec:sec||'study_profile'});
+  const dense=RULES.types.filter(t=>t.dense).map(t=>t.id);
+  const soften=(txt,kind)=>dense.forEach(t=>{
+    if(state[t].bucket==='primary'){state[t].bucket='conditional';}
+    if(state[t].bucket!=='low') state[t].reasons.push({kind:kind,text:txt});});
+  const g3=RULES.stage3.signals;
+  const sig=id=>g3.find(s=>s.id===id);
+  if(S.recovery.low){push(sig('recovery').low.text);soften(sig('recovery').low.text,'recovery');}
+  if(S.selfStandard.high){push(sig('self_standard').high.text);soften(sig('self_standard').high.text,'self_standard');}
+  if(S.competition.fuel) push(sig('competition').fuel.text);
+  else if(S.competition.steady){push(sig('competition').steady.text);soften(sig('competition').steady.text,'competition');}
+  if(S.examFit.mode) push(sig('exam_fit')[S.examFit.mode].text);
+  push(S.selfMgmt.guided?sig('self_management').guided.text:sig('self_management').self.text);
+  if(S.peer.mode) push(sig('peer_pref')[S.peer.mode].text);
+  const IT=interest(a);
+  const stated=(a.K4||[]).filter(x=>x!=='none');
+  const picks=stated.length?stated:IT.acc;
+  if(picks.length&&!picks.includes('lang')&&!picks.includes('intl')){
+    const t='외고·국제고'; if(state[t]&&state[t].bucket==='primary'){state[t].bucket='conditional';}
+    if(state[t]&&state[t].bucket!=='low') state[t].reasons.push({kind:'curriculum',text:RULES.stage4.curriculum[0].text});}
+  const notes=[];
+  if(picks.some(p=>p==='eng'||p==='med')) notes.push(RULES.stage4.curriculum[1].text);
+  if(picks.includes('soc')) notes.push(RULES.stage4.curriculum[2].text);
+  let branch=null;
+  if(a.H1&&RULES.stage4.branch[a.H1]&&RULES.stage4.branch[a.H1].text) branch=RULES.stage4.branch[a.H1];
+  const gaps=[];
+  if(pole('G1',a.G1)==='guided'&&pole('K2',a.K2)==='self') gaps.push(RULES.stage3.gapReport.text);
+  if(pole('E2',a.E2)==='steady'&&pole('K1',a.K1)==='fuel')
+    gaps.push('아이는 잘하는 친구가 많은 반에서 공부가 더 잘될 것 같다고 했고, 보호자는 잘하고 있다는 느낌이 있을 때 안정적이라고 보셨습니다. 실제로 성적이 흔들렸던 시기에 어떻게 반응했는지 함께 떠올려 보세요.');
+  const buckets={primary:[],conditional:[],low:[]};
+  RULES.types.forEach(t=>buckets[state[t.id].bucket].push({id:t.id,reasons:state[t.id].reasons}));
+  return {grade:gid,frame:gf,pos:P,signals:S,obs,interest:IT,picks,stated,notes,branch,gaps,buckets,
+          needTB1:gf.typeRanking&&buckets.primary.length>=2,
+          needTB2:gf.typeRanking&&buckets.primary.concat(buckets.conditional).some(b=>b.id==='외고·국제고')
+                  &&(picks.includes('lang')&&picks.includes('intl'))};
+}
+function sincerity(a,ms){
+  const f=[];
+  const n=Object.keys(a).length;
+  if(ms&&n>0&&ms/n<3000) f.push('pace');
+  const fr=['D1','D2','D3','E1'].map(i=>a[i]).filter(Boolean);
+  const it=TRACKS.map(t=>a['K5-'+t.id]).filter(Boolean);
+  if(fr.length>=4&&new Set(fr).size===1&&it.length>=6&&new Set(it).size===1) f.push('straight');
+  return f;
 }
 
-// 멘탈 유형 분류 (6가지) — ★ 보호형 임계값 N<50으로 상향(이전 40)
-function classifyMentalType(big5) {
-  const {N, E, C, O, A} = big5;
-  // 우선순위 규칙 적용 — 정서적 안정성이 평균 이하면 무조건 보호형
-  if (N < 50) {
-    return {
-      key: 'protective',
-      name: '회복·보호형',
-      icon: '保',
-      tone: 'rose',
-      summary: '감정 회복력이 아직 충전 중인 시기예요. 경쟁이 강한 환경보다는 선생님의 관리·피드백이 촘촘한 곳이 안전합니다. 이 유형은 환경을 잘못 고르면 회복이 더 길어질 수 있어요.',
-      strength: ['세심함', '공감 능력', '신중한 의사결정'],
-      careful: ['치열한 비교 환경', '서열 공개 분위기', '익명성이 큰 대형 학교'],
-      fitTypes: ['일반고', '자공고2.0']
-    };
-  }
-  if (N >= 70 && C >= 65) {
-    return {
-      key: 'resilient',
-      name: '강철 멘탈형',
-      icon: '剛',
-      tone: 'teal',
-      summary: '높은 압박 속에서도 흔들리지 않고 끝까지 밀어붙이는 유형입니다. 강도 높은 학교에서도 무너지지 않아요.',
-      strength: ['감정 안정', '꾸준함', '회복 탄력성'],
-      careful: ['혼자 다 짊어지지 않기', '번아웃 신호 점검'],
-      fitTypes: ['자사고', '영재학교', '과학고']
-    };
-  }
-  if (O >= 65 && E >= 60) {
-    return {
-      key: 'explorer',
-      name: '도전·탐험형',
-      icon: '探',
-      tone: 'amber',
-      summary: '새로운 사람·아이디어·환경에 끌리는 유형. 다양성과 자극이 많은 학교에서 빛납니다.',
-      strength: ['호기심', '주도성', '사교성'],
-      careful: ['깊이 vs 넓이 균형', '한 분야 집중력'],
-      fitTypes: ['외고', '국제고', '자사고']
-    };
-  }
-  if (C >= 65 && E < 50) {
-    return {
-      key: 'planner',
-      name: '신중·정밀형',
-      icon: '精',
-      tone: 'teal',
-      summary: '계획대로 차근차근 쌓아 올리는 스타일. 조용한 몰입이 잘 통하는 환경에서 강해요.',
-      strength: ['정확성', '책임감', '깊이 있는 사고'],
-      careful: ['갑작스러운 변화 적응', '발표·네트워킹 훈련'],
-      fitTypes: ['일반고', '자공고2.0', '과학고']
-    };
-  }
-  if (A >= 65 && E >= 55) {
-    return {
-      key: 'connector',
-      name: '공감·협력형',
-      icon: '和',
-      tone: 'amber',
-      summary: '사람과 사람 사이에서 빛나는 유형. 협력·팀활동이 많은 환경에서 동기부여가 잘 됩니다.',
-      strength: ['공감 능력', '팀워크', '관계 지능'],
-      careful: ['타인의 페이스에 휩쓸리지 않기', '내 의견 말하기'],
-      fitTypes: ['일반고', '자공고2.0', '외고']
-    };
-  }
-  // 그 외 — 균형형
-  return {
-    key: 'balanced',
-    name: '균형·탐색형',
-    icon: '衡',
-    tone: 'teal',
-    summary: '특정 방향으로 치우치지 않은 유형이에요. 지금은 다양한 환경을 탐색해 보는 것이 좋습니다.',
-    strength: ['적응력', '균형 감각', '유연성'],
-    careful: ['색깔 찾기', '나만의 강점 키우기'],
-    fitTypes: ['일반고', '자공고2.0']
-  };
-}
-
-// ============================================================
-// 점수 계산 메인 함수
-// ============================================================
-function computeScores(answers, careerSelections, background) {
-  background = background || {};
-  // 1. 축별 점수 (0-100 정규화) — A~F만 점수 산출, G/H는 정보용
-  const axes = {A:[], B:[], C:[], D:[], E:[], F:[]};
-  const axisDetail = {};
-
-  QUESTIONS.forEach(q => {
-    if (q.type === 'multi-career') return;
-    if (q.axis === 'G' || q.axis === 'H') return; // 배경/자유서술은 점수 산출 제외
-    const ans = answers[q.id];
-    if (ans == null) return;
-    let val = ans;
-    if (q.reverse) val = 6 - val; // 역문항
-    axes[q.axis].push(val);
-    if (!axisDetail[q.axis]) axisDetail[q.axis] = [];
-    axisDetail[q.axis].push({ id: q.id, sub: q.sub, val });
-  });
-
-  const axisScore = {};
-  Object.keys(axes).forEach(k => {
-    if (axes[k].length === 0) { axisScore[k] = 50; return; }
-    const avg = axes[k].reduce((a,b)=>a+b,0) / axes[k].length;  // 1-5
-    axisScore[k] = Math.round(((avg - 1) / 4) * 100);            // 0-100
-  });
-
-  // 2. 멘탈 유형 (F축 하위 — 5요인 별도 점수)
-  const big5 = {N:50, E:50, C:50, O:50, A:50};
-  ['N','E','C','O','A'].forEach(sub => {
-    const items = (axisDetail.F || []).filter(it => it.sub === sub);
-    if (items.length === 0) return;
-    const avg = items.reduce((a,b)=>a+b.val,0) / items.length;
-    big5[sub] = Math.round(((avg - 1) / 4) * 100);
-  });
-  const mental = classifyMentalType(big5);
-
-  // 3. 7개 고교 유형별 적합도 점수
-  const typeScores = {};
-  Object.keys(HS_TYPES).forEach(t => typeScores[t] = 0);
-
-  // (a) 축 점수 × 가중치
-  Object.keys(AXIS_TYPE_WEIGHTS).forEach(ax => {
-    const score = axisScore[ax] || 50;
-    // 50을 기준으로 하여 +-50 범위 → -1.0 ~ +1.0 normalized
-    const norm = (score - 50) / 50;
-    Object.keys(AXIS_TYPE_WEIGHTS[ax]).forEach(t => {
-      typeScores[t] += norm * AXIS_TYPE_WEIGHTS[ax][t] * 10;
-    });
-  });
-
-  // (b) 계열 선택 보너스
-  const careerHasUnsure = careerSelections.includes('unsure');
-  const realCareers = careerSelections.filter(id => id !== 'unsure');
-
-  if (careerHasUnsure || realCareers.length === 0) {
-    // 잘 모르겠다 → 탐색 친화적 학교 가산
-    typeScores['일반고'] += 4;
-    typeScores['자공고2.0'] += 4;
-    typeScores['자사고'] -= 2;
-    typeScores['외고'] -= 1.5;
-    typeScores['국제고'] -= 1.5;
-    typeScores['과학고'] -= 2;
-    typeScores['영재학교'] -= 2;
-  } else {
-    // 선택한 계열들의 가중 평균 적용
-    const trackWeights = {eng:0, hum:0, soc:0, lang:0, intl:0};
-    realCareers.forEach(careerId => {
-      const c = CAREER_TRACKS.find(x => x.id === careerId);
-      if (!c) return;
-      Object.keys(c.tracks).forEach(t => {
-        trackWeights[t] += c.tracks[t];
-      });
-    });
-    // 정규화 (선택 개수로 나눔)
-    const totalWeight = Object.values(trackWeights).reduce((a,b)=>a+b,0) || 1;
-    Object.keys(trackWeights).forEach(t => {
-      const w = trackWeights[t] / totalWeight;
-      const bonus = TRACK_TYPE_BONUS[t];
-      if (!bonus) return;
-      Object.keys(bonus).forEach(hs => {
-        typeScores[hs] += w * bonus[hs] * 4;
-      });
-    });
-  }
-
-  // (c) 멘탈 유형 보너스
-  const mentalBonus = mentalTypeBonus(big5);
-  Object.keys(mentalBonus).forEach(t => typeScores[t] += mentalBonus[t]);
-
-  // (d) 0-100 스케일로 변환
-  // 모든 점수를 50을 기준으로 옮긴 뒤 양수로 만들기
-  const finalScores = {};
-  Object.keys(typeScores).forEach(t => {
-    finalScores[t] = Math.max(0, Math.min(100, Math.round(50 + typeScores[t] * 1.5)));
-  });
-
-  // (e) ★ 멘탈 보호 후처리: 정서적 안정성이 낮으면 특목고 점수에 절대 cap 적용
-  // 단순 가중치만으로는 다른 축이 매우 높을 때 특목고가 다시 상위로 올라올 위험이 있음.
-  // 멘탈 약 → 특목고는 환경 자체가 회복을 막을 수 있어 사실상 추천에서 배제.
-  const SPECIAL_TYPES = ['자사고', '외고', '국제고', '과학고', '영재학교'];
-  let mentalCap = null;
-  if (big5.N < 35) {
-    SPECIAL_TYPES.forEach(t => { finalScores[t] = Math.min(finalScores[t], 30); });
-    mentalCap = 'severe';
-  } else if (big5.N < 50) {
-    SPECIAL_TYPES.forEach(t => { finalScores[t] = Math.min(finalScores[t], 50); });
-    mentalCap = 'moderate';
-  }
-
-  // (g) ★ 학력 cap (v2.1 신규): 객관적 학력 위치가 따라주지 않으면 특목/자사고 추천 부적절.
-  // 컨설팅장에서 "저희 아이가 그 정도가 안 되는데요" 반응을 구조적으로 막는 안전장치.
-  // unknown은 cap을 발동하지 않되 결과 화면에 안내 1줄만 표시.
-  const HIGH_TIER = ['자사고', '과학고', '영재학교'];
-  let academicCap = null;
-  const academicRank = background.academicRank;
-  if (academicRank === 'below50') {
-    SPECIAL_TYPES.forEach(t => { finalScores[t] = Math.min(finalScores[t], 35); });
-    academicCap = 'severe';
-  } else if (academicRank === 'top50') {
-    HIGH_TIER.forEach(t => { finalScores[t] = Math.min(finalScores[t], 55); });
-    academicCap = 'moderate';
-  } else if (!academicRank || academicRank === 'unknown') {
-    academicCap = 'unknown';
-  }
-
-  // (f) ★ 계열 fit cap: 명확한 계열을 골랐는데 학교 특화 분야와 안 맞으면 자동 후순위
-  // 외고는 외국어, 국제고는 국제, 과학고/영재학교는 이공 특화학교.
-  // 이 계열을 안 골랐다면 그 특목고는 추천 대상에서 자연스럽게 빠져야 한다.
-  const careerCapList = [];
-  if (!careerHasUnsure && realCareers.length > 0) {
-    const trackFlags = { eng: false, lang: false, intl: false };
-    realCareers.forEach(id => {
-      const c = CAREER_TRACKS.find(x => x.id === id);
-      if (!c || !c.tracks) return;
-      if (c.tracks.eng)  trackFlags.eng  = true;
-      if (c.tracks.lang) trackFlags.lang = true;
-      if (c.tracks.intl) trackFlags.intl = true;
-    });
-    // 외국어 계열 미선택 → 외고 cap 60
-    if (!trackFlags.lang) {
-      finalScores['외고'] = Math.min(finalScores['외고'], 60);
-      careerCapList.push('외고');
-    }
-    // 국제·외국어 둘 다 미선택 → 국제고 cap 60
-    if (!trackFlags.intl && !trackFlags.lang) {
-      finalScores['국제고'] = Math.min(finalScores['국제고'], 60);
-      careerCapList.push('국제고');
-    }
-    // 이공 계열 미선택 → 과학고/영재학교 cap 55
-    if (!trackFlags.eng) {
-      finalScores['과학고']   = Math.min(finalScores['과학고'], 55);
-      finalScores['영재학교'] = Math.min(finalScores['영재학교'], 55);
-      careerCapList.push('과학고', '영재학교');
-    }
-  }
-
-  // 4. 추천 순위
-  const ranking = Object.entries(finalScores)
-    .sort((a, b) => b[1] - a[1])
-    .map(([type, score]) => ({ type, score }));
-
-  return {
-    axisScore,
-    big5,
-    mental,
-    typeScores: finalScores,
-    ranking,
-    careerSelections,
-    background,
-    mentalCap,
-    academicCap,
-    careerCapList
-  };
-}
-
-// ============================================================
-// 추천 사유 자동 생성
-// ============================================================
-function buildRationale(rank, scores) {
-  const t = rank.type;
-  const reasons = [];
-  const ax = scores.axisScore;
-  const m = scores.mental;
-  const careers = scores.careerSelections;
-  const hasUnsure = careers.includes('unsure') || careers.length === 0;
-  const SPECIAL = ['자사고', '외고', '국제고', '과학고', '영재학교'];
-
-  // ★ 멘탈 cap 발동 시: 특목고는 추천 사유 자체가 "권하지 않는다"
-  if (scores.mentalCap && SPECIAL.includes(t)) {
-    if (scores.mentalCap === 'severe') {
-      return '정서적 안정성이 평균보다 많이 낮아 회복이 최우선입니다. 강도 높은 학교는 환경 자체가 위험 요인이 될 수 있어 권장하지 않아요.';
-    }
-    return '정서적 안정성이 평균 이하라 멘탈 보호가 우선입니다. 다른 조건이 좋아도 강도 높은 환경은 적응 부담이 클 수 있어 후순위로 두었어요.';
-  }
-  // ★ 학력 cap 발동 시: 특목/상위 학교는 학력 우선 보강이 먼저
-  const HIGH_TIER = ['자사고', '과학고', '영재학교'];
-  if (scores.academicCap === 'severe' && SPECIAL.includes(t)) {
-    return '현재 학교 시험 위치로는 합격·적응 모두 부담이 큽니다. 컨설팅에서 학습 로드맵을 먼저 점검해 보세요.';
-  }
-  if (scores.academicCap === 'moderate' && HIGH_TIER.includes(t)) {
-    return '성적이 빠르게 올라오는 중이라면 후반에 다시 검토할 수 있어요. 지금 시점에선 후순위로 두었습니다.';
-  }
-  // ★ 멘탈 cap 발동 시: 일반고/자공고가 상위로 올라온 이유
-  if (scores.mentalCap && (t === '일반고' || t === '자공고2.0')) {
-    if (scores.mentalCap === 'severe') {
-      reasons.push('정서적 안정성 회복이 최우선이라, 안정적인 학교 환경이 가장 중요한 조건이에요.');
-    } else {
-      reasons.push('멘탈이 평균 이하라 강도 높은 학교보다 안정적인 환경이 더 중요해요.');
-    }
-  }
-  // ★ 학력 cap 발동 시: 일반고/자공고가 상위로 올라온 이유
-  if (scores.academicCap === 'severe' && (t === '일반고' || t === '자공고2.0')) {
-    reasons.push('지금 학력 위치 기준으로 가장 안정적인 선택지예요. 학습 기반을 다지면서 전형을 준비할 수 있어요.');
-  }
-
-  switch(t) {
-    case '일반고':
-      if (hasUnsure) reasons.push('진로 탐색 단계에 있어 다양한 가능성을 열어두기에 좋아요.');
-      if (ax.A < 60) reasons.push('자기주도 학습 체력을 학교 시스템과 함께 차근차근 키울 수 있어요.');
-      if (ax.D < 50) reasons.push('통학·비용 부담을 최소화할 수 있는 현실적인 선택입니다.');
-      if (m.key === 'protective') reasons.push('감정 회복기에 안정적인 학습 환경을 제공받을 수 있어요.');
-      break;
-    case '자공고2.0':
-      reasons.push('일반고의 안정감과 학점제 선택과목의 폭을 함께 누릴 수 있어요.');
-      if (ax.A >= 50 && ax.A < 75) reasons.push('자기주도 학습이 중상위 수준인 학생에게 잘 맞는 절충형이에요.');
-      if (m.key === 'planner' || m.key === 'connector') reasons.push('관리받으면서도 다양성을 경험할 수 있는 환경입니다.');
-      break;
-    case '자사고':
-      if (ax.A >= 70) reasons.push('학습량이 많아도 끝까지 소화할 수 있는 학습 체력이 있어요.');
-      if (ax.E >= 65) reasons.push('또래 경쟁이 동기부여로 작용하는 유형이에요.');
-      if (ax.D >= 60) reasons.push('학비·기숙비를 감당할 수 있는 환경이 준비되어 있어요.');
-      if (m.key === 'resilient') reasons.push('압박 속에서도 흔들리지 않는 멘탈을 가지고 있어요.');
-      break;
-    case '외고':
-      if (careers.includes('lang') || careers.includes('hum')) reasons.push('어문·인문 계열 진학에 특화된 환경이에요.');
-      if (m.key === 'explorer' || m.key === 'connector') reasons.push('언어와 사람에 대한 호기심이 강한 멘탈 유형과 잘 맞아요.');
-      break;
-    case '국제고':
-      if (careers.includes('intl') || careers.includes('soc')) reasons.push('국제·사회 계열 진학에 가장 적합한 환경입니다.');
-      if (ax.B >= 60) reasons.push('진로 방향이 비교적 분명해 학교생활 기록의 일관성을 만들기 좋아요.');
-      break;
-    case '과학고':
-      if (careers.includes('eng')) reasons.push('이공계 진학을 전제로 한 심화 환경에 부합해요.');
-      if (ax.A >= 70) reasons.push('이공 심화 학습량을 감당할 학습 체력이 있어요.');
-      reasons.push('※ 의대 진학 시 페널티가 있으니 진로 확정 여부를 다시 점검하세요.');
-      break;
-    case '영재학교':
-      if (ax.A >= 80 && (careers.includes('eng'))) reasons.push('이공 심화의 최고 강도 환경에 적성이 매우 잘 맞아요.');
-      else reasons.push('전국 최상위 수·과학 영재 대상 학교입니다. 학업 강도를 신중히 점검하세요.');
-      break;
-  }
-  if (reasons.length === 0) {
-    reasons.push(`종합 적합도 점수가 ${rank.score}점으로 평가되었습니다.`);
-  }
-  return reasons.slice(0, 3).join(' ');
-}
-
-// ============================================================
-// 화면 렌더링
-// ============================================================
-const main = document.getElementById('main');
-let state = {
-  view: 'welcome',  // welcome | quiz | done | admin
-  name: '', phone: '', grade: '', school: '',
-  questionIdx: 0,
-  answers: {},
-  careerSelections: [],
-  background: {},   // {academicRank, sido, sigungu, englishLevel}
-  freetext: {},     // {H1, H2, H3}
-  consent: null,    // {agreed, agreedAt, version}
-  result: null,
-  // ── 토큰 게이트 (B2C 결제 모델) ──
-  tokenCode: null,           // URL ?t= 값
-  tokenStatus: 'checking',   // checking | valid | no_token | already_used | not_found | error | dev_mode
-  tokenConsumed: false       // consume_token RPC 성공 여부
-};
-
-function render() {
-  // 관리자 페이지는 토큰 게이트 우회
-  if (state.view === 'admin') return renderAdmin();
-  // 토큰 게이트 비활성화: 누구나 URL 접속만으로 검사 진행 가능
-  // 다시 켜려면 아래 두 줄 주석 해제 (토큰 시스템은 SQL/코드에 그대로 보존됨)
-  // if (state.tokenStatus !== 'valid' && state.tokenStatus !== 'dev_mode') return renderGate();
-  if (state.view === 'welcome') return renderWelcome();
-  if (state.view === 'quiz') return renderQuiz();
-  if (state.view === 'done') return renderDone();
-}
-
-// ── Gate: 토큰 검증 결과 화면 ──────────────────────────────
-function renderGate() {
-  document.getElementById('shell').classList.remove('admin-shell');
-  const status = state.tokenStatus;
-  let title, body, tone;
-  if (status === 'checking') {
-    tone = 'teal';
-    title = '링크 확인 중…';
-    body = '<p class="lede">검사 링크를 확인하고 있어요. 잠시만 기다려주세요.</p>';
-  } else if (status === 'no_token') {
-    tone = 'amber';
-    title = '검사 링크가 필요합니다';
-    body = `
-      <p class="lede">이 검사는 <strong>결제 후 받으신 전용 링크</strong>로만 접속할 수 있어요.</p>
-      <ul class="gate-list">
-        <li>외부 결제 사이트에서 결제를 완료하셨는지 확인해 주세요.</li>
-        <li>결제 후 카카오톡·문자·이메일로 받으신 링크를 다시 확인해 주세요.</li>
-        <li>링크를 분실하셨다면 운영자에게 문의해 주세요.</li>
-      </ul>
-    `;
-  } else if (status === 'already_used') {
-    tone = 'rose';
-    title = '이미 사용된 링크입니다';
-    body = `
-      <p class="lede">이 링크는 이미 한 번 검사에 사용되었습니다.</p>
-      <ul class="gate-list">
-        <li>이전 검사 결과를 다시 받고 싶으시면 운영자에게 문의해 주세요.</li>
-        <li>새로 검사를 받으시려면 다시 결제하셔야 합니다.</li>
-      </ul>
-    `;
-  } else if (status === 'not_found') {
-    tone = 'rose';
-    title = '존재하지 않는 링크입니다';
-    body = `
-      <p class="lede">받으신 링크를 다시 한 번 확인해 주세요.</p>
-      <ul class="gate-list">
-        <li>주소창의 링크가 운영자가 보내준 것과 정확히 같은지 확인해 주세요.</li>
-        <li>문제가 계속되면 운영자에게 문의해 주세요.</li>
-      </ul>
-    `;
-  } else { // error
-    tone = 'amber';
-    title = '연결에 문제가 있습니다';
-    body = `
-      <p class="lede">서버 연결이 잠시 불안정합니다.</p>
-      <ul class="gate-list">
-        <li>인터넷 연결을 확인하신 뒤 페이지를 새로고침해 주세요.</li>
-        <li>문제가 계속되면 운영자에게 문의해 주세요.</li>
-      </ul>
-      <button class="btn btn-primary btn-block" id="btnRetry" style="margin-top:14px">다시 시도</button>
-    `;
-  }
-  main.innerHTML = `
-    <div class="card hero-decor fade-in gate-card gate-${tone}">
-      <div class="eyebrow">고교선택 적성검사</div>
-      <h1>${title}</h1>
-      ${body}
-    </div>
-  `;
-  const retry = document.getElementById('btnRetry');
-  if (retry) retry.onclick = () => { state.tokenStatus = 'checking'; render(); checkToken(); };
-}
-
-// ── 토큰 검증 (peek_token RPC) ─────────────────────────────
-async function checkToken() {
-  // 클라우드 미설정 = 개발/로컬 모드: 토큰 게이트 우회
-  if (!isCloudEnabled()) {
-    state.tokenStatus = 'dev_mode';
-    render();
-    return;
-  }
-  state.tokenCode = new URLSearchParams(location.search).get('t') || null;
-  if (!state.tokenCode) {
-    state.tokenStatus = 'no_token';
-    render();
-    return;
-  }
-  try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/peek_token`, {
-      method: 'POST',
-      headers: _cloudHeaders(),
-      body: JSON.stringify({ p_code: state.tokenCode })
-    });
-    if (!res.ok) throw new Error(`peek failed: ${res.status}`);
-    const status = await res.json();
-    state.tokenStatus = (status === 'valid' || status === 'already_used' || status === 'not_found')
-      ? status
-      : 'error';
-  } catch (e) {
-    console.warn('[Token] peek 실패:', e);
-    state.tokenStatus = 'error';
-  }
-  render();
-}
-
-// ── Welcome ────────────────────────────────────────────────
-function renderWelcome() {
-  document.getElementById('shell').classList.remove('admin-shell');
-  main.innerHTML = `
-    <div class="card hero-decor fade-in">
-      <h1>고교선택 적성검사</h1>
-      <div class="feature-grid">
-        <div class="feature"><strong>47문항 · 약 10분</strong>학업·진로·입시·환경·심리·멘탈 6축 + 배경·자유서술</div>
-        <div class="feature"><strong>1~3순위 추천</strong>7개 고교 유형별 적합도 점수 + 추천 사유</div>
-        <div class="feature"><strong>멘탈 유형 분석</strong>강철 멘탈형·도전형·신중형·공감형·회복형·균형형</div>
-      </div>
-    </div>
-
-    <div class="card fade-in" style="animation-delay:.05s">
-      <h3 style="margin-bottom:14px">시작하기 전에</h3>
-      <div class="field">
-        <label>학생 이름</label>
-        <input type="text" id="fName" placeholder="홍길동" autocomplete="name" value="${state.name}" />
-      </div>
-      <div class="field">
-        <label>보호자 연락처 (휴대전화)</label>
-        <input type="tel" id="fPhone" placeholder="010-1234-5678" autocomplete="tel" inputmode="tel" value="${state.phone}" />
-      </div>
-      <div class="field">
-        <label>학년</label>
-        <select id="fGrade">
-          <option value="">선택해 주세요</option>
-          <option ${state.grade==='유치원생'?'selected':''}>유치원생</option>
-          <option ${state.grade==='초1'?'selected':''}>초1</option>
-          <option ${state.grade==='초2'?'selected':''}>초2</option>
-          <option ${state.grade==='초3'?'selected':''}>초3</option>
-          <option ${state.grade==='초4'?'selected':''}>초4</option>
-          <option ${state.grade==='초5'?'selected':''}>초5</option>
-          <option ${state.grade==='초6'?'selected':''}>초6</option>
-          <option ${state.grade==='중1'?'selected':''}>중1</option>
-          <option ${state.grade==='중2'?'selected':''}>중2</option>
-          <option ${state.grade==='중3'?'selected':''}>중3</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>학교 (선택)</label>
-        <input type="text" id="fSchool" placeholder="○○중학교" value="${state.school}" />
-      </div>
-      <div class="privacy-box">
-        <div class="privacy-summary">
-          <strong>개인정보 수집·이용 안내</strong>
-          <ul>
-            <li><strong>수집 항목</strong>: 이름, 보호자 연락처, 학년, 학교, 거주지, 영어 수준, 학력 위치, 검사 응답, 자유서술</li>
-            <li><strong>수집 목적</strong>: 고교선택 컨설팅 보조자료 작성</li>
-            <li><strong>보유 기간</strong>: 컨설팅 종료 후 1년 (학부모 요청 시 즉시 파기)</li>
-            <li><strong>처리 위탁</strong>: Supabase, Inc. (응답 저장)</li>
-          </ul>
-          <button type="button" class="link-btn" id="btnViewPrivacy">전체 개인정보처리방침 보기 →</button>
-        </div>
-        <label class="consent-row">
-          <input type="checkbox" id="fConsent" />
-          <span>위 개인정보 수집·이용 안내를 확인하였으며, <strong>미성년자의 보호자로서 자녀의 개인정보 수집·이용에 동의</strong>합니다.</span>
-        </label>
-      </div>
-      <button class="btn btn-primary btn-block" id="btnStart" disabled>검사 시작하기 →</button>
-    </div>
-  `;
-  // 동의 체크박스 + 입력 검증으로 시작 버튼 활성화
-  const updateStartButton = () => {
-    const name = document.getElementById('fName').value.trim();
-    const phoneRaw = document.getElementById('fPhone').value.trim();
-    const phoneClean = phoneRaw.replace(/[^0-9]/g, '');
-    const phoneOk = /^01[0-9]{8,9}$/.test(phoneClean);
-    const grade = document.getElementById('fGrade').value;
-    const consent = document.getElementById('fConsent').checked;
-    const btn = document.getElementById('btnStart');
-    btn.disabled = !(name && phoneOk && grade && consent);
-  };
-  document.getElementById('fName').oninput = updateStartButton;
-  document.getElementById('fPhone').oninput = updateStartButton;
-  document.getElementById('fGrade').onchange = updateStartButton;
-  document.getElementById('fConsent').onchange = updateStartButton;
-
-  // 개인정보처리방침 전체 보기
-  document.getElementById('btnViewPrivacy').onclick = showPrivacyModal;
-
-  document.getElementById('btnStart').onclick = () => {
-    state.name = document.getElementById('fName').value.trim();
-    const phoneRaw = document.getElementById('fPhone').value.trim();
-    const phoneClean = phoneRaw.replace(/[^0-9]/g, '');
-    state.grade = document.getElementById('fGrade').value;
-    state.school = document.getElementById('fSchool').value.trim();
-    const consent = document.getElementById('fConsent').checked;
-    if (!state.name || !state.grade) {
-      alert('이름과 학년을 입력해 주세요.');
-      return;
-    }
-    if (!/^01[0-9]{8,9}$/.test(phoneClean)) {
-      alert('보호자 휴대전화 번호를 010-1234-5678 형식으로 입력해 주세요.');
-      return;
-    }
-    // 11자리 표준 형식으로 정규화 (010-XXXX-XXXX)
-    state.phone = phoneClean.length === 11
-      ? phoneClean.replace(/^(\d{3})(\d{4})(\d{4})$/, '$1-$2-$3')
-      : phoneClean.replace(/^(\d{3})(\d{3})(\d{4})$/, '$1-$2-$3');
-    if (!consent) {
-      alert('개인정보 수집·이용 동의가 필요합니다.');
-      return;
-    }
-    state.consent = { agreed: true, agreedAt: new Date().toISOString(), version: 'v1' };
-    state.view = 'quiz';
-    state.questionIdx = 0;
-    state.answers = {};
-    state.careerSelections = [];
-    state.background = {};
-    state.freetext = {};
-    render();
-  };
-}
-
-// ── 개인정보처리방침 모달 ─────────────────────────────────
-function showPrivacyModal() {
-  const html = `
-    <div class="modal-head">
-      <h2>개인정보 수집·이용 안내 (전체)</h2>
-      <button class="modal-close" id="modalCloseBtn">×</button>
-    </div>
-    <div style="padding:4px 2px 0;font-size:13px;line-height:1.7;color:white">
-      <h3 style="font-size:14px;margin:14px 0 6px;color:white">1. 수집하는 개인정보 항목</h3>
-      <p style="margin:0 0 8px">학생 이름, 보호자 휴대전화 번호, 학년, 학교(선택), 거주지(시/도·시군구), 영어 수준, 학력 위치, 검사 응답(45문항), 자유서술(선택), 동의 일시.</p>
-
-      <h3 style="font-size:14px;margin:14px 0 6px;color:white">2. 수집·이용 목적</h3>
-      <p style="margin:0 0 8px">유료 고교선택 컨설팅의 보조자료 작성. 컨설턴트가 학생의 성향·학력·환경을 종합 분석하여 적합한 고교 유형을 제안하는 데 사용합니다.</p>
-
-      <h3 style="font-size:14px;margin:14px 0 6px;color:white">3. 보유 및 이용 기간</h3>
-      <p style="margin:0 0 8px">컨설팅 종료 후 <strong>1년</strong> 동안 보관 후 파기합니다. 학부모(보호자)가 파기 요청 시 즉시 삭제합니다.</p>
-
-      <h3 style="font-size:14px;margin:14px 0 6px;color:white">4. 처리 위탁</h3>
-      <p style="margin:0 0 8px">응답 데이터의 안전한 저장·관리를 위해 다음 업체에 처리를 위탁합니다.</p>
-      <ul style="margin:0 0 8px;padding-left:18px">
-        <li>수탁자: Supabase, Inc. (미국)</li>
-        <li>위탁업무: 응답 데이터 저장 및 관리</li>
-        <li>보호조치: 전송구간 TLS 암호화, RLS(Row Level Security), 관리자 인증·잠금</li>
-      </ul>
-
-      <h3 style="font-size:14px;margin:14px 0 6px;color:white">5. 제3자 제공</h3>
-      <p style="margin:0 0 8px">원칙적으로 제3자에게 제공하지 않습니다. 다만 법령에 근거하거나 수사기관의 정당한 요청이 있는 경우 예외적으로 제공할 수 있습니다.</p>
-
-      <h3 style="font-size:14px;margin:14px 0 6px;color:white">6. 미성년자 개인정보의 처리</h3>
-      <p style="margin:0 0 8px">본 검사는 미성년자가 응답 대상입니다. <strong>법정대리인(보호자)의 동의</strong>가 있는 경우에 한해 정보를 수집·이용합니다. 보호자는 언제든 자녀의 개인정보 열람·정정·삭제를 요청할 수 있습니다.</p>
-
-      <h3 style="font-size:14px;margin:14px 0 6px;color:white">7. 정보주체의 권리</h3>
-      <p style="margin:0 0 8px">정보주체(보호자 포함)는 다음 권리를 행사할 수 있습니다.</p>
-      <ul style="margin:0 0 8px;padding-left:18px">
-        <li>개인정보 열람 요구</li>
-        <li>오류 등이 있을 경우 정정·삭제 요구</li>
-        <li>처리 정지 요구</li>
-        <li>동의 철회</li>
-      </ul>
-
-      <h3 style="font-size:14px;margin:14px 0 6px;color:white">8. 안전성 확보 조치</h3>
-      <ul style="margin:0 0 8px;padding-left:18px">
-        <li>전송구간 암호화(HTTPS/TLS)</li>
-        <li>접근 통제: 관리자 비밀번호 + 5회 실패 시 1시간 자동 잠금</li>
-        <li>접속 기록 보관(감사 로그)</li>
-        <li>물리적·기술적 분리(Supabase RLS)</li>
-      </ul>
-
-      <h3 style="font-size:14px;margin:14px 0 6px;color:white">9. 개인정보 보호책임자</h3>
-      <p style="margin:0 0 8px">
-        본 서비스에 관한 개인정보 관련 문의는 운영자에게 직접 연락해 주세요.<br>
-        <span style="color:#FFD8A0">※ 운영자 연락처(이메일·전화)는 추후 본 화면에 추가될 예정입니다.</span>
-      </p>
-
-      <h3 style="font-size:14px;margin:14px 0 6px;color:white">10. 개인정보 처리방침 변경</h3>
-      <p style="margin:0 0 8px">처리방침이 변경될 경우 본 화면에 공지하며, 중요한 변경 시 별도 동의를 다시 받습니다.</p>
-
-      <p style="margin:14px 0 0;font-size:11px;color:rgba(255,255,255,.6)">최초 시행일: 2026-04-28 · 버전 v1</p>
-    </div>
-    <div style="margin-top:18px">
-      <button class="btn btn-primary btn-block" id="btnPrivacyClose">확인했습니다</button>
-    </div>
-  `;
-  document.getElementById('modalBody').innerHTML = html;
-  document.getElementById('modalBg').classList.add('open');
-  document.getElementById('modalCloseBtn').onclick = closeModal;
-  document.getElementById('btnPrivacyClose').onclick = closeModal;
-}
-
-// ── Quiz ───────────────────────────────────────────────────
-function renderQuiz() {
-  const total = QUESTIONS.length;
-  const cur = QUESTIONS[state.questionIdx];
-  const pct = Math.round((state.questionIdx / total) * 100);
-  const axisName = {A:'학업 성향', B:'진로 명확도', C:'입시 전략', D:'환경·생활', E:'심리·사회성', F:'멘탈 유형', G:'배경 정보', H:'추가로 알려주세요'}[cur.axis];
-
-  let bodyHTML = '';
-  if (cur.type === 'multi-career') {
-    bodyHTML = `
-      <div class="ms-grid">
-        ${CAREER_TRACKS.map(c => {
-          const sel = state.careerSelections.includes(c.id);
-          return `
-          <div class="ms-card ${sel ? 'selected' : ''} ${c.isUnsure ? 'unsure' : ''}" data-cid="${c.id}">
-            <div class="ms-card-head">
-              <strong>${c.name}</strong>
-              <div class="ms-check"></div>
-            </div>
-            <div class="col"><em>${c.majors}</em></div>
-            ${c.jobs ? `<div class="col" style="margin-top:4px">${c.jobs}</div>` : ''}
-          </div>`;
-        }).join('')}
-      </div>
-    `;
-  } else if (cur.type === 'academic-rank') {
-    const sel = state.background.academicRank;
-    bodyHTML = `
-      <div class="choice-list">
-        ${cur.choices.map(c => `
-          <label class="choice-opt ${sel === c.id ? 'selected' : ''}" data-cid="${c.id}">
-            <div class="dot"></div>
-            <span>${c.label}</span>
-          </label>
-        `).join('')}
-      </div>
-    `;
-  } else if (cur.type === 'english-level') {
-    const sel = state.background.englishLevel;
-    bodyHTML = `
-      <div class="choice-list">
-        ${cur.choices.map(c => `
-          <label class="choice-opt ${sel === c.id ? 'selected' : ''}" data-cid="${c.id}">
-            <div class="dot"></div>
-            <span>${c.label}</span>
-          </label>
-        `).join('')}
-      </div>
-    `;
-  } else if (cur.type === 'relocation') {
-    const sel = state.background.relocation;
-    bodyHTML = `
-      <div class="choice-list">
-        ${cur.choices.map(c => `
-          <label class="choice-opt ${sel === c.id ? 'selected' : ''}" data-cid="${c.id}">
-            <div class="dot"></div>
-            <span>${c.label}</span>
-          </label>
-        `).join('')}
-      </div>
-    `;
-  } else if (cur.type === 'preferred-school') {
-    const v = state.background.preferredSchool || '';
-    const max = cur.maxLength || 120;
-    bodyHTML = `
-      <div class="field">
-        <input type="text" id="fPreferredSchool" maxlength="${max}" placeholder="(선택) 예: ○○고등학교, 외고, 자사고 등" value="${escapeHtml(v)}" />
-        <div style="font-size:12px;color:var(--ink-soft);text-align:right;margin-top:4px"><span id="psCount">${v.length}</span>/${max}자 · 비워두셔도 됩니다</div>
-      </div>
-    `;
-  } else if (cur.type === 'region') {
-    const sido = state.background.sido || '';
-    const sigungu = state.background.sigungu || '';
-    bodyHTML = `
-      <div class="field">
-        <label>시/도</label>
-        <select id="fSido">
-          <option value="">선택해 주세요</option>
-          ${SIDO_OPTIONS.map(s => `<option ${sido===s?'selected':''}>${s}</option>`).join('')}
-        </select>
-      </div>
-      <div class="field">
-        <label>시/군/구</label>
-        <input type="text" id="fSigungu" placeholder="예: 강남구" value="${escapeHtml(sigungu)}" />
-      </div>
-    `;
-  } else if (cur.type === 'freetext') {
-    const v = state.freetext[cur.id] || '';
-    const max = cur.maxLength || 200;
-    bodyHTML = `
-      <div class="field">
-        <textarea id="fFreetext" rows="4" maxlength="${max}" placeholder="(선택) 한두 줄로 적어주세요" style="width:100%;padding:12px;border:1px solid var(--line);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:15px;line-height:1.5;resize:vertical;background:white;color:var(--ink)">${escapeHtml(v)}</textarea>
-        <div style="font-size:12px;color:var(--ink-soft);text-align:right;margin-top:4px"><span id="ftCount">${v.length}</span>/${max}자 · 비워두셔도 됩니다</div>
-      </div>
-    `;
-  } else {
-    const cur_ans = state.answers[cur.id];
-    bodyHTML = `
-      <div class="likert">
-        ${[1,2,3,4,5].map(v => `
-          <label class="likert-opt ${cur_ans === v ? 'selected' : ''}" data-val="${v}">
-            <div class="dot"></div>
-            <span>${LIKERT_LABELS[v-1]}</span>
-          </label>
-        `).join('')}
-      </div>
-      <div class="likert-axis-labels"><span>← 아니다</span><span>그렇다 →</span></div>
-    `;
-  }
-
-  main.innerHTML = `
-    <div class="progress-shell">
-      <div class="progress-meta">
-        <span><strong>${state.questionIdx + 1}</strong> / ${total}</span>
-        <span>${axisName}</span>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-    </div>
-
-    <div class="card fade-in" key="${cur.id}">
-      <div class="q-axis-tag">축 ${cur.axis} · ${axisName}</div>
-      <div class="q-text">${cur.text}</div>
-      ${cur.hint ? `<div class="q-hint">${cur.hint}</div>` : ''}
-      ${bodyHTML}
-      <div class="q-nav">
-        <button class="btn btn-ghost" id="btnPrev" ${state.questionIdx === 0 ? 'disabled' : ''}>← 이전</button>
-        <button class="btn btn-primary" id="btnNext">${state.questionIdx === total - 1 ? '제출 →' : '다음 →'}</button>
-      </div>
-    </div>
-  `;
-
-  // 타입별 입력 처리
-  if (cur.type === 'multi-career') {
-    main.querySelectorAll('.ms-card').forEach(card => {
-      card.onclick = () => {
-        const cid = card.dataset.cid;
-        if (cid === 'unsure') {
-          state.careerSelections = state.careerSelections.includes('unsure') ? [] : ['unsure'];
-        } else {
-          state.careerSelections = state.careerSelections.filter(x => x !== 'unsure');
-          if (state.careerSelections.includes(cid)) {
-            state.careerSelections = state.careerSelections.filter(x => x !== cid);
-          } else {
-            state.careerSelections.push(cid);
-          }
-        }
-        render();
-      };
-    });
-  } else if (cur.type === 'academic-rank' || cur.type === 'english-level' || cur.type === 'relocation') {
-    const stateKey = cur.type === 'academic-rank' ? 'academicRank'
-                   : cur.type === 'english-level' ? 'englishLevel'
-                   : 'relocation';
-    main.querySelectorAll('.choice-opt').forEach(opt => {
-      opt.onclick = () => {
-        const cid = opt.dataset.cid;
-        state.background[stateKey] = cid;
-        main.querySelectorAll('.choice-opt').forEach(o => o.classList.remove('selected'));
-        opt.classList.add('selected');
-        // 자동 진행 (다른 단일선택과 동일)
-        setTimeout(() => {
-          if (state.questionIdx < total - 1) {
-            state.questionIdx += 1;
-            render();
-          }
-        }, 280);
-      };
-    });
-  } else if (cur.type === 'preferred-school') {
-    const inp = document.getElementById('fPreferredSchool');
-    const counter = document.getElementById('psCount');
-    inp.oninput = () => {
-      state.background.preferredSchool = inp.value;
-      counter.textContent = inp.value.length;
-    };
-  } else if (cur.type === 'region') {
-    document.getElementById('fSido').onchange = (e) => {
-      state.background.sido = e.target.value;
-    };
-    document.getElementById('fSigungu').oninput = (e) => {
-      state.background.sigungu = e.target.value;
-    };
-  } else if (cur.type === 'freetext') {
-    const ta = document.getElementById('fFreetext');
-    const counter = document.getElementById('ftCount');
-    ta.oninput = () => {
-      state.freetext[cur.id] = ta.value;
-      counter.textContent = ta.value.length;
-    };
-  } else {
-    // Likert
-    main.querySelectorAll('.likert-opt').forEach(opt => {
-      opt.onclick = () => {
-        const v = parseInt(opt.dataset.val);
-        state.answers[cur.id] = v;
-        main.querySelectorAll('.likert-opt').forEach(o => o.classList.remove('selected'));
-        opt.classList.add('selected');
-        setTimeout(() => {
-          if (state.questionIdx < total - 1) {
-            state.questionIdx += 1;
-            render();
-          }
-        }, 280);
-      };
-    });
-  }
-
-  // 이전/다음
-  document.getElementById('btnPrev').onclick = () => {
-    if (state.questionIdx > 0) {
-      state.questionIdx -= 1;
-      render();
-    }
-  };
-  document.getElementById('btnNext').onclick = () => {
-    // 응답 검증
-    if (cur.type === 'multi-career') {
-      if (state.careerSelections.length === 0) {
-        alert('하나 이상 선택해 주세요. 잘 모르겠으면 마지막 항목을 선택하세요.');
-        return;
-      }
-    } else if (cur.type === 'academic-rank') {
-      if (!state.background.academicRank) {
-        alert('학력 위치를 골라주세요. 모르시면 "잘 모르겠어요"를 선택하세요.');
-        return;
-      }
-    } else if (cur.type === 'english-level') {
-      if (!state.background.englishLevel) {
-        alert('영어 수준을 골라주세요.');
-        return;
-      }
-    } else if (cur.type === 'relocation') {
-      if (!state.background.relocation) {
-        alert('이사 가능 여부를 골라주세요. 모르시면 "잘 모르겠어요"를 선택하세요.');
-        return;
-      }
-    } else if (cur.type === 'preferred-school') {
-      // 선호 학교는 선택 입력 — 검증 생략
-    } else if (cur.type === 'region') {
-      if (!state.background.sido) {
-        alert('시/도를 선택해 주세요.');
-        return;
-      }
-    } else if (cur.type === 'freetext') {
-      // 자유서술은 비워둘 수 있음 — 검증 생략
-    } else if (state.answers[cur.id] == null) {
-      alert('응답을 선택해 주세요.');
-      return;
-    }
-    if (state.questionIdx < total - 1) {
-      state.questionIdx += 1;
-      render();
-    } else {
-      // 결과 계산
-      finishQuiz();
-    }
-  };
-}
-
-async function finishQuiz() {
-  const result = computeScores(state.answers, state.careerSelections, state.background);
-  state.result = result;
-
-  // 저장
-  const record = {
-    id: 'r' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
-    name: state.name,
-    phone: state.phone,
-    grade: state.grade,
-    school: state.school,
-    completedAt: new Date().toISOString(),
-    answers: state.answers,
-    careerSelections: state.careerSelections,
-    background: state.background,
-    freetext: state.freetext,
-    consent: state.consent,
-    tokenCode: state.tokenCode || null,
-    axisScore: result.axisScore,
-    big5: result.big5,
-    mentalKey: result.mental.key,
-    mentalName: result.mental.name,
-    typeScores: result.typeScores,
-    ranking: result.ranking,
-    mentalCap: result.mentalCap,
-    academicCap: result.academicCap,
-    careerCapList: result.careerCapList
-  };
-
-  const localOk = saveResponseSync(record);
-
-  let cloudOk = false;
-  let cloudError = null;
-  if (isCloudEnabled()) {
-    try {
-      await cloudInsert(record);
-      cloudOk = true;
-    } catch(e) {
-      cloudError = e.message;
-      console.error('[Cloud] 저장 실패:', e);
-    }
-  }
-
-  // 토큰 소비 (응답 저장 직후, 결과 표시 전)
-  if (state.tokenCode && isCloudEnabled() && cloudOk) {
-    try {
-      await cloudConsumeToken(state.tokenCode, record.id);
-      state.tokenConsumed = true;
-    } catch(e) {
-      // 토큰 소비 실패해도 결과 화면은 표시 (데이터 손실 방지 우선)
-      console.warn('[Token] consume 실패:', e);
-    }
-  }
-
-  if (!localOk && !cloudOk) {
-    alert('⚠️ 응답 저장에 실패했습니다.\n결과는 표시되지만 데이터가 보관되지 않습니다.\n' +
-          '브라우저의 localStorage 차단 여부 또는 네트워크를 확인해주세요.');
-  } else if (isCloudEnabled() && !cloudOk) {
-    console.warn('클라우드 저장 실패, 이 기기에는 저장됨:', cloudError);
-  }
-
-  state.view = 'done';
-  render();
-}
-
-// ============================================================
-// 저장소: localStorage 기반 (브라우저 단독 동작 보장)
-// ============================================================
-const STORAGE_KEY = 'guide_v2_responses';
-
-function loadAllResponsesSync() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const list = JSON.parse(raw);
-    return Array.isArray(list) ? list : [];
-  } catch(e) {
-    console.error('load 실패', e);
-    return [];
-  }
-}
-
-function saveResponseSync(record) {
-  try {
-    let list = loadAllResponsesSync();
-    list.push(record);
-    if (list.length > 2000) list = list.slice(-2000);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    // 검증: 즉시 다시 읽어서 확인
-    const verify = localStorage.getItem(STORAGE_KEY);
-    if (!verify) return false;
-    return true;
-  } catch(e) {
-    console.error('save 실패', e);
-    return false;
-  }
-}
-
-function saveAllResponsesSync(list) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    return true;
-  } catch(e) {
-    console.error('save all 실패', e);
-    return false;
-  }
-}
-
-function deleteAllResponsesSync() {
-  try {
-    localStorage.removeItem(STORAGE_KEY);
-    return true;
-  } catch(e) { return false; }
-}
-
-// ============================================================
-// 클라우드 헬퍼 (Supabase REST API)
-// ============================================================
-function _cloudHeaders() {
-  return {
-    'apikey': SUPABASE_ANON_KEY,
-    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-    'Content-Type': 'application/json'
-  };
-}
-
-async function cloudInsert(record) {
-  if (!isCloudEnabled()) throw new Error('Cloud not configured');
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/responses`, {
-    method: 'POST',
-    headers: { ..._cloudHeaders(), 'Prefer': 'return=minimal' },
-    body: JSON.stringify({
-      id: record.id,
-      name: record.name || null,
-      phone: record.phone || null,
-      grade: record.grade || null,
-      school: record.school || null,
-      completed_at: record.completedAt,
-      payload: record
-    })
-  });
-  if (!res.ok) {
-    const t = await res.text().catch(() => 'unknown error');
-    throw new Error(`HTTP ${res.status}: ${t}`);
-  }
+/* ═══ 화면 ═══ */
+const $=s=>document.querySelector(s), APP=()=>document.getElementById('app');
+const esc=s=>String(s==null?'':s).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+const KEY='hsc_v31';
+let S={a:{},i:0,phase:'intro',t0:0,ms:0};
+try{const r=localStorage.getItem(KEY); if(r) S=Object.assign(S,JSON.parse(r));}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const MO=['A1','A2','A3','A4','A5','A6','B1','B2','B3','B4','B5','C1','C2','D1','D2','D3',
+          'E1','E2','F1','F2','G1','G2','G3','H1','I1','I2'];
+const KID=['K1','K2','K3','K4'].concat(QUESTIONS.tracks.map(t=>'K5-'+t.id));
+const TB=['TB1','TB2'];
+const BLOCKNAME={A:'기본 정보',B:'현재 성적',C:'시험',D:'공부 습관',E:'공부 환경',
+  F:'공부 리듬',G:'공부 계획',H:'추가 확인',I:'적어 주실 것',K:'아이 문항',TB:'마지막 확인'};
+const GRADE=()=>QUESTIONS.grades.find(g=>g.id===S.a.A1)||{has:[]};
+function visible(id){
+  const q=QI[id]; if(!q) return false;
+  // 문항이 깔고 있는 전제를 그 학년이 못 채우면 띄우지 않는다
+  if(q.requires&&q.requires.length){
+    const has=GRADE().has||[];
+    if(!q.requires.every(r=>has.includes(r))) return false;}
+  const si=q.showIf;
+  if(si){ if(si.grade&&!si.grade.includes(S.a.A1)) return false;
+    for(const k in si){ if(k==='grade')continue;
+      const w=si[k],g=S.a[k];
+      if(Array.isArray(w)){ if(!(Array.isArray(g)?g.some(x=>w.includes(x)):w.includes(g))) return false; }
+      else if(g!==w) return false; } }
+  if(q.block==='TB'){ const r=S.res; if(!r) return false;
+    if(id==='TB1') return r.needTB1; if(id==='TB2') return r.needTB2; }
   return true;
 }
-
-// ── 토큰 RPC 헬퍼 ──────────────────────────────────────────
-async function cloudCreateToken(password, note) {
-  if (!isCloudEnabled()) throw new Error('Cloud not configured');
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/admin_create_token`, {
-    method: 'POST',
-    headers: _cloudHeaders(),
-    body: JSON.stringify({ pwd: password, p_note: note || null })
-  });
-  if (!res.ok) {
-    const t = await res.text().catch(() => '');
-    const tl = t.toLowerCase();
-    if (tl.includes('locked')) throw new Error('Locked');
-    if (tl.includes('unauthorized')) throw new Error('Unauthorized');
-    throw new Error(`HTTP ${res.status}: ${t}`);
-  }
-  // RPC가 단일 text를 반환 → JSON 파싱 시 문자열로 옴
-  return await res.json();
+const queue=()=>(S.phase==='kid'?KID:S.phase==='tb'?TB:MO).filter(visible);
+function answered(id){const q=QI[id],v=S.a[id];
+  if(q.optional) return true;
+  if(q.scale==='multi') return Array.isArray(v)&&v.length>0;
+  if(q.scale==='number-grid') return v&&Object.keys(v).length===5&&Object.values(v).every(r=>r.raw!==''&&r.mean!=='');
+  if(q.scale==='region') return v&&v.sido;
+  return v!==undefined&&v!==null&&v!=='';}
+const NEEDBTN=q=>['multi','number-grid','region','text'].includes(q.scale)||(q.id==='B5'&&S.a.B5==='A');
+function advance(){
+  const qq=queue();
+  if(S.i<qq.length-1){S.i++;save();render();return;}
+  if(S.phase==='mo'){S.phase='handoff';S.i=0;save();render();return;}
+  if(S.phase==='kid'){
+    S.ms=Date.now()-(S.t0||Date.now());
+    const f=sincerity(S.a,S.ms);
+    S.res=evaluate(S.a);
+    if(f.length>=RULES.sincerity.flagAt&&!S.checked){S.flags=f;S.phase='check';save();render();return;}
+    if(TB.filter(visible).length){S.phase='tb';S.i=0;save();render();return;}
+    S.phase='result';save();render();return;}
+  if(S.phase==='tb'){S.res=evaluate(S.a);S.phase='result';save();render();return;}
+}
+function back(){ if(S.i>0){S.i--;save();render();} }
+function barHTML(){
+  const qq=queue(),n=qq.length,i=S.i+1,kid=S.phase==='kid',q=QI[qq[S.i]];
+  const nm=kid?'아이가 답합니다':(BLOCKNAME[q?q.block:'A']||'');
+  // 블록 B는 성적표 유무로 문항 수가 갈려 도중에 총계가 바뀐다. 분수를 안 붙인다.
+  const branching=q&&q.block==='B';
+  const idx=q?qq.filter(x=>QI[x].block===q.block).indexOf(q.id)+1:1;
+  const tot=q?qq.filter(x=>QI[x].block===q.block).length:1;
+  const frac=branching?'':` ${idx}/${tot}`;
+  return `<div class="bar"><div class="bar-row"><span class="bar-ax${kid?' kid':''}">${esc(nm)}${frac}</span>
+    <span class="bar-n tnum">${i} / ${n}</span></div>
+    <div class="bar-t"><div class="bar-f${kid?' kid':''}" style="flex:${i}"></div><div class="bar-r" style="flex:${Math.max(n-i,0)}"></div></div></div>`;
+}
+function qHTML(q){
+  const v=S.a[q.id];
+  let h='';
+  if(q.stem) h+=`<div class="q-stem">${esc(q.stem)}</div>`;
+  const txt=(q.textByGrade&&q.textByGrade[S.a.A1])||q.text;
+  h+=`<h1 class="q">${esc(txt)}</h1>`;
+  if(q.examples) h+=`<div class="q-ex">예를 들면 ${esc(q.examples)}</div>`;
+  if(q.hint) h+=`<div class="q-hint">${esc(q.hint)}</div>`;
+  if(q.scale==='number-grid'){
+    const g=v||{};
+    h+=`<div class="grid"><div class="ghead"><span>과목</span><span>원점수</span><span>과목평균</span></div><div class="rule top"></div>`;
+    q.rows.forEach(r=>{const row=g[r]||{};
+      h+=`<div class="grow"><span class="sb">${esc(r)}</span>
+       <input inputmode="numeric" data-r="${esc(r)}" data-c="raw" value="${esc(row.raw||'')}" placeholder="－" aria-label="${esc(r)} 원점수">
+       <input inputmode="numeric" data-r="${esc(r)}" data-c="mean" value="${esc(row.mean||'')}" placeholder="－" aria-label="${esc(r)} 과목평균"></div><div class="rule"></div>`;});
+    return h+`</div>`;}
+  if(q.scale==='region'){const r=v||{};
+    h+=`<div style="margin-top:22px"><select id="sido"><option value="">시·도를 고르세요</option>${
+      ((QI.A2.fields[0].options)||[]).map(x=>`<option${r.sido===x?' selected':''}>${esc(x)}</option>`).join('')}</select>
+      <input class="txt" id="sigungu" style="margin-top:10px" placeholder="시·군·구" value="${esc(r.sigungu||'')}"></div>`;
+    return h;}
+  if(q.scale==='text') return h+`<textarea id="ta" maxlength="${q.maxLength||200}" placeholder="비워 두셔도 됩니다">${esc(v||'')}</textarea>`;
+  h+=`<ul class="opts"><li class="rule top"></li>`;
+  (q.options||[]).forEach(o=>{
+    const on=q.scale==='multi'?(Array.isArray(v)&&v.includes(o.value)):v===o.value;
+    h+=`<li class="opt${on?' on':''}" data-v="${esc(o.value)}" role="button" tabindex="0">
+      <span class="dot${q.scale==='multi'?' sq':''}"></span><span class="lab">${esc(o.label)}${
+      o.examples?`<span class="sub">${esc(o.examples)}</span>`:''}${o.hint?`<span class="sub">${esc(o.hint)}</span>`:''}</span></li><li class="rule"></li>`;});
+  h+=`</ul>`;
+  if(q.id==='B5'&&v==='A'){const g=S.a.B5f||{};
+    h+=`<div class="grid"><div class="ghead"><span>과목</span><span>등급</span><span></span></div><div class="rule top"></div>`;
+    [['kor','국어'],['mat','수학'],['eng','영어']].forEach(([k,n])=>{
+      h+=`<div class="grow"><span class="sb">${n}</span><input inputmode="numeric" data-g="${k}" value="${esc(g[k]||'')}" placeholder="－" aria-label="${n} 등급"><span></span></div><div class="rule"></div>`;});
+    h+=`</div><div class="q-hint">기억나는 과목만 적으셔도 됩니다.</div>`;}
+  return h;
+}
+function render(){
+  window.scrollTo(0,0);
+  const A=APP();
+  if(S.phase==='intro') return introHTML(A);
+  if(S.phase==='handoff') return handoffHTML(A);
+  if(S.phase==='check') return checkHTML(A);
+  if(S.phase==='result') return resultHTML(A);
+  const qq=queue(); if(!qq.length||S.i>=qq.length){advance();return;}
+  const q=QI[qq[S.i]], btn=NEEDBTN(q);
+  A.innerHTML=barHTML()+`<main>${qHTML(q)}</main>`+
+    (btn?`<div style="padding:6px 0 14px"><button class="btn" id="go"${answered(q.id)?'':' disabled'}>다음</button></div>`:'')+
+    `<div class="foot"><div class="back${S.i===0?' off':''}" id="back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>이전</div>
+     <div class="tip">${btn?'':(q.by==='child'?'정답은 없어. 더 가까운 쪽을 고르면 돼':'고르시면 다음으로 넘어갑니다')}</div></div>`;
+  wire(q);
+}
+function wire(q){
+  const b=$('#back'); if(b) b.onclick=back;
+  const go=$('#go'); if(go) go.onclick=()=>{ if(answered(q.id)) advance(); };
+  const pick=el=>{const v=el.dataset.v;
+    if(q.scale==='multi'){let c=S.a[q.id]||[];
+      c = v==='none' ? (c.includes('none')?[]:['none'])
+        : (c.includes(v)?c.filter(x=>x!==v):c.filter(x=>x!=='none').concat(v));
+      S.a[q.id]=c;save();render();return;}
+    S.a[q.id]=v;save();
+    if(q.id==='B5'&&v==='A'){render();return;}
+    render(); setTimeout(advance,140);};
+  APP().querySelectorAll('.opt').forEach(el=>{
+    el.onclick=()=>pick(el);
+    el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(el);}};});
+  APP().querySelectorAll('.grid input[data-r]').forEach(inp=>{inp.oninput=()=>{
+    const g=S.a[q.id]||{},r=inp.dataset.r; g[r]=g[r]||{raw:'',mean:''};
+    g[r][inp.dataset.c]=inp.value.replace(/\D/g,'').slice(0,3); S.a[q.id]=g;save();
+    const gb=$('#go'); if(gb) gb.disabled=!answered(q.id);};});
+  APP().querySelectorAll('.grid input[data-g]').forEach(inp=>{inp.oninput=()=>{
+    const g=S.a.B5f||{}; g[inp.dataset.g]=inp.value.replace(/\D/g,'').slice(0,1); S.a.B5f=g;save();};});
+  const sd=$('#sido'),sg=$('#sigungu');
+  if(sd){const up=()=>{S.a[q.id]={sido:sd.value,sigungu:sg.value};save();
+    const gb=$('#go'); if(gb) gb.disabled=!answered(q.id);}; sd.onchange=up; sg.oninput=up;}
+  const ta=$('#ta'); if(ta) ta.oninput=()=>{S.a[q.id]=ta.value;save();};
 }
 
-async function cloudListTokens(password) {
-  if (!isCloudEnabled()) throw new Error('Cloud not configured');
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/admin_list_tokens`, {
-    method: 'POST',
-    headers: _cloudHeaders(),
-    body: JSON.stringify({ pwd: password })
-  });
-  if (!res.ok) {
-    const t = await res.text().catch(() => '');
-    const tl = t.toLowerCase();
-    if (tl.includes('locked')) throw new Error('Locked');
-    if (tl.includes('unauthorized')) throw new Error('Unauthorized');
-    throw new Error(`HTTP ${res.status}: ${t}`);
-  }
-  const rows = await res.json();
-  return Array.isArray(rows) ? rows : [];
+/* ═══ 시작·전환·확인·결과 ═══ */
+function introHTML(A){
+  const g=S.a.A1;
+  A.innerHTML=`<div class="bar"></div><main class="center">
+   <div class="mark"></div><h1 class="big">고교선택검사</h1>
+   <div class="lead">아이가 어떤 조건에서 공부가 잘 유지되는지 정리하고,<br>학교를 비교할 때 무엇을 확인해야 하는지 알려 드립니다.</div>
+   <div class="facts"><div class="rule"></div>
+    <div class="fact"><span class="k">대상</span><span class="v">초등 1학년 ~ 중학교 3학년</span></div><div class="rule"></div>
+    <div class="fact"><span class="k">문항</span><span class="v tnum">24 ~ 31개</span></div><div class="rule"></div>
+    <div class="fact"><span class="k">걸리는 시간</span><span class="v">10분 안팎</span></div><div class="rule"></div>
+    <div class="fact"><span class="k">답하는 사람</span><span class="v">보호자와 아이</span></div><div class="rule"></div></div>
+   <div class="fine">${esc(RULES.outputPolicy.disclaimer)}<br><br>
+    중학생은 성적표가 있으면 더 정확합니다. 없어도 진행할 수 있습니다.<br>초등학생에게는 성적과 시험을 묻지 않고, 학년이 낮을수록 문항이 줄어듭니다.<br>
+    중간에 닫으셔도 이어서 하실 수 있습니다.</div></main>
+   <div style="padding:0 0 18px"><button class="btn" id="start">시작하기</button>
+   ${Object.keys(S.a).length?'<button class="btn ghost" id="reset">처음부터 다시</button>':''}</div>`;
+  $('#start').onclick=()=>{S.phase='mo';S.i=0;S.t0=Date.now();save();render();};
+  const r=$('#reset'); if(r) r.onclick=()=>{S={a:{},i:0,phase:'intro',t0:0,ms:0};save();render();};
 }
-
-async function cloudConsumeToken(code, responseId) {
-  if (!isCloudEnabled()) throw new Error('Cloud not configured');
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/consume_token`, {
-    method: 'POST',
-    headers: _cloudHeaders(),
-    body: JSON.stringify({ p_code: code, p_response_id: responseId })
-  });
-  if (!res.ok) {
-    const t = await res.text().catch(() => '');
-    throw new Error(`HTTP ${res.status}: ${t}`);
-  }
-  return true;
+function handoffHTML(A){
+  const n=KID.filter(visible).length;
+  A.innerHTML=`<div class="bar"></div><main class="center">
+   <div class="mark amber"></div><h1 class="big">여기부터는<br>아이가 직접 답합니다</h1>
+   <div class="lead">${n}문항이고 2분이면 끝납니다.<br>정답은 없습니다. 둘 중 더 가까운 쪽을 골라 주세요.</div>
+   <div class="fine">보호자가 대신 답하셔도 결과는 나옵니다. 다만 관심 분야와 공부 환경 선호는 아이 답이 더 정확하고,
+   보호자 답과 다를 때는 그 차이 자체를 결과에 적어 드립니다.</div></main>
+   <div style="padding:0 0 18px"><button class="btn" id="go2">아이에게 넘기기</button>
+   <button class="btn ghost" id="skip">나중에 하고 결과 먼저 보기</button></div>`;
+  $('#go2').onclick=()=>{S.phase='kid';S.i=0;save();render();};
+  $('#skip').onclick=()=>{S.res=evaluate(S.a);S.phase='result';save();render();};
 }
-
-// ── 관리자 토큰 발급/목록 UI 핸들러 ──────────────────────────
-async function createNewToken() {
-  const noteEl = document.getElementById('tokenNote');
-  const resultEl = document.getElementById('tokenResult');
-  const btn = document.getElementById('btnCreateToken');
-  if (!noteEl || !resultEl || !btn) return;
-  const note = (noteEl.value || '').trim();
-  if (!note) {
-    alert('메모(예: 학생 이름 / 보호자 연락처)를 입력해 주세요. 추후 어느 학부모 링크인지 식별하는 데 사용됩니다.');
-    noteEl.focus();
-    return;
-  }
-  btn.disabled = true;
-  resultEl.innerHTML = '';
-  try {
-    const code = await cloudCreateToken(currentAdminPassword, note);
-    const url = `${location.origin}${location.pathname}?t=${encodeURIComponent(code)}`;
-    resultEl.innerHTML = `
-      <div class="token-result">
-        <span>✓ 새 링크 발급 완료 — 이 URL을 학부모에게 카카오톡·문자로 보내세요:</span>
-        <code id="newTokenUrl">${escapeHtml(url)}</code>
-        <button class="copy-btn" id="btnCopyUrl">📋 복사</button>
-      </div>
-    `;
-    document.getElementById('btnCopyUrl').onclick = () => copyToClipboard(url, '링크가 복사되었습니다');
-    noteEl.value = '';
-    loadTokenList();
-  } catch(e) {
-    if (e.message === 'Locked') alert('5회 연속 실패하여 1시간 잠금되었습니다.');
-    else if (e.message === 'Unauthorized') alert('인증이 만료되었습니다. 관리자 콘솔에서 나갔다 다시 들어와 주세요.');
-    else alert('링크 발급 실패: ' + e.message);
-  } finally {
-    btn.disabled = false;
-  }
+function checkHTML(A){
+  A.innerHTML=`<div class="bar"></div><main class="center"><div class="mark"></div>
+   <h1 class="big">${esc(RULES.sincerity.screen.title)}</h1>
+   <div class="lead">${esc(RULES.sincerity.screen.text)}</div></main>
+   <div style="padding:0 0 18px"><button class="btn" id="again">문항 다시 보기</button>
+   <button class="btn ghost" id="skip2">${esc(RULES.sincerity.screen.skip)}</button></div>`;
+  $('#again').onclick=()=>{S.checked=1;S.phase='mo';S.i=0;save();render();};
+  $('#skip2').onclick=()=>{S.checked=1;
+    if(TB.filter(visible).length){S.phase='tb';S.i=0;} else S.phase='result';
+    save();render();};
 }
-
-async function loadTokenList() {
-  const listEl = document.getElementById('tokenList');
-  if (!listEl) return;
-  listEl.innerHTML = '<div class="empty">불러오는 중…</div>';
-  try {
-    const tokens = await cloudListTokens(currentAdminPassword);
-    if (!tokens || tokens.length === 0) {
-      listEl.innerHTML = '<div class="empty">아직 발급된 링크가 없습니다.</div>';
-      return;
-    }
-    listEl.innerHTML = tokens.map(tk => {
-      const url = `${location.origin}${location.pathname}?t=${encodeURIComponent(tk.code)}`;
-      const created = tk.created_at ? new Date(tk.created_at).toLocaleString('ko-KR', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' }) : '-';
-      const consumed = tk.consumed_at ? new Date(tk.consumed_at).toLocaleString('ko-KR', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' }) : '';
-      const used = !!tk.consumed_at;
-      return `
-        <div class="token-row">
-          <div>
-            <div class="code">${escapeHtml(tk.code)}</div>
-            ${tk.note ? `<div class="note">${escapeHtml(tk.note)}</div>` : ''}
-          </div>
-          <div class="${used ? 'badge-used' : 'badge-fresh'}">${used ? '사용됨' : '미사용'}</div>
-          <div style="font-size:11px;color:rgba(255,255,255,.55);line-height:1.3">
-            발급 ${created}${used ? `<br>사용 ${consumed}` : ''}
-          </div>
-          <button class="copy-btn" data-url="${escapeHtml(url)}" ${used ? 'disabled style="opacity:.4;cursor:not-allowed"' : ''}>📋</button>
-        </div>
-      `;
-    }).join('');
-    listEl.querySelectorAll('.copy-btn[data-url]').forEach(btn => {
-      if (!btn.disabled) btn.onclick = () => copyToClipboard(btn.dataset.url, '링크가 복사되었습니다');
-    });
-  } catch(e) {
-    if (e.message === 'Locked') {
-      listEl.innerHTML = '<div class="empty" style="color:#FFB5BD">5회 연속 실패로 1시간 잠금되었습니다.</div>';
-    } else if (e.message === 'Unauthorized') {
-      listEl.innerHTML = '<div class="empty" style="color:#FFB5BD">인증 만료. 다시 로그인해 주세요.</div>';
-    } else {
-      listEl.innerHTML = `<div class="empty" style="color:#FFB5BD">불러오기 실패: ${escapeHtml(e.message)}</div>`;
-    }
-  }
-}
-
-function copyToClipboard(text, successMsg) {
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(
-      () => alert(successMsg || '복사되었습니다'),
-      () => fallbackCopy(text, successMsg)
-    );
+const BUCKET_ICON={primary:'',conditional:'',low:''};
+function resultHTML(A){
+  const r=S.res||evaluate(S.a); S.res=r;
+  const gf=r.frame, T=RULES.resultSections;
+  const GN={}; QUESTIONS.grades.forEach(g=>GN[g.id]=g.label);
+  const d=new Date(), ds=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}.`;
+  let h=`<div class="bar"></div><main class="res">
+   <div class="print-head"><p class="t">고교선택검사 결과</p>
+     <div class="m"><span>${esc(GN[r.grade]||'')}</span>${S.a.A2&&S.a.A2.sido?`<span>${esc(S.a.A2.sido)} ${esc(S.a.A2.sigungu||'')}</span>`:''}<span>${ds}</span></div></div>`;
+  h+=`<section style="padding-top:40px"><div class="eyebrow">결과</div>
+      <h2>${esc(gf.title||'답변에서 확인된 공부 성향')}</h2>`;
+  if(gf.caveat) h+=`<div class="note amber">${esc(gf.caveat)}</div>`;
+  h+=`<div class="rule top" style="margin-top:20px"></div>`;
+  r.obs.forEach(o=>{h+=`<div class="obs">${esc(o.text)}</div><div class="rule"></div>`;});
+  h+=`</section>`;
+  const IT=r.interest;
+  h+=`<section><div class="eyebrow">관심</div><h2>아이가 더 관심을 보인 활동</h2>`;
+  if(Object.values(IT.w).some(v=>v>0)){
+    h+=`<div class="rule top" style="margin-top:18px"></div>`;
+    QUESTIONS.tracks.slice().sort((a,b)=>IT.w[b.id]-IT.w[a.id]).forEach(t=>{
+      const n=IT.w[t.id],on=IT.acc.includes(t.id);
+      h+=`<div class="trk${on?' on':''}"><span class="n">${esc(t.name)}</span><span class="pips">${
+        [1,2,3,4].map(i=>`<span class="pip${i<=n?' f':''}"></span>`).join('')}</span></div><div class="rule"></div>`;});
+    if(IT.flat) h+=`<div class="note">${esc(RULES.stage4.interest.flat.text)}</div>`;
+    else h+=`<div class="note">${esc(IT.acc.map(t=>TN[t]).join('과 '))} 활동에 상대적으로 더 관심을 보였습니다.</div>`;
+    if(r.stated.length&&IT.acc.length&&!IT.acc.every(t=>r.stated.includes(t))){
+      const m=IT.acc.filter(t=>!r.stated.includes(t)).map(t=>TN[t]).join('과 ');
+      h+=`<div class="note amber">${esc(RULES.stage4.stated.mismatch.replace('{stated}',r.stated.map(t=>TN[t]).join('과 ')).replace('{measured}',m))}</div>`;}
+  } else h+=`<div class="note">아이 문항을 아직 하지 않으셨습니다. 관심 분야는 아이가 직접 답해야 나옵니다.</div>`;
+  h+=`</section>`;
+  if(gf.typeRanking){
+    h+=`<section><div class="eyebrow">학교 유형</div><h2>세 묶음으로 정리했습니다</h2>
+        <div class="fine" style="margin-top:10px">묶음 안에서 순위를 매기지 않습니다. 점수도 매기지 않습니다.</div>`;
+    RULES.stage5.buckets.forEach(b=>{
+      const list=r.buckets[b.id]; if(!list.length) return;
+      h+=`<div class="rule top" style="margin-top:20px"></div><div class="bucket"><div class="tag">${esc(b.title)}</div>`;
+      list.forEach(x=>{h+=`<div class="bt">${esc(x.id)}</div>`;
+        if(x.reasons.length) x.reasons.forEach(rs=>{h+=`<div class="bd">${esc(rs.text)}</div>`;});
+        else h+=`<div class="bd">현재 조건에서 특별히 걸리는 부분이 없었습니다.</div>`;});
+      h+=`</div>`;});
+    h+=`<div class="rule"></div>`;
+    if(S.a.TB1){const p=(QI.TB1.options.find(o=>o.value===S.a.TB1)||{}).pole;
+      h+=`<div class="note">${p==='curriculum'?'과목과 활동 선택 폭을 조금 더 우선하겠다고 하셨습니다. 남은 후보 중 개설 과목이 넓은 학교부터 비교해 보세요.':'현재 성적 위치를 지키는 쪽을 조금 더 우선하겠다고 하셨습니다. 남은 후보 중 같은 성적대 학생이 많은 학교부터 비교해 보세요.'}</div>`;}
+    if(S.a.TB2){const p=(QI.TB2.options.find(o=>o.value===S.a.TB2)||{}).pole;
+      h+=`<div class="note">${p==='language'?'아이는 외국어 자체를 배우는 활동에 더 관심을 보였습니다. 외국어고 교육과정을 먼저 비교해 볼 이유가 있습니다.':'아이는 외국어로 국제 문제를 다루는 활동에 더 관심을 보였습니다. 국제고 교육과정을 먼저 비교해 볼 이유가 있습니다.'}</div>`;}
+    h+=`</section>`;
   } else {
-    fallbackCopy(text, successMsg);
+    h+=`<section><div class="eyebrow">학교 유형</div><h2>${esc(gf.title||'지금 살펴볼 것')}</h2>
+        <div class="note">${esc(gf.note||'')}</div></section>`;
   }
+  if(r.branch) h+=`<section><div class="eyebrow">별도 전형</div><h2>과학고·영재학교</h2>
+      <div class="note">${esc(r.branch.text)}</div></section>`;
+  if(r.gaps.length){h+=`<section><div class="eyebrow">응답 차이</div><h2>보호자와 아이의 답이 다른 부분</h2>`;
+    r.gaps.forEach(g=>h+=`<div class="note">${esc(g)}</div>`); h+=`</section>`;}
+  h+=`<section><div class="eyebrow">확인</div><h2>학교별로 반드시 확인할 것</h2><div class="rule top" style="margin-top:18px"></div>`;
+  RULES.checklist.forEach(c=>{h+=`<div class="bucket"><div class="bt">${esc(c.t)}</div><div class="bd">${esc(c.d)}</div></div><div class="rule"></div>`;});
+  r.notes.forEach(n=>h+=`<div class="note">${esc(n)}</div>`);
+  h+=`</section>`;
+  h+=`<section><div class="eyebrow">다음</div><h2>이번 학기에 할 일</h2><div class="note">${esc(nextAction(r))}</div></section>`;
+  const ctx=[S.a.I1,S.a.I2].filter(x=>x&&x.trim());
+  if(ctx.length){h+=`<section><div class="eyebrow">적어 주신 내용</div><h2>상담에 함께 봅니다</h2>`;
+    ctx.forEach(c=>h+=`<div class="note">${esc(c)}</div>`); h+=`</section>`;}
+  h+=`<div class="disclaim">${esc(RULES.outputPolicy.disclaimer)}</div></main>
+      <div style="padding:14px 0 40px">
+      ${KID.filter(visible).some(i=>S.a[i]===undefined)?'<button class="btn" id="kid">아이 문항 마저 하기</button>':''}
+      <button class="btn" id="prt">결과 인쇄 · PDF로 저장</button>
+      <div class="fine" id="prtmsg" style="text-align:center;margin-top:8px">인쇄 창에서 <b>대상</b>을 <b>PDF로 저장</b>으로 바꾸시면 파일로 남습니다.</div>
+      <button class="btn ghost" id="again2">처음부터 다시</button></div>`;
+  A.innerHTML=h;
+  const k=$('#kid'); if(k) k.onclick=()=>{S.phase='kid';S.i=0;save();render();};
+  $('#prt').onclick=doPrint;
+  $('#again2').onclick=()=>{ if(confirm('답을 모두 지우고 처음부터 진행할까요?')){
+    S={a:{},i:0,phase:'intro',t0:0,ms:0};save();render();}};
+  persist(r);
 }
-function fallbackCopy(text, successMsg) {
-  const ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.position = 'fixed';
-  ta.style.opacity = '0';
-  document.body.appendChild(ta);
-  ta.select();
-  try { document.execCommand('copy'); alert(successMsg || '복사되었습니다'); }
-  catch(e) { prompt('아래 URL을 직접 복사하세요:', text); }
-  finally { document.body.removeChild(ta); }
+function nextAction(r){
+  if(S.a.B5==='B') return '이번 주말에 고등학교 1학년 3월 모의고사를 한 과목만 시간을 재고 풀려 보세요. 중학교 성적표로는 보이지 않는 부분이 거기서 보입니다.';
+  if(!r.frame.typeRanking) return '지금 시점에는 학교를 좁히기보다, 위에 적힌 공부 성향 중 한 가지를 골라 한 학기 동안 지켜봐 주세요.';
+  if(r.signals.selfMgmt.guided) return '다음 한 주 동안 아이가 스스로 계획을 세워 보게 하고, 며칠이나 지켜지는지 확인해 보세요. 학교의 학습 관리 방식을 물어볼 때 기준이 됩니다.';
+  return '관심 있는 학교 두 곳의 편제표를 열어, 아이가 관심을 보인 분야의 과목이 실제로 개설되는지 확인해 보세요.';
 }
 
-async function cloudList(password) {
-  if (!isCloudEnabled()) throw new Error('Cloud not configured');
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/admin_list`, {
-    method: 'POST',
-    headers: _cloudHeaders(),
-    body: JSON.stringify({ pwd: password })
-  });
-  if (!res.ok) {
-    const t = await res.text().catch(() => '');
-    const tl = t.toLowerCase();
-    if (tl.includes('locked')) throw new Error('Locked');
-    if (tl.includes('unauthorized') || res.status === 401 || res.status === 403) {
-      throw new Error('Unauthorized');
+async function doPrint(){
+  const btn=$('#prt');
+  const setMsg=t=>{const m=$('#prtmsg'); if(m) m.innerHTML=t;};
+  // 아티팩트·임베드처럼 다른 페이지 안에 들어 있으면 인쇄 창이 안 열린다
+  const embedded=(()=>{try{return window.self!==window.top}catch(e){return true}})();
+  if(!embedded){
+    try{ window.print(); return; }catch(e){}
+  }
+  setMsg('결과 파일을 만들고 있습니다…');
+  const ok=await saveResultFile();
+  setMsg(ok
+    ? '결과 파일을 받으셨습니다. 그 파일을 열고 <b>인쇄 → 대상을 PDF로 저장</b>으로 바꾸시면 됩니다.'
+    : '이 화면에서는 인쇄 창이 열리지 않습니다. 브라우저 메뉴의 인쇄 기능을 쓰시거나, 검사를 별도 주소로 열어 주세요.');
+  if(btn) btn.textContent='결과 파일 다시 받기';
+}
+async function saveResultFile(){
+  const style=document.querySelector('style');
+  const main=document.querySelector('main.res');
+  if(!main) return false;
+  const html='<!doctype html><html lang="ko"><head><meta charset="utf-8">'+
+    '<meta name="viewport" content="width=device-width,initial-scale=1">'+
+    '<title>고교선택검사 결과</title>'+
+    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">'+
+    '<style>'+(style?style.textContent:'')+
+    '.print-head{display:block!important;margin:0 0 18px;padding-bottom:12px;border-bottom:1.5px solid var(--ink)}'+
+    '.print-head .t{font-family:var(--serif);font-size:22px;font-weight:700;margin:0}'+
+    '.print-head .m{font-size:12px;color:var(--muted);margin-top:6px;display:flex;gap:14px;flex-wrap:wrap}'+
+    '</style></head><body><div class="app"><main class="res">'+main.innerHTML+'</main></div></body></html>';
+  return await saveFile('고교선택검사_결과_'+new Date().toISOString().slice(0,10)+'.html', html, 'text/html');
+}
+
+/* ═══ 저장 · 관리자 ═══ */
+const ADMIN_PASSWORD="guide2026";
+const SUPABASE_URL="https://ihiuzfufngmbbresizzo.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_ohhFuQTtx3p7yWjPLXhZxg_2tZ3t67x";
+const V2_KEY='guide_v2_responses', V31_KEY='hsc_v31_responses';
+const cloudOn=()=>Boolean(SUPABASE_URL&&SUPABASE_ANON_KEY);
+const H=()=>({'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json'});
+function localList(k){try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return []}}
+function buildRecord(r){
+  const kidDone=KID.filter(visible).every(i=>S.a[i]!==undefined);
+  return {schemaVersion:'v3.1',id:(S.rid||(S.rid=Date.now()+'-'+Math.random().toString(36).slice(2,8))),
+    completedAt:new Date().toISOString(),grade:S.a.A1,region:S.a.A2||null,
+    answers:S.a,elapsedMs:S.ms||null,kidCompleted:kidDone,
+    result:{buckets:{primary:r.buckets.primary.map(b=>b.id),conditional:r.buckets.conditional.map(b=>b.id),low:r.buckets.low.map(b=>b.id)},
+      reasons:Object.fromEntries(['primary','conditional','low'].flatMap(k=>r.buckets[k].map(b=>[b.id,b.reasons.map(x=>x.kind)]))),
+      observations:r.obs.map(o=>o.text),interestAccepted:r.interest.acc,interestFlat:r.interest.flat,
+      statedTracks:r.stated,gaps:r.gaps,branch:S.a.H1||null,typeRanking:!!r.frame.typeRanking}};
+}
+let saved=false;
+function persist(r){
+  if(saved) return; saved=true;
+  const rec=buildRecord(r);
+  try{const l=localList(V31_KEY); l.push(rec); localStorage.setItem(V31_KEY,JSON.stringify(l.slice(-2000)));}catch(e){}
+  if(cloudOn()) fetch(SUPABASE_URL+'/rest/v1/responses',{method:'POST',
+    headers:Object.assign(H(),{'Prefer':'return=minimal'}),
+    body:JSON.stringify({id:rec.id,grade:rec.grade,completed_at:rec.completedAt,payload:rec})}).catch(()=>{});
+}
+/* ── 관리자 ── */
+function adminOpen(){
+  const pw=prompt('관리자 비밀번호');
+  if(pw!==ADMIN_PASSWORD){ if(pw!==null) alert('비밀번호가 다릅니다.'); return; }
+  const v31=localList(V31_KEY).map(r=>Object.assign({},r,{_v:'v3.1'}));
+  const v2=localList(V2_KEY).map(r=>Object.assign({},r,{_v:'v2'}));
+  const all=v31.concat(v2).sort((a,b)=>String(b.completedAt||'').localeCompare(String(a.completedAt||'')));
+  const d=document.createElement('div'); d.className='sheet'; d.id='sheet';
+  const GN={}; QUESTIONS.grades.forEach(g=>GN[g.id]=g.label);
+  d.innerHTML=`<div class="wrap">
+   <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+     <h2 style="font-family:var(--serif);margin:0">응답 ${all.length}건</h2>
+     <button class="btn ghost" style="width:auto" id="cls">닫기</button></div>
+   <div class="fine">v3.1 ${v31.length}건 · v2 ${v2.length}건. v2는 구버전 형식이라 새 판정을 적용하지 않고 원본만 보여 줍니다.</div>
+   <div style="overflow-x:auto;margin-top:14px"><table><thead><tr>
+     <th>버전</th><th>일시</th><th>학년</th><th>지역</th><th>우선 검토</th><th>조건 확인</th><th>우선순위 낮음</th><th>아이 문항</th></tr></thead><tbody>
+   ${all.map((r,i)=>{
+     if(r._v==='v2') return `<tr data-i="${i}"><td><span class="badge old">v2</span></td><td class="tnum">${esc((r.completedAt||'').slice(0,16).replace('T',' '))}</td>
+       <td>${esc(r.grade||'')}</td><td colspan="5" style="color:var(--faint)">구버전 응답 — 눌러서 원본 보기</td></tr>`;
+     const b=r.result?r.result.buckets:{primary:[],conditional:[],low:[]};
+     return `<tr data-i="${i}"><td><span class="badge">v3.1</span></td><td class="tnum">${esc((r.completedAt||'').slice(0,16).replace('T',' '))}</td>
+       <td>${esc(GN[r.grade]||r.grade||'')}</td><td>${esc(r.region?(r.region.sido||'')+' '+(r.region.sigungu||''):'')}</td>
+       <td>${esc((b.primary||[]).join(', ')||'—')}</td><td>${esc((b.conditional||[]).join(', ')||'—')}</td>
+       <td>${esc((b.low||[]).join(', ')||'—')}</td><td>${r.kidCompleted?'완료':'미완'}</td></tr>`;}).join('')}
+   </tbody></table></div>
+   <div style="display:flex;gap:8px;margin-top:16px"><button class="btn ghost" style="width:auto" id="csv">CSV 내보내기</button>
+   <button class="btn ghost" style="width:auto" id="jsn">JSON 내보내기</button></div>
+   <div id="det"></div></div>`;
+  document.body.appendChild(d);
+  d.querySelector('#cls').onclick=()=>d.remove();
+  d.querySelectorAll('tr[data-i]').forEach(tr=>tr.onclick=()=>adminDetail(all[+tr.dataset.i]));
+  d.querySelector('#jsn').onclick=()=>dl(JSON.stringify(all,null,2),'응답_'+new Date().toISOString().slice(0,10)+'.json','application/json');
+  d.querySelector('#csv').onclick=()=>{
+    const rows=[['버전','일시','학년','지역','우선검토','조건확인','우선순위낮음','아이문항','관심분야']];
+    all.forEach(r=>{const b=(r.result&&r.result.buckets)||{};
+      rows.push([r._v,(r.completedAt||'').slice(0,16),GN[r.grade]||r.grade||'',
+        r.region?(r.region.sido||'')+' '+(r.region.sigungu||''):'',
+        (b.primary||[]).join(' '),(b.conditional||[]).join(' '),(b.low||[]).join(' '),
+        r.kidCompleted?'완료':'미완',((r.result&&r.result.interestAccepted)||[]).map(t=>TN[t]||t).join(' ')]);});
+    dl('﻿'+rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n'),
+       '응답_'+new Date().toISOString().slice(0,10)+'.csv','text/csv');};
+}
+function adminDetail(r){
+  const box=document.getElementById('det'); if(!box) return;
+  if(r._v==='v2'){box.innerHTML=`<div style="margin-top:20px"><div class="rule top"></div>
+    <div class="fine" style="margin:12px 0">v2 구버전 응답입니다. 새 판정 로직을 적용하지 않습니다.</div>
+    <pre style="font-family:var(--mono);font-size:11px;white-space:pre-wrap;word-break:break-all">${esc(JSON.stringify(r,null,2))}</pre></div>`;
+    box.scrollIntoView({behavior:'smooth'});return;}
+  const A=r.answers||{}, res=r.result||{};
+  const lab=(id,v)=>{const q=QI[id]; if(!q) return v;
+    if(q.scale==='multi') return (v||[]).map(x=>{const o=(q.options||[]).find(o=>o.value===x);return o?o.label:x;}).join(', ');
+    if(typeof v==='object') return JSON.stringify(v);
+    const o=(q.options||[]).find(o=>o.value===v); return o?o.label:v;};
+  box.innerHTML=`<div style="margin-top:20px"><div class="rule top"></div>
+   <h3 style="font-family:var(--serif);margin:14px 0 8px">응답 상세</h3>
+   <div class="fine">${esc(r.completedAt||'')} · ${esc(r.schemaVersion)} · 소요 ${r.elapsedMs?Math.round(r.elapsedMs/1000)+'초':'—'}</div>
+   <h4 style="margin:16px 0 6px;font-size:14px">공부 성향 요약</h4>
+   ${(res.observations||[]).map(o=>`<div class="fine">· ${esc(o)}</div>`).join('')}
+   ${(res.gaps||[]).length?'<h4 style="margin:16px 0 6px;font-size:14px">보호자·아이 응답 차이</h4>'+res.gaps.map(g=>`<div class="fine">· ${esc(g)}</div>`).join(''):''}
+   <h4 style="margin:16px 0 6px;font-size:14px">문항별 응답</h4>
+   <div style="overflow-x:auto"><table><tbody>
+   ${Object.keys(A).filter(k=>QI[k]).map(k=>`<tr><td style="white-space:nowrap;color:var(--faint)">${esc(k)}</td>
+     <td>${esc(QI[k].text)}</td><td>${esc(lab(k,A[k]))}</td></tr>`).join('')}
+   </tbody></table></div></div>`;
+  box.scrollIntoView({behavior:'smooth'});
+}
+async function saveFile(name,txt,type){
+  // 아티팩트 안에서는 downloads 능력을 통해야 파일이 내려간다
+  try{
+    if(window.claude&&typeof window.claude.use==='function'){
+      const d=await window.claude.use('downloads');
+      if(d&&typeof d.save==='function'){ await d.save({filename:name,data:txt}); return true; }
     }
-    throw new Error(`HTTP ${res.status}: ${t}`);
-  }
-  const rows = await res.json();
-  // payload 컬럼에 전체 응답이 들어있음
-  return Array.isArray(rows)
-    ? rows.map(r => r.payload).filter(Boolean)
-    : [];
+  }catch(e){}
+  try{
+    const b=new Blob([txt],{type:type+';charset=utf-8'}),u=URL.createObjectURL(b);
+    const a=document.createElement('a'); a.href=u; a.download=name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(u),1000); return true;
+  }catch(e){ return false; }
 }
+function dl(txt,name,type){ saveFile(name,txt,type); }
 
-async function cloudDelete(password, id) {
-  if (!isCloudEnabled()) throw new Error('Cloud not configured');
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/admin_delete`, {
-    method: 'POST',
-    headers: _cloudHeaders(),
-    body: JSON.stringify({ pwd: password, rid: id })
-  });
-  if (!res.ok) {
-    const t = await res.text().catch(() => '');
-    throw new Error(`HTTP ${res.status}: ${t}`);
-  }
-  return true;
-}
-
-async function cloudClear(password) {
-  if (!isCloudEnabled()) throw new Error('Cloud not configured');
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/admin_clear`, {
-    method: 'POST',
-    headers: _cloudHeaders(),
-    body: JSON.stringify({ pwd: password })
-  });
-  if (!res.ok) {
-    const t = await res.text().catch(() => '');
-    throw new Error(`HTTP ${res.status}: ${t}`);
-  }
-  return true;
-}
-
-// ── Result ─────────────────────────────────────────────────
-function renderDone() {
-  document.getElementById('shell').classList.remove('admin-shell');
-  main.innerHTML = `
-    <div class="card fade-in" style="text-align:center;padding:48px 28px">
-      <h1 style="margin:0 0 10px">검사가 완료되었습니다.</h1>
-      <p class="lede" style="margin:0;color:var(--ink-soft);line-height:1.6">
-        응답해주셔서 감사합니다.<br>결과는 컨설턴트가 별도로 안내드립니다.
-      </p>
-    </div>
-  `;
-}
-
-// ── Hexagon SVG (6축 visualization) ───────────────────────
-function buildHexagonSVG(axisScore) {
-  const labels = [
-    {key:'A', name:'학업', x:0,  y:-1},
-    {key:'B', name:'진로', x:.866,  y:-.5},
-    {key:'C', name:'입시', x:.866, y:.5},
-    {key:'D', name:'환경', x:0,  y:1},
-    {key:'E', name:'심리', x:-.866, y:.5},
-    {key:'F', name:'멘탈', x:-.866, y:-.5}
-  ];
-  const cx = 160, cy = 160, R = 110;
-  // 격자 (5단계: 20, 40, 60, 80, 100)
-  let grid = '';
-  [20, 40, 60, 80, 100].forEach((g, idx) => {
-    const r = (g / 100) * R;
-    const pts = labels.map(l => `${cx + l.x*r},${cy + l.y*r}`).join(' ');
-    grid += `<polygon points="${pts}" fill="${idx===4?'rgba(14,143,134,.04)':'none'}" stroke="var(--line)" stroke-width="1" />`;
-  });
-  // 축선
-  let lines = '';
-  labels.forEach(l => {
-    lines += `<line x1="${cx}" y1="${cy}" x2="${cx + l.x*R}" y2="${cy + l.y*R}" stroke="var(--line)" stroke-width="1" />`;
-  });
-  // 데이터 다각형
-  const dataPts = labels.map(l => {
-    const v = axisScore[l.key] || 0;
-    const r = (v / 100) * R;
-    return `${cx + l.x*r},${cy + l.y*r}`;
-  }).join(' ');
-  // 데이터 점 + 라벨
-  let dots = '';
-  let textLabels = '';
-  labels.forEach(l => {
-    const v = axisScore[l.key] || 0;
-    const r = (v / 100) * R;
-    const px = cx + l.x*r;
-    const py = cy + l.y*r;
-    dots += `<circle cx="${px}" cy="${py}" r="4" fill="var(--teal-deep)" stroke="white" stroke-width="2" />`;
-    const lblR = R + 22;
-    const lx = cx + l.x*lblR;
-    const ly = cy + l.y*lblR + 4;
-    textLabels += `<text x="${lx}" y="${ly}" text-anchor="middle" fill="var(--ink)" font-size="13" font-weight="600" font-family="var(--font-display)">${l.name}</text>`;
-    textLabels += `<text x="${lx}" y="${ly+14}" text-anchor="middle" fill="var(--ink-soft)" font-size="11" font-family="var(--font-body)">${v}</text>`;
-  });
-  return `
-    <svg viewBox="0 0 320 320" width="320" height="320" xmlns="http://www.w3.org/2000/svg">
-      ${grid}
-      ${lines}
-      <polygon points="${dataPts}" fill="rgba(14,143,134,.18)" stroke="var(--teal-deep)" stroke-width="2" stroke-linejoin="round" />
-      ${dots}
-      ${textLabels}
-    </svg>
-  `;
-}
-
-// ============================================================
-// 관리자 패널
-// ============================================================
-let adminData = [];
-let adminFilter = '';
-
-async function renderAdmin() {
-  document.getElementById('shell').classList.add('admin-shell');
-
-  // 데이터 로드: 클라우드 우선, 실패 시 로컬 폴백
-  let dataSource = 'local';   // 'cloud' | 'local' | 'cloud-fail'
-  let cloudErr = null;
-
-  if (isCloudEnabled() && currentAdminPassword) {
-    try {
-      adminData = await cloudList(currentAdminPassword);
-      dataSource = 'cloud';
-    } catch(e) {
-      cloudErr = e.message;
-      adminData = loadAllResponsesSync();
-      dataSource = 'cloud-fail';
-    }
-  } else {
-    adminData = loadAllResponsesSync();
-  }
-
-  // 토큰 목록 (TOKENS_UI_ENABLED + 클라우드 모드에서만)
-  let tokens = [];
-  if (TOKENS_UI_ENABLED && isCloudEnabled() && currentAdminPassword && dataSource === 'cloud') {
-    try {
-      tokens = await cloudListTokens(currentAdminPassword);
-    } catch(e) {
-      console.warn('[Token] list 실패:', e.message);
-    }
-  }
-
-  // 정렬: 최신순
-  adminData.sort((a, b) => (b.completedAt || '').localeCompare(a.completedAt || ''));
-
-  // 통계
-  const total = adminData.length;
-  const grades = {};
-  const top1 = {};
-  const mentals = {};
-  adminData.forEach(d => {
-    grades[d.grade] = (grades[d.grade] || 0) + 1;
-    const t1 = d.ranking?.[0]?.type;
-    if (t1) top1[t1] = (top1[t1] || 0) + 1;
-    if (d.mentalName) mentals[d.mentalName] = (mentals[d.mentalName] || 0) + 1;
-  });
-  const mostType = Object.entries(top1).sort((a,b)=>b[1]-a[1])[0]?.[0] || '-';
-  const mostMental = Object.entries(mentals).sort((a,b)=>b[1]-a[1])[0]?.[0] || '-';
-
-  // 필터
-  const filtered = adminData.filter(d => {
-    if (!adminFilter) return true;
-    const q = adminFilter.toLowerCase();
-    return (
-      (d.name || '').toLowerCase().includes(q) ||
-      (d.school || '').toLowerCase().includes(q) ||
-      (d.grade || '').toLowerCase().includes(q) ||
-      (d.ranking?.[0]?.type || '').toLowerCase().includes(q) ||
-      (d.mentalName || '').toLowerCase().includes(q)
-    );
-  });
-
-  // 데이터 소스 배지 텍스트
-  const sourceBadge = dataSource === 'cloud'
-    ? `<span class="src-badge src-cloud">☁️ 클라우드 동기화</span>`
-    : dataSource === 'cloud-fail'
-    ? `<span class="src-badge src-fail">⚠ 클라우드 연결 실패 — 이 기기 데이터만 표시</span>`
-    : isCloudEnabled()
-    ? `<span class="src-badge src-fail">⚠ 클라우드 미인증</span>`
-    : `<span class="src-badge src-local">📱 이 기기 (localStorage)</span>`;
-
-  main.innerHTML = `
-    <div class="admin-top">
-      <div>
-        <h1>관리자 콘솔</h1>
-        <div class="sub">전체 응답자 ${total}명 · ${sourceBadge}</div>
-      </div>
-      <div style="display:flex;gap:6px">
-        ${isCloudEnabled() ? `<button class="btn btn-sm btn-ghost" id="btnRefresh" style="background:rgba(255,255,255,.05);color:white;border-color:rgba(255,255,255,.15);font-size:12px">↻ 새로고침</button>` : ''}
-        <button class="btn btn-sm btn-ghost" id="btnExitAdmin" style="background:rgba(255,255,255,.05);color:white;border-color:rgba(255,255,255,.15);font-size:12px">검사로 돌아가기</button>
-      </div>
-    </div>
-
-    ${cloudErr ? `<div style="background:rgba(177,74,90,.15);border:1px solid var(--rose);color:#FFB5BD;padding:10px 14px;border-radius:10px;margin-bottom:14px;font-size:12px">클라우드 오류: ${escapeHtml(cloudErr)}</div>` : ''}
-
-    ${isCloudEnabled() && dataSource === 'cloud' ? `
-    <div class="token-issue-card">
-      <div class="token-issue-head">
-        <h3>검사 링크 발급</h3>
-        <p>외부 결제 확인 후 새 링크를 발급해 사용자에게 전달하세요. 링크 1개 = 검사 1회.</p>
-      </div>
-      <div class="token-issue-form">
-        <input type="text" id="tokenNoteInput" placeholder="메모 (예: 홍길동 / 4/28 토스 결제) — 선택" />
-        <button class="btn primary" id="btnNewLink">+ 새 링크 생성</button>
-      </div>
-      <div id="tokenIssueResult" class="token-issue-result"></div>
-    </div>
-
-    <div class="token-list-card">
-      <div class="token-list-head">
-        <h3>발급된 링크 (${tokens.length})</h3>
-        <span class="token-list-sub">사용된 행을 클릭하면 해당 응답 상세를 볼 수 있어요.</span>
-      </div>
-      ${tokens.length === 0 ? `<div class="token-empty">아직 발급된 링크가 없습니다.</div>` : `
-      <div class="token-list">
-        <div class="token-row head">
-          <div>발급일시</div>
-          <div>코드 / 메모</div>
-          <div>상태</div>
-        </div>
-        ${tokens.slice(0, 100).map(t => {
-          const created = t.created_at ? new Date(t.created_at).toLocaleString('ko-KR', {month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'}) : '-';
-          const used = !!t.consumed_at;
-          const usedAt = used ? new Date(t.consumed_at).toLocaleString('ko-KR', {month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
-          return `
-          <div class="token-row ${used ? 'used' : 'unused'}" ${used && t.consumed_response_id ? `data-rid="${escapeHtml(t.consumed_response_id)}"` : ''}>
-            <div class="meta">${created}</div>
-            <div>
-              <div class="code">${escapeHtml(t.code)}</div>
-              ${t.note ? `<div class="meta">${escapeHtml(t.note)}</div>` : ''}
-            </div>
-            <div>
-              ${used
-                ? `<span class="badge used">사용됨</span><div class="meta">${usedAt}</div>`
-                : `<span class="badge unused">미사용</span><button class="link-copy" data-code="${escapeHtml(t.code)}">📋 복사</button>`}
-            </div>
-          </div>`;
-        }).join('')}
-      </div>
-      `}
-    </div>
-    ` : ''}
-
-    <div class="admin-stats">
-      <div class="admin-stat"><div class="num">${total}</div><div class="lbl">총 응답수</div></div>
-      <div class="admin-stat"><div class="num">${Object.keys(grades).length}</div><div class="lbl">학년 종류</div></div>
-      <div class="admin-stat"><div class="num" style="font-size:18px;line-height:1.3">${mostType}</div><div class="lbl">최다 추천 1순위</div></div>
-      <div class="admin-stat"><div class="num" style="font-size:18px;line-height:1.3">${mostMental}</div><div class="lbl">최다 멘탈 유형</div></div>
-    </div>
-
-    ${TOKENS_UI_ENABLED && isCloudEnabled() ? `
-    <div class="tokens-section" id="tokensSection">
-      <h3>🔑 검사 링크 발급 — 결제 확인 후 학부모에게 전달</h3>
-      <div class="token-form">
-        <input type="text" id="tokenNote" placeholder="메모 (예: 홍길동 학생 / 010-1234-5678)" maxlength="120" />
-        <button class="btn primary" id="btnCreateToken">+ 새 링크 발급</button>
-        <button class="btn btn-sm btn-ghost" id="btnRefreshTokens" style="background:rgba(255,255,255,.05);color:white;border-color:rgba(255,255,255,.15);font-size:12px">↻ 목록 새로고침</button>
-      </div>
-      <div id="tokenResult"></div>
-      <div class="token-list" id="tokenList">
-        <div class="empty">목록 새로고침을 눌러 발급된 링크를 확인하세요.</div>
-      </div>
-    </div>` : ''}
-
-    <div class="admin-toolbar">
-      <input type="text" id="adminSearch" placeholder="이름·학년·학교·고교 유형·멘탈 유형 검색" value="${adminFilter}" />
-      <button class="btn primary" id="btnExportCsv">CSV 내보내기</button>
-      <button class="btn primary" id="btnExportJson">JSON 내보내기</button>
-      <button class="btn primary" id="btnImportJson">JSON 가져오기 (병합)</button>
-      <button class="btn danger" id="btnClearAll">전체 삭제</button>
-      <input type="file" id="importJsonFile" accept="application/json,.json" style="display:none" />
-    </div>
-
-    <div class="admin-table">
-      <div class="admin-row head">
-        <div>이름·학년</div>
-        <div>완료시각·학교</div>
-        <div>1순위 / 멘탈</div>
-        <div style="text-align:right">점수</div>
-      </div>
-      ${filtered.length === 0 ? `<div class="admin-empty">${adminFilter ? '검색 결과가 없습니다.' : '아직 응답이 없습니다.'}</div>` : filtered.map((d, i) => {
-        const t1 = d.ranking?.[0];
-        const dt = d.completedAt ? new Date(d.completedAt).toLocaleString('ko-KR', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' }) : '-';
-        return `
-        <div class="admin-row" data-rid="${d.id}">
-          <div>
-            <div class="name">${escapeHtml(d.name || '-')}</div>
-            <div class="meta"><span>${escapeHtml(d.grade || '')}</span></div>
-          </div>
-          <div class="meta">
-            <span>${dt}</span>
-            ${d.school ? `<span>${escapeHtml(d.school)}</span>` : ''}
-          </div>
-          <div>
-            <div class="top1">${t1?.type || '-'}</div>
-            <div class="meta"><span>${d.mentalName || '-'}</span></div>
-          </div>
-          <div class="top1" style="text-align:right">${t1?.score ?? '-'}</div>
-        </div>`;
-      }).join('')}
-    </div>
-
-    <div style="margin-top:14px;font-size:11px;color:rgba(255,255,255,.4);line-height:1.5">
-      ※ 데이터는 이 브라우저의 로컬 저장소(localStorage)에 보관됩니다.
-      다른 기기에서 응답한 데이터는 그쪽 브라우저에 따로 저장되니, 합쳐서 보려면
-      다른 기기에서 <strong style="color:rgba(255,255,255,.7)">JSON 내보내기</strong> →
-      이쪽에서 <strong style="color:rgba(255,255,255,.7)">JSON 가져오기</strong>로 병합하세요.
-      행을 클릭하면 응답 전체를 볼 수 있습니다.
-    </div>
-  `;
-
-  // 이벤트
-  // ── 토큰 발급 이벤트 ──
-  const btnNewLink = document.getElementById('btnNewLink');
-  if (btnNewLink) {
-    btnNewLink.onclick = async () => {
-      const note = (document.getElementById('tokenNoteInput')?.value || '').trim();
-      const resultEl = document.getElementById('tokenIssueResult');
-      btnNewLink.disabled = true;
-      resultEl.innerHTML = '<div class="meta" style="color:rgba(255,255,255,.7)">발급 중…</div>';
-      try {
-        const code = await cloudCreateToken(currentAdminPassword, note);
-        const url = `${location.origin}${location.pathname}?t=${encodeURIComponent(code)}`;
-        resultEl.innerHTML = `
-          <div class="token-issue-success">
-            <div class="meta" style="color:rgba(255,255,255,.7);margin-bottom:6px">발급 완료 — 아래 링크를 사용자에게 전달하세요</div>
-            <div class="token-code-big">${escapeHtml(code)}</div>
-            <div class="token-url">${escapeHtml(url)}</div>
-            <div class="token-actions">
-              <button class="btn primary" id="btnCopyUrl">📋 링크 복사</button>
-              <button class="btn" id="btnCopyCode">코드만 복사</button>
-            </div>
-          </div>`;
-        document.getElementById('btnCopyUrl').onclick = () => copyToClipboard(url, '링크 복사됨');
-        document.getElementById('btnCopyCode').onclick = () => copyToClipboard(code, '코드 복사됨');
-        document.getElementById('tokenNoteInput').value = '';
-        // 0.6초 뒤 목록 갱신 (DB 반영 대기)
-        setTimeout(() => renderAdmin(), 600);
-      } catch (e) {
-        let msg = '발급 실패: ' + e.message;
-        if (e.message === 'Locked') msg = '5회 연속 실패로 1시간 잠금 상태입니다.';
-        else if (e.message === 'Unauthorized') msg = '관리자 인증이 만료되었습니다. 다시 로그인하세요.';
-        resultEl.innerHTML = `<div class="token-issue-error">${escapeHtml(msg)}</div>`;
-      } finally {
-        btnNewLink.disabled = false;
-      }
-    };
-  }
-
-  // 미사용 토큰 빠른 복사
-  main.querySelectorAll('.link-copy').forEach(b => {
-    b.onclick = (e) => {
-      e.stopPropagation();
-      const code = b.dataset.code;
-      const url = `${location.origin}${location.pathname}?t=${encodeURIComponent(code)}`;
-      copyToClipboard(url, '링크 복사됨');
-    };
-  });
-
-  // 사용된 토큰 행 클릭 → 해당 응답 상세 모달
-  main.querySelectorAll('.token-row.used').forEach(row => {
-    row.onclick = () => {
-      const rid = row.dataset.rid;
-      if (!rid) return;
-      const rec = adminData.find(d => d.id === rid);
-      if (rec) showDetail(rec);
-    };
-  });
-
-  document.getElementById('btnExitAdmin').onclick = () => {
-    state.view = 'welcome';
-    document.getElementById('shell').classList.remove('admin-shell');
-    render();
-  };
-
-  // 새로고침 (클라우드 모드 전용)
-  const refreshBtn = document.getElementById('btnRefresh');
-  if (refreshBtn) {
-    refreshBtn.onclick = () => renderAdmin();
-  }
-
-  // 토큰 발급 + 목록 (클라우드 모드 전용)
-  const createBtn = document.getElementById('btnCreateToken');
-  const refreshTokBtn = document.getElementById('btnRefreshTokens');
-  if (createBtn) {
-    createBtn.onclick = () => createNewToken();
-    refreshTokBtn.onclick = () => loadTokenList();
-    // 진입 시 자동 로드
-    loadTokenList();
-  }
-
-  document.getElementById('adminSearch').oninput = (e) => {
-    adminFilter = e.target.value;
-    renderAdmin();
-  };
-
-  document.getElementById('btnExportCsv').onclick = () => exportCsv(adminData);
-  document.getElementById('btnExportJson').onclick = () => exportJson(adminData);
-  document.getElementById('btnImportJson').onclick = () => document.getElementById('importJsonFile').click();
-  document.getElementById('importJsonFile').onchange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    try {
-      const text = await file.text();
-      const incoming = JSON.parse(text);
-      if (!Array.isArray(incoming)) throw new Error('JSON이 응답 배열 형식이 아닙니다.');
-      const existing = loadAllResponsesSync();
-      const existingIds = new Set(existing.map(x => x.id));
-      let added = 0, skipped = 0;
-      incoming.forEach(rec => {
-        if (rec && rec.id && !existingIds.has(rec.id)) {
-          existing.push(rec);
-          existingIds.add(rec.id);
-          added++;
-        } else { skipped++; }
-      });
-      const ok = saveAllResponsesSync(existing);
-      if (!ok) { alert('병합 저장에 실패했습니다.'); return; }
-      alert(`✓ 병합 완료\n• 추가: ${added}건\n• 중복으로 건너뜀: ${skipped}건\n• 현재 총 ${existing.length}건`);
-      e.target.value = '';
-      renderAdmin();
-    } catch(err) {
-      alert('가져오기 실패: ' + err.message);
-      e.target.value = '';
-    }
-  };
-  document.getElementById('btnClearAll').onclick = async () => {
-    if (!confirm('정말 모든 응답 데이터를 삭제하시겠습니까? 복구할 수 없습니다.')) return;
-    if (!confirm('마지막 확인입니다. 정말 삭제할까요?')) return;
-
-    if (isCloudEnabled() && currentAdminPassword) {
-      try {
-        await cloudClear(currentAdminPassword);
-      } catch(e) {
-        alert('클라우드 전체 삭제 실패: ' + e.message);
-        return;
-      }
-    }
-    deleteAllResponsesSync();
-    adminData = [];
-    renderAdmin();
-  };
-
-  // 행 클릭 → 상세
-  main.querySelectorAll('.admin-row[data-rid]').forEach(row => {
-    row.onclick = () => {
-      const rid = row.dataset.rid;
-      const rec = adminData.find(x => x.id === rid);
-      if (rec) showDetail(rec);
-    };
-  });
-}
-
-function showDetail(rec) {
-  const big5Names = {N:'정서적 안정성', E:'외향성', C:'성실성', O:'개방성', A:'우호성'};
-  const axisName = {A:'학업 성향', B:'진로 명확도', C:'입시 전략', D:'환경·생활', E:'심리·사회성', F:'멘탈 유형'};
-  const careerNames = {};
-  CAREER_TRACKS.forEach(c => careerNames[c.id] = c.name);
-  const selectedCareers = (rec.careerSelections || []).map(id => careerNames[id] || id).join(', ') || '-';
-
-  const dt = rec.completedAt ? new Date(rec.completedAt).toLocaleString('ko-KR') : '-';
-
-  // 응답별 텍스트 매핑 (리커트 문항만 — G/H는 별도 섹션)
-  const ansRows = QUESTIONS.filter(q => !q.type || q.type === undefined).map(q => {
-    const v = rec.answers?.[q.id];
-    if (v == null) return '';
-    return `
-      <div class="q-answer-row">
-        <div class="qid">${q.id}</div>
-        <div class="qtext">${q.text}</div>
-        <div class="qval v${v}">${v}</div>
-      </div>
-    `;
-  }).join('');
-
-  // 배경 정보 + 자유서술 (v2.1)
-  const bg = rec.background || {};
-  const ft = rec.freetext || {};
-  const bgRows = [];
-  if (bg.academicRank) bgRows.push(['학력 위치', ACADEMIC_RANK_LABELS[bg.academicRank] || bg.academicRank]);
-  if (bg.sido) bgRows.push(['거주지', bg.sido + (bg.sigungu ? ' ' + bg.sigungu : '')]);
-  if (bg.englishLevel) bgRows.push(['영어 수준', ENGLISH_LEVEL_LABELS[bg.englishLevel] || bg.englishLevel]);
-  if (bg.preferredSchool && bg.preferredSchool.trim()) bgRows.push(['선호 학교', bg.preferredSchool.trim()]);
-  if (bg.relocation) bgRows.push(['이사 가능 여부', RELOCATION_LABELS[bg.relocation] || bg.relocation]);
-  const ftLabels = {
-    H1: '지금 가장 큰 고민',
-    H2: '최근 1년간 가장 큰 변화',
-    H3: '학교 선택에서 가장 중요한 것'
-  };
-  const ftRows = ['H1','H2','H3'].filter(k => ft[k] && ft[k].trim()).map(k => [ftLabels[k], ft[k]]);
-  const capBadges = [];
-  if (rec.mentalCap) capBadges.push(`<span class="cap-badge ${rec.mentalCap}">멘탈 cap · ${rec.mentalCap}</span>`);
-  if (rec.academicCap && rec.academicCap !== 'unknown') capBadges.push(`<span class="cap-badge ${rec.academicCap}">학력 cap · ${rec.academicCap}</span>`);
-  else if (rec.academicCap === 'unknown') capBadges.push(`<span class="cap-badge info">학력 정보 미입력</span>`);
-  if (rec.careerCapList && rec.careerCapList.length > 0) capBadges.push(`<span class="cap-badge info">계열 fit cap · ${[...new Set(rec.careerCapList)].join('·')}</span>`);
-
-  document.getElementById('modalBody').innerHTML = `
-    <div class="modal-head">
-      <div>
-        <h2 style="margin-bottom:4px">${escapeHtml(rec.name || '-')}</h2>
-        <div style="font-size:13px;color:var(--ink-soft)">${escapeHtml(rec.grade || '')} · ${escapeHtml(rec.school || '')} · ${dt}</div>
-      </div>
-      <button class="modal-close" id="modalCloseBtn">×</button>
-    </div>
-
-    <div class="detail-section">
-      <h4>기본 정보</h4>
-      <div class="detail-grid">
-        <div class="row"><div class="lbl">이름</div><div class="val">${escapeHtml(rec.name || '-')}</div></div>
-        <div class="row"><div class="lbl">학년</div><div class="val">${escapeHtml(rec.grade || '-')}</div></div>
-        <div class="row"><div class="lbl">학교</div><div class="val">${escapeHtml(rec.school || '-')}</div></div>
-        <div class="row"><div class="lbl">완료시각</div><div class="val">${dt}</div></div>
-        <div class="row" style="grid-column:1/-1"><div class="lbl">선택 계열</div><div class="val">${escapeHtml(selectedCareers)}</div></div>
-        ${capBadges.length > 0 ? `<div class="row" style="grid-column:1/-1"><div class="lbl">cap</div><div class="val" style="display:flex;gap:6px;flex-wrap:wrap">${capBadges.join('')}</div></div>` : ''}
-      </div>
-    </div>
-
-    ${(bgRows.length > 0 || ftRows.length > 0) ? `
-    <div class="detail-section">
-      <h4>컨설팅 메모 (배경 정보 + 자유서술)</h4>
-      ${bgRows.length > 0 ? `
-        <div class="detail-grid">
-          ${bgRows.map(([k, v]) => `<div class="row" style="grid-column:1/-1"><div class="lbl">${escapeHtml(k)}</div><div class="val">${escapeHtml(v)}</div></div>`).join('')}
-        </div>
-      ` : ''}
-      ${ftRows.length > 0 ? `
-        <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
-          ${ftRows.map(([k, v]) => `
-            <div style="padding:10px 12px;background:rgba(255,255,255,.04);border-radius:8px;border-left:3px solid var(--teal)">
-              <div style="font-size:11px;color:var(--teal);font-weight:600;margin-bottom:4px;letter-spacing:.5px">${escapeHtml(k)}</div>
-              <div style="font-size:13px;color:white;line-height:1.55;white-space:pre-wrap">${escapeHtml(v)}</div>
-            </div>
-          `).join('')}
-        </div>
-      ` : ''}
-    </div>` : ''}
-
-    <div class="detail-section">
-      <h4>축별 점수 (0-100)</h4>
-      ${Object.entries(rec.axisScore || {}).map(([k, v]) => `
-        <div class="bar-row">
-          <div class="label">${axisName[k]}</div>
-          <div class="bar-track"><div class="bar-fill" style="width:${v}%"></div></div>
-          <div class="num">${v}</div>
-        </div>
-      `).join('')}
-    </div>
-
-    <div class="detail-section">
-      <h4>멘탈 유형 — ${escapeHtml(rec.mentalName || '-')}</h4>
-      ${Object.entries(rec.big5 || {}).map(([k, v]) => `
-        <div class="bar-row">
-          <div class="label">${big5Names[k]}</div>
-          <div class="bar-track"><div class="bar-fill" style="width:${v}%"></div></div>
-          <div class="num">${v}</div>
-        </div>
-      `).join('')}
-    </div>
-
-    <div class="detail-section">
-      <h4>고교 유형 추천 순위</h4>
-      ${(rec.ranking || []).map((r, i) => `
-        <div class="bar-row">
-          <div class="label">${i+1}. ${r.type}</div>
-          <div class="bar-track"><div class="bar-fill ${i===0?'':(i===1?'amber':'')}" style="width:${r.score}%"></div></div>
-          <div class="num">${r.score}</div>
-        </div>
-      `).join('')}
-    </div>
-
-    <div class="detail-section">
-      <h4>전체 응답 (1=전혀 그렇지 않다 ~ 5=매우 그렇다)</h4>
-      <div style="max-height:300px;overflow-y:auto;padding:4px">
-        ${ansRows}
-      </div>
-    </div>
-
-    <div style="margin-top:18px;display:flex;gap:8px">
-      <button class="btn btn-ghost" id="btnDeleteRec" style="flex:1;color:var(--rose);border-color:var(--rose)">이 응답 삭제</button>
-      <button class="btn btn-primary" id="btnExportRec" style="flex:1">JSON 내보내기</button>
-    </div>
-  `;
-
-  document.getElementById('modalBg').classList.add('open');
-  document.getElementById('modalCloseBtn').onclick = closeModal;
-  document.getElementById('btnExportRec').onclick = () => {
-    const blob = new Blob([JSON.stringify(rec, null, 2)], {type:'application/json'});
-    downloadBlob(blob, `${rec.name}_${rec.id}.json`);
-  };
-  document.getElementById('btnDeleteRec').onclick = async () => {
-    if (!confirm(`${rec.name}님의 응답을 삭제하시겠습니까?`)) return;
-    if (isCloudEnabled() && currentAdminPassword) {
-      try {
-        await cloudDelete(currentAdminPassword, rec.id);
-      } catch(e) {
-        alert('클라우드 삭제 실패: ' + e.message);
-        return;
-      }
-    }
-    adminData = adminData.filter(x => x.id !== rec.id);
-    saveAllResponsesSync(adminData);
-    closeModal();
-    renderAdmin();
-  };
-}
-
-function closeModal() {
-  document.getElementById('modalBg').classList.remove('open');
-}
-
-document.getElementById('modalBg').onclick = (e) => {
-  if (e.target.id === 'modalBg') closeModal();
-};
-
-// ── 내보내기 ───────────────────────────────────────────────
-function exportCsv(data) {
-  const headers = [
-    'id','name','grade','school','completedAt',
-    'mentalName','top1_type','top1_score','top2_type','top2_score','top3_type','top3_score',
-    'A','B','C','D','E','F',
-    'big5_N','big5_E','big5_C','big5_O','big5_A',
-    'careerSelections',
-    // v2.1 \uC2E0\uADDC
-    'academicRank','sido','sigungu','englishLevel','preferredSchool','relocation',
-    'mentalCap','academicCap','careerCapList',
-    'H1_\uACE0\uBBFC','H2_\uBCC0\uD654','H3_\uC911\uC694\uD55C\uAC83',
-    'answersJson'
-  ];
-  const rows = data.map(d => {
-    const careerNames = {};
-    CAREER_TRACKS.forEach(c => careerNames[c.id] = c.name);
-    const careers = (d.careerSelections || []).map(id => careerNames[id] || id).join('|');
-    const bg = d.background || {};
-    const ft = d.freetext || {};
-    return [
-      d.id, d.name, d.grade, d.school, d.completedAt,
-      d.mentalName,
-      d.ranking?.[0]?.type, d.ranking?.[0]?.score,
-      d.ranking?.[1]?.type, d.ranking?.[1]?.score,
-      d.ranking?.[2]?.type, d.ranking?.[2]?.score,
-      d.axisScore?.A, d.axisScore?.B, d.axisScore?.C, d.axisScore?.D, d.axisScore?.E, d.axisScore?.F,
-      d.big5?.N, d.big5?.E, d.big5?.C, d.big5?.O, d.big5?.A,
-      careers,
-      bg.academicRank || '', bg.sido || '', bg.sigungu || '', bg.englishLevel || '', bg.preferredSchool || '', bg.relocation || '',
-      d.mentalCap || '', d.academicCap || '', (d.careerCapList || []).join('|'),
-      ft.H1 || '', ft.H2 || '', ft.H3 || '',
-      JSON.stringify(d.answers || {})
-    ].map(v => csvEscape(v));
-  });
-  const csv = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-  const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
-  downloadBlob(blob, `responses_${new Date().toISOString().slice(0,10)}.csv`);
-}
-function csvEscape(v) {
-  if (v == null) return '';
-  const s = String(v);
-  if (s.includes(',') || s.includes('"') || s.includes('\n')) {
-    return '"' + s.replace(/"/g, '""') + '"';
-  }
-  return s;
-}
-function exportJson(data) {
-  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
-  downloadBlob(blob, `responses_${new Date().toISOString().slice(0,10)}.json`);
-}
-function downloadBlob(blob, filename) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
-}
-
-function escapeHtml(s) {
-  if (s == null) return '';
-  return String(s).replace(/[&<>"']/g, c => ({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[c]));
-}
-
-// 클립보드 복사 (관리자용)
-async function copyToClipboard(text, toastMsg) {
-  try {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-    } else {
-      // 폴백: 임시 textarea 선택 후 execCommand
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.left = '-9999px';
-      document.body.appendChild(ta);
-      ta.focus(); ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-    }
-    showToast(toastMsg || '복사됨');
-  } catch (e) {
-    showToast('복사 실패: ' + e.message);
-  }
-}
-
-function showToast(msg) {
-  let t = document.getElementById('admin-toast');
-  if (!t) {
-    t = document.createElement('div');
-    t.id = 'admin-toast';
-    t.className = 'admin-toast';
-    document.body.appendChild(t);
-  }
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), 1800);
-}
-
-// ============================================================
-// Pinpad 이벤트
-// ============================================================
-document.getElementById('adminKeyBtn').onclick = () => {
-  document.getElementById('pinpadShell').classList.add('open');
-  document.getElementById('pinInput').value = '';
-  document.getElementById('pinErr').textContent = '\u00A0';
-  setTimeout(() => document.getElementById('pinInput').focus(), 100);
-};
-document.getElementById('pinCancel').onclick = () => {
-  document.getElementById('pinpadShell').classList.remove('open');
-};
-document.getElementById('pinOk').onclick = tryPin;
-document.getElementById('pinInput').onkeydown = (e) => {
-  if (e.key === 'Enter') tryPin();
-};
-async function tryPin() {
-  const v = document.getElementById('pinInput').value;
-  const errEl = document.getElementById('pinErr');
-  const okBtn = document.getElementById('pinOk');
-  if (!v) { errEl.textContent = '비밀번호를 입력하세요'; return; }
-
-  if (isCloudEnabled()) {
-    // 클라우드 모드: 서버에 비밀번호 검증 요청
-    errEl.textContent = '서버 확인 중…';
-    okBtn.disabled = true;
-    try {
-      await cloudList(v);  // 성공하면 비밀번호 정상
-      currentAdminPassword = v;
-      document.getElementById('pinpadShell').classList.remove('open');
-      state.view = 'admin';
-      render();
-    } catch(e) {
-      if (e.message === 'Locked') {
-        errEl.textContent = '5회 연속 실패하여 1시간 잠금되었습니다. 1시간 후 다시 시도하세요.';
-      } else if (e.message === 'Unauthorized') {
-        errEl.textContent = '비밀번호가 올바르지 않습니다.';
-      } else {
-        errEl.textContent = '서버 연결 실패: ' + e.message;
-      }
-    } finally {
-      okBtn.disabled = false;
-    }
-  } else {
-    // 로컬 모드
-    if (v === ADMIN_PASSWORD) {
-      currentAdminPassword = v;
-      document.getElementById('pinpadShell').classList.remove('open');
-      state.view = 'admin';
-      render();
-    } else {
-      errEl.textContent = '비밀번호가 올바르지 않습니다.';
-    }
-  }
-}
-
-// ============================================================
-// 부팅
-// ============================================================
-// 1. 일단 'checking' 상태로 게이트 화면(로더)부터 그린다
+document.getElementById('admBtn').onclick=adminOpen;
 render();
-// 2. 토큰 검증 후 결과를 state.tokenStatus에 반영하고 다시 렌더
-checkToken();
 </script>
-</body>
-</html>
+</body></html>
