@@ -136,7 +136,18 @@ function evaluate(a){
   const buckets={primary:[],conditional:[],low:[]};
   RULES.types.forEach(t=>{ if(state[t.id]) buckets[state[t.id].bucket].push({id:t.id,reasons:state[t.id].reasons}); });
   const excluded=RULES.types.filter(t=>!elig[t.id]).map(t=>t.id);
-  return {grade:gid,frame:gf,pos:P,signals:S,obs,interest:IT,picks,stated,notes,gaps,buckets,excluded,
+  // 초등: 유형 대신 방향
+  let direction=null;
+  if((RULES.direction.forGrades||[]).includes(gid)){
+    const D=RULES.direction; let env;
+    if(S.recovery.low) env=D.env.gentle;
+    else if(S.selfMgmt.guided) env=D.env.managed;
+    else if(S.competition.fuel) env=D.env.competitive;
+    else env=D.env.steady;
+    const it=picks.filter(p=>D.interest[p]).slice(0,2).map(p=>D.interest[p]);
+    direction={env,interest:it,caveat:D.caveat};
+  }
+  return {grade:gid,frame:gf,pos:P,signals:S,obs,interest:IT,picks,stated,notes,gaps,buckets,excluded,direction,
           needTB1:gf.typeRanking&&buckets.primary.length>=2,
           needTB2:gf.typeRanking&&(buckets.primary.concat(buckets.conditional)).some(b=>b.id==='외고'||b.id==='국제고')
                   &&picks.includes('lang')&&picks.includes('intl')};

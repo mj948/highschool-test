@@ -113,6 +113,19 @@ function resultHTML(A){
     if(S.a.TB2){const p=(QI.TB2.options.find(o=>o.value===S.a.TB2)||{}).pole;
       h+=`<div class="note">${p==='language'?'아이는 외국어 자체를 배우는 활동에 더 관심을 보였습니다. 외국어고 교육과정을 먼저 비교해 볼 이유가 있습니다.':'아이는 외국어로 국제 문제를 다루는 활동에 더 관심을 보였습니다. 국제고 교육과정을 먼저 비교해 볼 이유가 있습니다.'}</div>`;}
     h+=`</section>`;
+  } else if(r.direction){
+    const D=r.direction;
+    h+=`<section><div class="eyebrow">방향</div><h2>지금 보이는 방향</h2>
+        <div class="rule top" style="margin-top:18px"></div>
+        <div class="obs">${esc(D.env)}</div><div class="rule"></div>`;
+    D.interest.forEach(t=>{ h+=`<div class="obs">${esc(t)}</div><div class="rule"></div>`; });
+    h+=`<div class="note amber">${esc(D.caveat)}</div></section>`;
+    if((gf.sections||[]).includes('middle_school_check')){
+      h+=`<section><div class="eyebrow">앞으로</div><h2>중학교에서 확인할 것</h2>
+        <div class="rule top" style="margin-top:18px"></div>
+        <div class="bucket"><div class="bt">첫 지필고사 성적표</div><div class="bd">원점수와 과목평균이 나오면 그때 학교 유형을 실제로 놓고 볼 수 있습니다.</div></div><div class="rule"></div>
+        <div class="bucket"><div class="bt">고1 3월 모의고사 한 과목</div><div class="bd">중2·중3 무렵 시간을 재고 한 과목만 풀려 보면, 범위 있는 시험과 없는 시험 중 어디에 강한지 보입니다.</div></div><div class="rule"></div></section>`;
+    }
   } else {
     h+=`<section><div class="eyebrow">학교 유형</div><h2>${esc(gf.title||'지금 살펴볼 것')}</h2>
         <div class="note">${esc(gf.note||'')}</div></section>`;

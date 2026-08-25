@@ -104,7 +104,7 @@ T('20. T와 Q에서 서로 다른 특성이 동시에 → 일관성 오류로 �
   const f=sincerity(a,600000);
   return f.length===0?true:'오탐: '+f;});
 
-console.log('\n═══ 불변식 27 ═══');
+console.log('\n═══ 불변식 28 ═══');
 T('I1. 초등에 유형 순위 없음',()=>['e34','e56'].every(g=>RULES.gradeFrames[g].typeRanking===false)?true:'초등 순위 존재');
 T('I2. 고1 이상에 신규 진학 순위 없음',()=>RULES.gradeFrames.h1.typeRanking===false?true:'고1 순위 존재');
 T('I3. 정보 없음에 중간값을 주지 않음',()=>{
@@ -264,6 +264,26 @@ T('I27. 과학고·영재는 내신 등급 컷으로 우선순위낮음에 처�
   const r=evaluate(base);
   const sciLow=r.buckets.low.some(x=>x.id==='과학고'&&x.reasons.some(y=>y.kind==='position'));
   return !sciLow?true:'과학고가 학력 컷으로 low에 감';});
+
+T('I28. 초등은 방향을 내되 유형 순위는 안 낸다',()=>{
+  const base={A2:{sido:'서울'},A3:'D',A4:'A',A5:'A',A6:'A',D1:'3',D2:'3',D3:'3',E1:'4',E2:'A',
+    F1:'A',F2:'A',G1:'A',G2:'A',G3:'A',K1:'A',K2:'A',K3:'A',
+    'K5-eng':'4','K5-med':'2','K5-soc':'2','K5-lang':'1','K5-intl':'1','K5-art':'2'};
+  const bad=[];
+  ['e12','e34','e56'].forEach(g=>{
+    const r=evaluate({...base,A1:g});
+    if(r.frame.typeRanking) bad.push(g+' 유형순위 나옴');
+    if(!r.direction) bad.push(g+' 방향 없음');
+    if(r.direction){
+      if(!r.direction.env) bad.push(g+' 환경 방향 없음');
+      if(!r.direction.caveat) bad.push(g+' 경고 없음');
+      // 유형 이름을 '맞다'로 단정하지 않는다 (선택지·알아두기 프레임)
+      const txt=r.direction.env+' '+r.direction.interest.join(' ');
+      if(/체질입니다|맞습니다|가세요|추천/.test(txt)) bad.push(g+' 단정 표현');}});
+  // 고1은 방향도 유형도 안 냄 (전학·재입장 프레임)
+  const h1=evaluate({...base,A1:'h1'});
+  if(h1.direction) bad.push('h1에 방향이 나옴');
+  return bad.length===0?true:bad.join(', ');});
 
 console.log('\n═══ 결과 ═══');
 console.log(`  PASS ${pass} · FAIL ${fail}`);
