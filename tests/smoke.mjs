@@ -1,5 +1,7 @@
 /* 최소 DOM 스텁으로 전 학년 경로를 끝까지 눌러 본다 */
 import fs from 'fs';
+import crypto from 'crypto';
+import {TextEncoder as TE} from 'util';
 const HTML=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
 const SRC=HTML.match(/<script>\n([\s\S]*)<\/script>/)[1];
 const GRADE=process.argv[2]?+process.argv[2]:0;
@@ -16,10 +18,11 @@ globalThis.localStorage={getItem:k=>store[k]??null,setItem:(k,v)=>{store[k]=v},r
 globalThis.window={scrollTo(){},print(){}};
 globalThis.confirm=()=>true; globalThis.prompt=()=>null; globalThis.alert=()=>{};
 globalThis.setTimeout=f=>{f();return 0}; globalThis.fetch=()=>Promise.resolve({ok:true});
-globalThis.crypto={subtle:{digest:async(_,buf)=>{
-  const c=require('crypto');const h=c.createHash('sha256').update(Buffer.from(buf)).digest();
-  return h.buffer.slice(h.byteOffset,h.byteOffset+h.byteLength);}}};
-globalThis.TextEncoder=require('util').TextEncoder;
+if(!globalThis.crypto||!globalThis.crypto.subtle){
+  globalThis.crypto={subtle:{digest:async(_,buf)=>{
+    const h=crypto.createHash('sha256').update(Buffer.from(buf)).digest();
+    return h.buffer.slice(h.byteOffset,h.byteOffset+h.byteLength);}}};}
+if(!globalThis.TextEncoder) globalThis.TextEncoder=TE;
 globalThis.Blob=class{constructor(){}}; globalThis.URL={createObjectURL:()=>'',revokeObjectURL(){}};
 globalThis.document={querySelector:s=>s==='#app'?APPEL:(els[s]||null),
   getElementById:id=>id==='app'?APPEL:(els['#'+id]||mk()),
@@ -28,6 +31,10 @@ new Function(SRC.replace(/document\.getElementById\('admBtn'\)\.onclick=adminOpe
 const press=id=>{const e=els['#'+id]; if(!e) throw new Error('버튼 없음 '+id); e.onclick();};
 let steps=0, seen=[];
 (async()=>{
+// 게이트 통과: 비밀번호 입력 → 들어가기 → 해시 검증(async) 완료까지 대기
+if(els['#gpw']){ els['#gpw'].value='2608'; els['#genter'].onclick(); }
+for(let w=0; w<100 && !els['#start']; w++){ await new Promise(r=>setImmediate(r)); }
+if(!els['#start']) throw new Error('게이트를 통과하지 못했습니다');
 press('start');
 for(let g=0; g<400; g++){
   steps++;
