@@ -10,6 +10,7 @@ const html=`<!doctype html>
 <html lang="ko"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://ihiuzfufngmbbresizzo.supabase.co; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'self'">
 <title>고교선택검사</title>
 <meta name="description" content="아이가 어떤 조건에서 공부가 잘 유지되는지 정리하고, 학교를 비교할 때 확인할 것을 알려 주는 검사입니다.">
 <link rel="preconnect" href="https://fonts.googleapis.com">

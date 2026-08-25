@@ -38,7 +38,7 @@ function adminOpen(){
    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
      <h2 style="font-family:var(--serif);margin:0">응답 ${all.length}건</h2>
      <button class="btn ghost" style="width:auto" id="cls">닫기</button></div>
-   <div class="fine">v3.1 ${v31.length}건 · v2 ${v2.length}건. v2는 구버전 형식이라 새 판정을 적용하지 않고 원본만 보여 줍니다.</div>
+   <div class="fine">v3.1 ${v31.length}건 · v2 ${v2.length}건. v2는 구버전 형식이라 새 판정을 적용하지 않고 원본만 보여 줍니다.<br>이 목록은 <b>이 기기 이 브라우저에 저장된 응답만</b> 보여 줍니다. 전체 응답은 Supabase 대시보드에서 확인하세요.</div>
    <div style="overflow-x:auto;margin-top:14px"><table><thead><tr>
      <th>버전</th><th>일시</th><th>학년</th><th>지역</th><th>우선 검토</th><th>조건 확인</th><th>우선순위 낮음</th><th>아이 문항</th></tr></thead><tbody>
    ${all.map((r,i)=>{
