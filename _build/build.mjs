@@ -31,3 +31,25 @@ render();
 </body></html>`;
 fs.writeFileSync(new URL('index.html',r),html);
 console.log('index.html '+Buffer.byteLength(html)+' bytes');
+
+/* 아티팩트용 — 바깥 문서 껍데기를 뺀 판.
+   아티팩트는 doctype·html·head·body를 발행할 때 씌워 주므로 그대로 올리면 껍데기가 겹친다.
+   CSP도 아티팩트 쪽이 걸어 주니 우리 meta는 뺀다. 구글 폰트는 아티팩트가 허용하는 유일한 외부 호스트다. */
+const art=`<title>고교선택검사</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>${css}</style>
+<button class="adm" id="admBtn" title="관리자">관리자</button>
+<div class="app" id="app"></div>
+<script>
+/* 고교선택검사 v3.1 — QUESTIONS.json · RULES.json · SPEC.md 와 일치해야 한다 */
+const QUESTIONS=${JSON.stringify(JSON.parse(Q))};
+const RULES=${JSON.stringify(JSON.parse(R))};
+${js}
+document.getElementById('admBtn').onclick=adminOpen;
+render();
+</script>`;
+fs.mkdirSync(new URL('_배포/',r),{recursive:true});
+fs.writeFileSync(new URL('_배포/artifact.html',r),art);
+console.log('_배포/artifact.html '+Buffer.byteLength(art)+' bytes');

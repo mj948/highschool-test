@@ -41,7 +41,8 @@ T('2. 중2·학력높음·완벽주의높음·회복느림 → 밀집 유형이 
   return d.length===0?true:'primary에 밀집 유형: '+d.map(b=>b.id);});
 T('3. 중3·학력보통·회복빠름·자기관리높음 → 성향만으로 상위 유형을 primary에 올리지 않는다',()=>{
   const r=evaluate(base({A1:'m3',B3:'D',B4:'D'}));
-  const d=r.buckets.primary.filter(b=>RULES.types.find(t=>t.id===b.id).dense);
+  // 배정 유형(일반고·학군지 일반고)은 성적으로 뽑는 학교가 아니라 여기서 제외한다
+  const d=r.buckets.primary.filter(b=>{const t=RULES.types.find(x=>x.id===b.id);return t.dense&&!t.assigned;});
   return d.length===0?true:'primary에 밀집 유형: '+d.map(b=>b.id);});
 T('4. 중2·성적표 없음(모르겠다) → 학력 위치를 만들어 내지 않는다',()=>{
   const r=evaluate(base({B3:'X',B4:'X'}));
@@ -206,15 +207,20 @@ T('I20. 의문문에 물음표, 나머지 문장에 마침표가 있다',()=>{
     const askNoMark=/(나요|인가요|가요|까요|어떤가요|쪽인가요|같나요|정하나요)[.]$/.test(t);
     return askNoMark;});
   return bad.length===0?true:'부호 오류: '+bad.map(q=>q.id);});
-T('I21. 인쇄가 막힌 환경을 감지해 파일 저장으로 넘어간다',()=>{
-  const embed=/window\.self!==window\.top/.test(SRC.replace(/\s/g,''));
-  const hasPrint=SRC.includes('window.print');
-  const hasSave=SRC.includes("claude.use('downloads')")&&SRC.includes('d.save');
-  const hasBlob=SRC.includes('createObjectURL');
-  const hasFile=SRC.includes('saveResultFile');
-  const hasCss=/@media print\{/.test(HTML)&&/\.print-head/.test(HTML);
-  return (embed&&hasPrint&&hasSave&&hasBlob&&hasFile&&hasCss)?true:
-    `embed:${embed} print:${hasPrint} downloads:${hasSave} blob:${hasBlob} file:${hasFile} css:${hasCss}`;});
+T('I21. PDF는 브라우저 인쇄창으로 만들고, 결과를 html 파일로 떨구지 않는다',()=>{
+  const bad=[];
+  if(!SRC.includes('window.print')) bad.push('인쇄 호출 없음');
+  if(SRC.includes('saveResultFile')) bad.push('결과를 파일로 떨구는 경로가 남아 있음');
+  if(/고교선택검사_결과_.*\.html/.test(SRC)) bad.push('결과 html 파일명이 남아 있음');
+  // 인쇄 CSS와 인쇄용 머리글이 살아 있어야 PDF가 제대로 나온다
+  if(!/@media print\{/.test(HTML)) bad.push('인쇄 CSS 없음');
+  if(!/\.print-head/.test(HTML)) bad.push('인쇄용 머리글 없음');
+  // 아티팩트 안에서 창이 안 열릴 때 대신 할 일을 알려 준다
+  if(!/window\.self!==window\.top/.test(SRC.replace(/\s/g,''))) bad.push('임베드 감지 없음');
+  if(!SRC.includes('새 탭')) bad.push('창이 안 열릴 때 안내가 없음');
+  // 관리자 내보내기는 아티팩트 안에서 downloads 능력을 거쳐야 한다
+  if(!(SRC.includes("claude.use('downloads')")&&SRC.includes('d.save'))) bad.push('관리자 내보내기 경로 없음');
+  return bad.length===0?true:bad.join(', ');});
 T('I22. 아이 문항이 짧고 어려운 말이 없다',()=>{
   const HARD=/(자연현상|탐구|근거로 설명|해결 방법을 생각|정치·경제·사회|문예창작|비교적|관심사가 다양|생명과학|국제관계)/;
   const bad=[];
@@ -283,6 +289,151 @@ T('I28. 초등은 방향을 내되 유형 순위는 안 낸다',()=>{
   // 고1은 방향도 유형도 안 냄 (전학·재입장 프레임)
   const h1=evaluate({...base,A1:'h1'});
   if(h1.direction) bad.push('h1에 방향이 나옴');
+  return bad.length===0?true:bad.join(', ');});
+
+T('I29. 유형마다 예시 학교가 붙고, 학교 수가 근거대장(98개교)과 맞는다',()=>{
+  const SE=RULES.schoolExamples; if(!SE) return 'schoolExamples 없음';
+  const bad=[]; let n=0;
+  RULES.types.forEach(t=>{ const E=SE.byType[t.id];
+    if(!E){bad.push(t.id+' 예시 없음');return;}
+    if(E.scope==='national') n+=E.list.length;
+    else if(E.scope==='region'){
+      if(!E.noneText) bad.push(t.id+' 없는 지역 안내 없음');
+      n+=Object.values(E.byRegion).reduce((a,v)=>a+v.length,0);}
+    else if(E.scope==='none'&&!E.text) bad.push(t.id+' 안내 문구 없음');});
+  if(n!==98) bad.push('학교 수 '+n+'개 (98이어야 함)');
+  return bad.length===0?true:bad.join(', ');});
+
+T('I30. 지역 단위 유형은 사는 시·도 학교만 보여 준다',()=>{
+  const B=RULES.schoolExamples.byType, bad=[];
+  if((B['외고'].byRegion['서울']||[]).some(x=>/부산|대구|제주/.test(x.n))) bad.push('서울 외고에 타 지역');
+  if(B['외고'].byRegion['광주']) bad.push('광주에 없는 외고가 들어 있음');
+  if(B['과학고'].byRegion['광주']) bad.push('광주 과학고는 영재학교로 전환됐는데 남아 있음');
+  ['광역 자사고','외고','국제고','과학고'].forEach(t=>{
+    if(B[t].scope!=='region') bad.push(t+'가 지역 단위가 아님');});
+  ['전국 자사고','영재학교'].forEach(t=>{
+    if(B[t].scope!=='national') bad.push(t+'가 전국 단위가 아님');});
+  const hana=B['전국 자사고'].list.find(x=>x.n==='하나고');
+  if(!hana||!hana.note) bad.push('하나고 서울 거주 요건 안내 없음');
+  return bad.length===0?true:bad.join(', ');});
+
+T('I31. 학군지 일반고는 사는 곳과 이사 가능 여부로 갈린다',()=>{
+  const bad=[];
+  const g=r=>{const k=['primary','conditional','low'].find(x=>r.buckets[x].some(b=>b.id==='학군지 일반고'));
+    return k?{b:k,rs:r.buckets[k].find(b=>b.id==='학군지 일반고').reasons.map(x=>x.kind)}:null;};
+  const inD=g(evaluate(base({A2:{sido:'서울',sigungu:'강남구'},A6:'B'})));
+  if(!inD) bad.push('학군지 거주인데 유형이 없음');
+  else{ if(inD.b==='low') bad.push('학군지에 사는데 우선순위 낮음으로 감');
+        if(!inD.rs.includes('district')) bad.push('거주 판정 문장 없음'); }
+  const move=g(evaluate(base({A2:{sido:'전북',sigungu:'익산시'},A6:'A'})));
+  if(!move||move.b!=='conditional') bad.push('이사 가능한데 조건 확인이 아님: '+(move&&move.b));
+  const fixed=g(evaluate(base({A2:{sido:'전북',sigungu:'익산시'},A6:'B'})));
+  if(!fixed||fixed.b!=='low') bad.push('거주지 고정인데 우선순위 낮음이 아님: '+(fixed&&fixed.b));
+  return bad.length===0?true:bad.join(', ');});
+
+T('I32. 학군지 일반고는 성적으로 후보에서 빠지지 않고, 대신 대가를 적는다',()=>{
+  const bad=[];
+  // 하위권이어도 후보에서 사라지지 않는다 (배정받는 학교라서)
+  const low=evaluate(base({A2:{sido:'서울',sigungu:'노원구'},B3:'F',B4:'F'}));
+  const k=['primary','conditional','low'].find(x=>low.buckets[x].some(b=>b.id==='학군지 일반고'));
+  if(!k) bad.push('하위권에서 유형이 통째로 사라짐');
+  const rs=k?low.buckets[k].find(b=>b.id==='학군지 일반고').reasons:[];
+  if(k!=='low'&&!rs.some(x=>x.kind==='district_cost')) bad.push('내신이 밀린다는 대가 문장이 없음');
+  if(rs.some(x=>x.kind==='position'&&/범위 밖/.test(x.text))) bad.push('지원자 범위 밖으로 잘림');
+  // 학군지 목록에 근거와 한계가 적혀 있다
+  const HG=RULES.hakgunji;
+  if(!HG) bad.push('hakgunji 없음');
+  else{ if(!HG.basis) bad.push('근거 없음'); if(!HG.unverified) bad.push('미확인 표시 없음');
+        if(!HG.caption||!/공식/.test(HG.caption)) bad.push('공식 구분이 아니라는 안내 없음'); }
+  return bad.length===0?true:bad.join(', ');});
+
+T('I33. 학군지 일반고에도 예시 칸이 있고, 유형 이름에 은어를 쓰지 않는다',()=>{
+  const bad=[];
+  if(!RULES.schoolExamples.byType['학군지 일반고']) bad.push('예시 칸 없음');
+  const names=RULES.types.map(t=>t.id+' '+(t.label||''));
+  if(names.some(n=>/갓반고|명문|일류|좋은 학교/.test(n))) bad.push('유형 이름에 은어·평가어');
+  const all=JSON.stringify(RULES.hakgunji)+JSON.stringify(RULES.schoolExamples);
+  if(/우수한|뛰어난|명문|좋은 동네|수준 높은/.test(all)) bad.push('평가어가 들어 있음');
+  return bad.length===0?true:bad.join(', ');});
+
+T('I34. 비수도권 메디컬 지망은 학군지 이사보다 지역인재를 먼저 본다',()=>{
+  const bad=[];
+  const has=(r,k)=>['primary','conditional','low'].some(x=>r.buckets[x].some(
+    b=>b.id==='학군지 일반고'&&b.reasons.some(y=>y.kind===k)));
+  // 전북(비수도권) + 메디컬 + 이사 고려 가능 → 경고가 붙는다
+  const away=evaluate(base({A2:{sido:'전북',sigungu:'익산시'},A6:'A',K4:['med'],
+    'K5-med':'4','K5-eng':'2','K5-soc':'2','K5-lang':'1','K5-intl':'1','K5-art':'2'}));
+  if(!has(away,'regional_talent')) bad.push('비수도권 메디컬에 경고가 없음');
+  // 서울(수도권) 거주면 붙지 않는다
+  const seoul=evaluate(base({A2:{sido:'서울',sigungu:'강남구'},A6:'A',K4:['med'],
+    'K5-med':'4','K5-eng':'2','K5-soc':'2','K5-lang':'1','K5-intl':'1','K5-art':'2'}));
+  if(has(seoul,'regional_talent')) bad.push('수도권 거주인데 경고가 붙음');
+  // 메디컬 관심이 없으면 붙지 않는다
+  const eng=evaluate(base({A2:{sido:'전북',sigungu:'익산시'},A6:'A',K4:['eng']}));
+  if(has(eng,'regional_talent')) bad.push('메디컬 관심이 없는데 경고가 붙음');
+  // 권역 일치가 아니라 비수도권이면 된다는 구분을 뭉개지 않는다
+  const t=(RULES.hakgunji.regionalTalent||{}).text||'';
+  if(!/비수도권 안에서 옮기면/.test(t)) bad.push('비수도권 내 이사는 자격이 남는다는 설명이 없음');
+  if(/권역이 같아야|같은 권역이어야/.test(t)) bad.push('권역 일치로 잘못 적혀 있음');
+  return bad.length===0?true:bad.join(', ');});
+
+T('I35. 평준화 데이터는 확인된 것만 화면에 나가고, 모르면 아무 말도 안 한다',()=>{
+  const EQ=RULES.equalization, bad=[];
+  if(!EQ) return 'equalization 블록 없음';
+  // 확인 안 된 시·도는 결과에 안 실린다
+  const off=evaluate(base({A2:{sido:'서울',sigungu:'강남구'}}));
+  const rec=EQ.bySido['서울'];
+  if((!rec||rec.confidence!=='확인')&&off.equalization) bad.push('미확인인데 판정이 나옴');
+  // 시·군·구를 안 적은 혼재 시·도는 단정하지 않는다
+  Object.keys(EQ.bySido).forEach(k=>{
+    const v=EQ.bySido[k];
+    if(v.system==='혼재'){
+      const blank=evaluate(base({A2:{sido:k,sigungu:''}}));
+      if(blank.equalization) bad.push(k+': 시·군·구가 비었는데 단정함');
+      if(!(v.areas||[]).length&&!(v.nonAreas||[]).length) bad.push(k+': 혼재인데 지역 목록이 둘 다 비었음');
+    }
+    if(v.confidence==='확인'){
+      if(!v.method) bad.push(k+': 확인인데 배정 방식이 없음');
+      if(!v.schoolYear) bad.push(k+': 확인인데 학년도가 없음');
+      if(!v.sourceUrl) bad.push(k+': 확인인데 출처 URL이 없음');
+      if(v.directRead===false) bad.push(k+': 원문을 못 읽었는데 확인으로 되어 있음');
+    }
+  });
+  // 문구 골격이 있다
+  ['equalized','nonEqualized'].forEach(k=>{ if(!EQ.text||!EQ.text[k]) bad.push('문구 '+k+' 없음'); });
+  return bad.length===0?true:bad.join(', ');});
+
+T('I36. 시·도 17곳이 다 있고, 학년도·출처가 한 곳도 안 빠졌다',()=>{
+  const B=RULES.equalization.bySido, bad=[];
+  const SIDO=['서울','부산','대구','인천','광주','대전','울산','세종','경기','강원','충북','충남','전북','전남','경북','경남','제주'];
+  SIDO.forEach(k=>{ if(!B[k]) bad.push(k+' 없음'); });
+  Object.keys(B).forEach(k=>{ if(!SIDO.includes(k)) bad.push(k+'는 시·도가 아님'); });
+  const years=new Set(Object.values(B).map(v=>v.schoolYear));
+  if(years.size!==1) bad.push('학년도가 섞임: '+[...years].join(','));
+  Object.keys(B).forEach(k=>{ const v=B[k];
+    if(v.system==='혼재'&&!(v.areas.length&&v.nonAreas.length)) bad.push(k+': 혼재인데 한쪽이 비었음');
+    if(v.system!=='혼재'&&v.nonAreas.length) bad.push(k+': 전 지역인데 비평준화 목록이 있음');
+    if(!v.method) bad.push(k+': 배정 방식 없음'); });
+  return bad.length===0?true:bad.join(', ');});
+
+T('I37. 한 시·군 안에서 갈리면 어느 한쪽으로 단정하지 않는다',()=>{
+  const bad=[];
+  const R2=(sido,sigungu)=>evaluate(base({A2:{sido,sigungu}})).equalization;
+  // 창원시라고만 적으면 진해구인지 알 수 없다 → 갈린다고만 말한다
+  const cw=R2('경남','창원시');
+  if(!cw||cw.resolved!=='갈림') bad.push('창원시: '+(cw&&cw.resolved));
+  else if(!cw.eqQ||!cw.nonQ) bad.push('창원시: 갈린 양쪽을 안 적음');
+  // 구까지 적으면 확정한다
+  if((R2('경남','창원시 진해구')||{}).resolved!=='비평준화') bad.push('진해구를 비평준화로 못 잡음');
+  if((R2('경남','창원시 성산구')||{}).resolved!=='평준화') bad.push('성산구를 평준화로 못 잡음');
+  // 동·읍면으로 갈리는 곳도 마찬가지
+  [['충북','청주시'],['전북','군산시'],['제주','제주시'],['경북','포항시'],['충북','진천군']].forEach(([a,b])=>{
+    const v=R2(a,b); if(!v||v.resolved!=='갈림') bad.push(b+': '+(v&&v.resolved)); });
+  // 목록에 없는 구는 시 이름으로 되짚는다
+  if((R2('경기','수원시 영통구')||{}).resolved!=='평준화') bad.push('수원시 영통구를 못 잡음');
+  if((R2('충북','청주시 흥덕구')||{}).resolved!=='갈림') bad.push('청주시 흥덕구를 못 잡음');
+  // 아예 모르는 시·군·구면 아무 말도 안 한다
+  if(R2('경기','없는시')) bad.push('모르는 시·군·구인데 판정함');
   return bad.length===0?true:bad.join(', ');});
 
 console.log('\n═══ 결과 ═══');

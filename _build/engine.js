@@ -68,6 +68,30 @@ function interest(a){
     if(acc.length<2&&w[s[1]]>=3&&w[s[1]]===w[s[0]])acc.push(s[1]);}
   return {w,acc,flat};
 }
+/* 사는 곳이 평준화인지 비평준화인지 — 확인된 시·도만 답한다 */
+function equalizationOf(a){
+  const EQ=RULES.equalization; if(!EQ||!EQ.bySido) return null;
+  const reg=a.A2||{}, sido=reg.sido||'', sgg=(reg.sigungu||'').trim();
+  const rec=EQ.bySido[sido];
+  if(!rec||rec.confidence!=='확인') return null;
+  if(rec.system!=='혼재') return Object.assign({},rec,{resolved:rec.system,place:sido});
+  if(!sgg) return null;                       // 혼재인데 시·군·구를 모르면 단정하지 않는다
+  const base=x=>String(x).replace(/\(.*/,'').split(/\s+/)[0];   // 청주시 동지역 → 청주시
+  const qual=x=>String(x).slice(base(x).length).replace(/^[\s(]+/,'').replace(/[)\s]+$/,'').trim();
+  // 정확히 같은 이름 → 앞부분이 같은 이름 → 시·군 이름이 같은 것 순으로 좁힌다
+  const rules=[x=>x===sgg, x=>x.startsWith(sgg), x=>base(x)===base(sgg)];
+  for(let i=0;i<rules.length;i++){
+    const eq=(rec.areas||[]).filter(rules[i]), non=(rec.nonAreas||[]).filter(rules[i]);
+    if(!eq.length&&!non.length) continue;
+    if(eq.length&&non.length)                 // 한 시·군 안에서 갈린다 — 단정하지 않고 갈린다고 적는다
+      return Object.assign({},rec,{resolved:'갈림',place:base(sgg),
+        eqQ:eq.map(qual).filter(Boolean).join('·'), nonQ:non.map(qual).filter(Boolean).join('·')});
+    const hit=eq.length?eq:non;
+    return Object.assign({},rec,{resolved:eq.length?'평준화':'비평준화',
+      place:hit.length===1?hit[0]:base(sgg)});
+  }
+  return null;                                // 어느 목록에도 없으면 말하지 않는다
+}
 function evaluate(a){
   const gid=a.A1, gf=RULES.gradeFrames[gid]||{};
   const T={}; RULES.types.forEach(t=>T[t.id]=t);
@@ -76,6 +100,7 @@ function evaluate(a){
   const stated=(a.K4||[]).filter(x=>x!=='none');
   const picks=stated.length?stated:IT.acc;
   const prep=a.H1;                      // A 준비중 / B 관심 / C 고려안함
+  let hakgunjiResident=false;
   // ① 자격 심사 — 관심·준비가 안 맞는 유형은 후보에서 뺀다
   const elig={};
   RULES.types.forEach(t=>{
@@ -104,6 +129,26 @@ function evaluate(a){
     else{ inside[t.id]= p<=RULES.stage2.cut.inside;
       if(!inside[t.id]&&state[t.id].bucket==='primary'){state[t.id].bucket='conditional';
         state[t.id].reasons.push({kind:'position',text:'현재 성적 위치에서는 이 유형에 들어가더라도 상위권 유지가 쉽지 않을 수 있습니다. 한 학기 뒤 다시 확인해 보세요.'});}}});
+  // ③-2 학군지 일반고 — 성적이 아니라 사는 곳과 이사 가능 여부로 갈린다
+  const HG=RULES.hakgunji;
+  if(HG&&state['학군지 일반고']){
+    const reg=a.A2||{}, sido=reg.sido||'', sgg=(reg.sigungu||'').trim();
+    const list=HG.areas[sido]||[];
+    const isIn=list.some(x=>sgg===x||sgg.startsWith(x)||(x.startsWith(sgg)&&sgg.length>=2));
+    const st=state['학군지 일반고'];
+    if(isIn) st.reasons.unshift({kind:'district',text:HG.resident.text});
+    else if(a.A6==='B'){ st.bucket='low'; st.reasons.unshift({kind:HG.fixed.kind,text:HG.fixed.text}); }
+    else { if(st.bucket==='primary') st.bucket='conditional';
+           st.reasons.unshift({kind:HG.movable.kind,text:HG.movable.text}); }
+    if(st.bucket!=='low'){
+      st.reasons.push({kind:'district_cost',text:HG.cost});
+      // 비수도권 + 메디컬이면 학군보다 지역인재가 먼저다
+      const RT=HG.regionalTalent;
+      if(RT&&picks.includes('med')&&sido&&!(HG.capital||[]).includes(sido))
+        st.reasons.push({kind:'regional_talent',text:RT.text});
+    }
+    hakgunjiResident=isIn;
+  }
   // ④ 기질·체질 (밀집 유형에만)
   const S=signals(a), obs=[]; const push=t=>obs.push({text:t});
   const g3=RULES.stage3.signals, sig=id=>g3.find(s=>s.id===id);
@@ -147,7 +192,8 @@ function evaluate(a){
     const it=picks.filter(p=>D.interest[p]).slice(0,2).map(p=>D.interest[p]);
     direction={env,interest:it,caveat:D.caveat};
   }
-  return {grade:gid,frame:gf,pos:P,signals:S,obs,interest:IT,picks,stated,notes,gaps,buckets,excluded,direction,
+  return {grade:gid,frame:gf,pos:P,signals:S,obs,interest:IT,picks,stated,notes,gaps,buckets,excluded,direction,hakgunjiResident,
+          equalization:gf.typeRanking?equalizationOf(a):null,
           needTB1:gf.typeRanking&&buckets.primary.length>=2,
           needTB2:gf.typeRanking&&(buckets.primary.concat(buckets.conditional)).some(b=>b.id==='외고'||b.id==='국제고')
                   &&picks.includes('lang')&&picks.includes('intl')};

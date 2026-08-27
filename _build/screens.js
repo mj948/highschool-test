@@ -1,3 +1,49 @@
+function eqLine(r){
+  const E=r.equalization, T=RULES.equalization&&RULES.equalization.text;
+  if(!E||!T) return '';
+  const eun=n=>{const t=String(n||'').trim(), c=t.charCodeAt(t.length-1);
+    return (c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28)?'은':'는';};
+  const place=E.place==='전 지역'?((S.a.A2&&S.a.A2.sido)||''):(E.place||'');
+  const fill=t=>String(t||'').replace(/\{place\}/g,place).replace(/\{eun\}/g,eun(place))
+                  .replace(/\{method\}/g,E.method||'')
+                  .replace(/\{eqQ\}/g,E.eqQ||'').replace(/\{eqEun\}/g,eun(E.eqQ))
+                  .replace(/\{nonQ\}/g,E.nonQ||'').replace(/\{nonEun\}/g,eun(E.nonQ))
+                  .replace(/\s+/g,' ').trim();
+  if(E.resolved==='갈림')   return `<div class="bd">${esc(fill(T.split))}</div>`;
+  if(E.resolved==='비평준화') return `<div class="bd">${esc(fill(T.nonEqualized))}</div>`;
+  return `<div class="bd">${esc(fill(T.equalized))}</div>`
+       + `<div class="bd">${esc(fill(T.equalizedTail))}</div>`;
+}
+
+function exSchools(typeId,reg,res,bucket){
+  const SE=RULES.schoolExamples, E=SE&&SE.byType&&SE.byType[typeId];
+  if(!E) return '';
+  if(E.hideWhenLow&&bucket==='low') return '';
+  const sido=(reg&&reg.sido)||'', sgg=(reg&&reg.sigungu)||'';
+  const fill=t=>String(t||'').replace(/\{sido\}/g,sido||'사시는 지역').replace(/\{sigungu\}/g,sgg);
+  if(E.scope==='district'){
+    if(res) return `<div class="ex">${esc(fill(E.text))}</div>`;
+    const HGx=RULES.hakgunji||{}, D=HGx.display||{};
+    const names=Object.keys(D).map(k=>`${esc(k)}<span class="exr">${esc(D[k])}</span>`).join(' · ');
+    return `<div class="ex"><span class="exl">${esc('저희가 잡은 학군지')}</span>${names}`
+         + `<div class="exn">${esc(fill(E.textAway))}</div></div>`;
+  }
+  if(E.scope==='none') return `<div class="ex">${esc(fill(E.text))}</div>`;
+  let list, label;
+  if(E.scope==='national'){ list=E.list||[]; label='전국 '+list.length+'곳'; }
+  else{
+    list=(E.byRegion||{})[sido]||[];
+    if(!list.length) return `<div class="ex">${esc(fill(E.noneText))}</div>`;
+    label=(sido||'')+' '+list.length+'곳';
+  }
+  const names=list.map(x=>esc(x.n)+(x.r?`<span class="exr">${esc(x.r)}</span>`:'')).join(' · ');
+  const notes=list.filter(x=>x.note).map(x=>esc(x.n)+' — '+esc(x.note)).join(' ');
+  const ft=(E.footByRegion&&E.footByRegion[sido])||E.foot||'';
+  const foot=[notes,ft?esc(ft):''].filter(Boolean).join(' ');
+  return `<div class="ex"><span class="exl">${esc(label)}</span>${names}`
+       + (foot?`<div class="exn">${foot}</div>`:'') + `</div>`;
+}
+
 function gateHTML(A){
   A.innerHTML=`<div class="bar"></div><main class="center">
    <div class="mark"></div><h1 class="big">고교선택검사</h1>
@@ -94,14 +140,18 @@ function resultHTML(A){
   h+=`</section>`;
   if(gf.typeRanking){
     h+=`<section><div class="eyebrow">학교 유형</div><h2>이 유형들을 놓고 보시면 됩니다</h2>
-        <div class="fine" style="margin-top:10px">순위나 점수를 매기지 않습니다. 세 묶음으로 나눠, 각 유형이 왜 그 자리에 있는지 적었습니다.</div>`;
+        <div class="fine" style="margin-top:10px">순위나 점수를 매기지 않습니다. 세 묶음으로 나눠, 각 유형이 왜 그 자리에 있는지 적었습니다. 유형마다 어떤 학교가 여기 들어가는지 이름도 함께 적었는데, 추천이 아니라 목록입니다.</div>`;
     const BTAG={primary:'지금 바로 검토', conditional:'조건을 확인한 뒤 검토', low:'현재는 우선순위 낮음'};
     RULES.stage5.buckets.forEach(b=>{
       const list=r.buckets[b.id]; if(!list.length) return;
       h+=`<div class="rule top" style="margin-top:20px"></div><div class="bucket"><div class="tag">${esc(BTAG[b.id]||b.title)}</div>`;
       list.forEach(x=>{ h+=`<div class="bt">${esc(x.id)}</div>`;
+        if(x.id==='일반고') h+=eqLine(r);
         if(x.reasons.length) x.reasons.forEach(rs=>{h+=`<div class="bd">${esc(rs.text)}</div>`;});
-        else h+=`<div class="bd">지금 조건에서 특별히 걸리는 부분이 없습니다.</div>`;});
+        else h+=`<div class="bd">지금 조건에서 특별히 걸리는 부분이 없습니다.</div>`;
+        if(x.id==='일반고'&&r.hakgunjiResident)
+          h+=`<div class="bd">지금 사시는 곳에서 배정받는 일반고가 대체로 아래 학군지 일반고와 겹칩니다.</div>`;
+        h+=exSchools(x.id,S.a.A2,r.hakgunjiResident,b.id);});
       h+=`</div>`;});
     if(r.excluded&&r.excluded.length){
       const EX={'외고':'외국어','국제고':'국제','과학고':'이공·메디컬 관심과 준비','영재학교':'이공·메디컬 관심과 준비'};
@@ -112,6 +162,11 @@ function resultHTML(A){
       h+=`<div class="note">${p==='curriculum'?'과목과 활동 선택 폭을 조금 더 우선하겠다고 하셨습니다. 위 후보 중 개설 과목이 넓은 학교부터 비교해 보세요.':'현재 성적 위치를 지키는 쪽을 조금 더 우선하겠다고 하셨습니다. 위 후보 중 같은 성적대 학생이 많은 학교부터 비교해 보세요.'}</div>`;}
     if(S.a.TB2){const p=(QI.TB2.options.find(o=>o.value===S.a.TB2)||{}).pole;
       h+=`<div class="note">${p==='language'?'아이는 외국어 자체를 배우는 활동에 더 관심을 보였습니다. 외국어고 교육과정을 먼저 비교해 볼 이유가 있습니다.':'아이는 외국어로 국제 문제를 다루는 활동에 더 관심을 보였습니다. 국제고 교육과정을 먼저 비교해 볼 이유가 있습니다.'}</div>`;}
+    const shown=['primary','conditional','low'].some(k=>r.buckets[k].some(x=>x.id==='학군지 일반고'));
+    if(shown&&RULES.hakgunji&&RULES.hakgunji.caption)
+      h+=`<div class="fine">${esc(RULES.hakgunji.caption)}</div>`;
+    if(RULES.schoolExamples&&RULES.schoolExamples.caption)
+      h+=`<div class="fine">${esc(RULES.schoolExamples.caption)}</div>`;
     h+=`</section>`;
   } else if(r.direction){
     const D=r.direction;
@@ -144,7 +199,7 @@ function resultHTML(A){
       <div style="padding:14px 0 40px">
       ${KID.filter(visible).some(i=>S.a[i]===undefined)?'<button class="btn" id="kid">아이 문항 마저 하기</button>':''}
       <button class="btn" id="prt">결과 인쇄 · PDF로 저장</button>
-      <div class="fine" id="prtmsg" style="text-align:center;margin-top:8px">인쇄 창에서 <b>대상</b>을 <b>PDF로 저장</b>으로 바꾸시면 파일로 남습니다.</div>
+      <div class="fine" id="prtmsg" style="text-align:center;margin-top:8px">인쇄 창에서 <b>대상</b>을 <b>PDF로 저장</b>으로 바꾸시면 PDF 파일이 됩니다.</div>
       <button class="btn ghost" id="again2">처음부터 다시</button></div>`;
   A.innerHTML=h;
   const k=$('#kid'); if(k) k.onclick=()=>{S.phase='kid';S.i=0;save();render();};
@@ -154,39 +209,23 @@ function resultHTML(A){
   persist(r);
 }
 function nextAction(r){
+  if(r.equalization&&r.equalization.resolved==='평준화')
+    return '배정받고 싶은 학교 세 곳을 순서까지 정해 적어 보세요. 여기서는 성적보다 1지망을 어디로 쓰느냐가 결과를 바꿉니다.';
   if(S.a.B5==='B') return '이번 주말에 고등학교 1학년 3월 모의고사를 한 과목만 시간을 재고 풀려 보세요. 중학교 성적표로는 보이지 않는 부분이 거기서 보입니다.';
   if(!r.frame.typeRanking) return '지금 시점에는 학교를 좁히기보다, 위에 적힌 공부 성향 중 한 가지를 골라 한 학기 동안 지켜봐 주세요.';
   if(r.signals.selfMgmt.guided) return '다음 한 주 동안 아이가 스스로 계획을 세워 보게 하고, 며칠이나 지켜지는지 확인해 보세요. 학교의 학습 관리 방식을 물어볼 때 기준이 됩니다.';
   return '관심 있는 학교 두 곳의 편제표를 열어, 아이가 관심을 보인 분야의 과목이 실제로 개설되는지 확인해 보세요.';
 }
 
+/* PDF는 브라우저 인쇄창의 'PDF로 저장'으로 만든다.
+   글꼴이 한글이라 파일을 직접 PDF로 찍으려면 폰트를 통째로 넣어야 해서 인쇄창을 쓴다.
+   결과 화면의 @media print 규칙이 그대로 적용된다. */
 async function doPrint(){
-  const btn=$('#prt');
   const setMsg=t=>{const m=$('#prtmsg'); if(m) m.innerHTML=t;};
-  // 아티팩트·임베드처럼 다른 페이지 안에 들어 있으면 인쇄 창이 안 열린다
   const embedded=(()=>{try{return window.self!==window.top}catch(e){return true}})();
-  if(!embedded){
-    try{ window.print(); return; }catch(e){}
-  }
-  setMsg('결과 파일을 만들고 있습니다…');
-  const ok=await saveResultFile();
-  setMsg(ok
-    ? '결과 파일을 받으셨습니다. 그 파일을 열고 <b>인쇄 → 대상을 PDF로 저장</b>으로 바꾸시면 됩니다.'
-    : '이 화면에서는 인쇄 창이 열리지 않습니다. 브라우저 메뉴의 인쇄 기능을 쓰시거나, 검사를 별도 주소로 열어 주세요.');
-  if(btn) btn.textContent='결과 파일 다시 받기';
-}
-async function saveResultFile(){
-  const style=document.querySelector('style');
-  const main=document.querySelector('main.res');
-  if(!main) return false;
-  const html='<!doctype html><html lang="ko"><head><meta charset="utf-8">'+
-    '<meta name="viewport" content="width=device-width,initial-scale=1">'+
-    '<title>고교선택검사 결과</title>'+
-    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">'+
-    '<style>'+(style?style.textContent:'')+
-    '.print-head{display:block!important;margin:0 0 18px;padding-bottom:12px;border-bottom:1.5px solid var(--ink)}'+
-    '.print-head .t{font-family:var(--serif);font-size:22px;font-weight:700;margin:0}'+
-    '.print-head .m{font-size:12px;color:var(--muted);margin-top:6px;display:flex;gap:14px;flex-wrap:wrap}'+
-    '</style></head><body><div class="app"><main class="res">'+main.innerHTML+'</main></div></body></html>';
-  return await saveFile('고교선택검사_결과_'+new Date().toISOString().slice(0,10)+'.html', html, 'text/html');
+  let opened=false;
+  try{ window.print(); opened=true; }catch(e){ opened=false; }
+  setMsg(opened&&!embedded
+    ? '인쇄 창에서 <b>대상</b>을 <b>PDF로 저장</b>으로 바꾸시면 PDF 파일이 됩니다.'
+    : '인쇄 창이 뜨면 <b>대상</b>을 <b>PDF로 저장</b>으로 바꾸세요. 창이 안 뜨면 이 검사를 새 탭에서 연 뒤 브라우저 메뉴의 <b>인쇄</b>를 눌러 주세요.');
 }
