@@ -436,6 +436,17 @@ T('I37. 한 시·군 안에서 갈리면 어느 한쪽으로 단정하지 않는
   if(R2('경기','없는시')) bad.push('모르는 시·군·구인데 판정함');
   return bad.length===0?true:bad.join(', ');});
 
+T('I38. 브라우저 팝업(confirm·prompt·alert)을 쓰지 않는다',()=>{
+  // 아티팩트는 iframe 안이라 이 셋이 막힌다. 막히면 조용히 아무 일도 안 일어난다.
+  const bad=[];
+  [['confirm','되묻기'],['prompt','입력받기'],['alert','알리기']].forEach(([f,role])=>{
+    const re=new RegExp('(^|[^.\\w])'+f+'\\s*\\(');
+    if(re.test(SRC)) bad.push(f+'('+role+')가 남아 있음');});
+  // 되묻기와 비밀번호는 화면 안에서 처리한다
+  if(!SRC.includes('한 번 더 누르세요')) bad.push('처음부터 다시가 화면 안에서 되묻지 않음');
+  if(!SRC.includes('admgate')) bad.push('관리자 비밀번호를 화면 안에서 안 받음');
+  return bad.length===0?true:bad.join(', ');});
+
 console.log('\n═══ 결과 ═══');
 console.log(`  PASS ${pass} · FAIL ${fail}`);
 if(fail){console.log('\n실패 목록:');fails.forEach(f=>console.log('  · '+f));process.exit(1);}

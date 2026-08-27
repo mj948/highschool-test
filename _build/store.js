@@ -27,8 +27,27 @@ function persist(r){
 }
 /* ── 관리자 ── */
 function adminOpen(){
-  const pw=prompt('관리자 비밀번호');
-  if(pw!==ADMIN_PASSWORD){ if(pw!==null) alert('비밀번호가 다릅니다.'); return; }
+  // prompt·alert도 아티팩트 안에서는 막힌다. 비밀번호를 화면 안에서 받는다.
+  if(document.getElementById('admgate')) return;
+  const g=document.createElement('div'); g.className='sheet'; g.id='admgate';
+  g.innerHTML=`<div class="wrap" style="max-width:340px;padding-top:60px">
+    <h2 style="font-family:var(--serif);margin:0 0 14px">관리자</h2>
+    <input class="txt" id="admpw" type="password" placeholder="비밀번호" autocomplete="current-password">
+    <div class="fine" id="admmsg" style="margin-top:8px"></div>
+    <button class="btn" id="admok" style="margin-top:14px">들어가기</button>
+    <button class="btn ghost" id="admno">닫기</button></div>`;
+  document.body.appendChild(g);
+  const close=()=>g.remove();
+  g.querySelector('#admno').onclick=close;
+  const tryOpen=()=>{
+    if(g.querySelector('#admpw').value!==ADMIN_PASSWORD){
+      g.querySelector('#admmsg').textContent='비밀번호가 다릅니다.'; return; }
+    close(); adminSheet();};
+  g.querySelector('#admok').onclick=tryOpen;
+  g.querySelector('#admpw').onkeydown=e=>{if(e.key==='Enter') tryOpen();};
+  g.querySelector('#admpw').focus();
+}
+function adminSheet(){
   const v31=localList(V31_KEY).map(r=>Object.assign({},r,{_v:'v3.1'}));
   const v2=localList(V2_KEY).map(r=>Object.assign({},r,{_v:'v2'}));
   const all=v31.concat(v2).sort((a,b)=>String(b.completedAt||'').localeCompare(String(a.completedAt||'')));

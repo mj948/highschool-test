@@ -200,12 +200,24 @@ function resultHTML(A){
       ${KID.filter(visible).some(i=>S.a[i]===undefined)?'<button class="btn" id="kid">아이 문항 마저 하기</button>':''}
       <button class="btn" id="prt">결과 인쇄 · PDF로 저장</button>
       <div class="fine" id="prtmsg" style="text-align:center;margin-top:8px">인쇄 창에서 <b>대상</b>을 <b>PDF로 저장</b>으로 바꾸시면 PDF 파일이 됩니다.</div>
-      <button class="btn ghost" id="again2">처음부터 다시</button></div>`;
+      <button class="btn ghost" id="again2">처음부터 다시</button>
+      <div class="fine" id="agmsg" style="text-align:center;margin-top:6px"></div></div>`;
   A.innerHTML=h;
   const k=$('#kid'); if(k) k.onclick=()=>{S.phase='kid';S.i=0;save();render();};
   $('#prt').onclick=doPrint;
-  $('#again2').onclick=()=>{ if(confirm('답을 모두 지우고 처음부터 진행할까요?')){
-    S={a:{},i:0,phase:'intro',t0:0,ms:0,gate:1};save();render();}};
+  // 아티팩트처럼 다른 페이지 안에 있으면 confirm 창이 막혀 아무 일도 안 일어난다.
+  // 그래서 되묻는 것도 화면 안에서 한다. 한 번 더 누르면 지운다.
+  let armed=false;
+  $('#again2').onclick=()=>{
+    const b=$('#again2'), m=$('#agmsg');
+    if(!armed){ armed=true;
+      if(b) b.textContent='정말 지울까요? 한 번 더 누르세요';
+      if(m) m.textContent='답이 모두 지워지고 처음 화면으로 돌아갑니다.';
+      setTimeout(()=>{ armed=false;
+        const bb=$('#again2'), mm=$('#agmsg');
+        if(bb) bb.textContent='처음부터 다시'; if(mm) mm.textContent=''; },6000);
+      return; }
+    S={a:{},i:0,phase:'intro',t0:0,ms:0,gate:1};save();render();};
   persist(r);
 }
 function nextAction(r){
