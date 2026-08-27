@@ -60,7 +60,7 @@ function gateHTML(A){
     const v=(inp.value||'').trim();
     if(!v){ return; }
     let ok=false; try{ ok=(await sha256(v))===GATE_HASH; }catch(e){ ok=false; }
-    if(ok){ S.gate=1; S.phase='intro'; save(); render(); }
+    if(ok){ passed=true; render(); }   // 하던 데가 있으면 거기서 이어진다
     else{ msg.textContent='비밀번호가 다릅니다.'; inp.value=''; inp.focus(); }
   };
   $('#genter').onclick=submit;
@@ -83,7 +83,7 @@ function introHTML(A){
    <div style="padding:0 0 18px"><button class="btn" id="start">시작하기</button>
    ${Object.keys(S.a).length?'<button class="btn ghost" id="reset">처음부터 다시</button>':''}</div>`;
   $('#start').onclick=()=>{S.phase='mo';S.i=0;S.t0=Date.now();save();render();};
-  const r=$('#reset'); if(r) r.onclick=()=>{S={a:{},i:0,phase:'intro',t0:0,ms:0,gate:1};save();render();};
+  const r=$('#reset'); if(r) r.onclick=()=>{S={a:{},i:0,phase:'intro',t0:0,ms:0};save();render();};
 }
 function handoffHTML(A){
   const n=KID.filter(visible).length;
@@ -217,7 +217,7 @@ function resultHTML(A){
         const bb=$('#again2'), mm=$('#agmsg');
         if(bb) bb.textContent='처음부터 다시'; if(mm) mm.textContent=''; },6000);
       return; }
-    S={a:{},i:0,phase:'intro',t0:0,ms:0,gate:1};save();render();};
+    S={a:{},i:0,phase:'intro',t0:0,ms:0};save();render();};
   persist(r);
 }
 function nextAction(r){

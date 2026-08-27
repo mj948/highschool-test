@@ -232,11 +232,18 @@ T('I22. 아이 문항이 짧고 어려운 말이 없다',()=>{
     (q.options||[]).forEach(o=>{if(HARD.test(o.label)) bad.push(q.id+' 선지 어휘');});});
   return bad.length===0?true:bad.join(', ');});
 
-T('I23. 진입 비밀번호가 평문이 아니라 해시로 들어 있다',()=>{
-  const plain=/['\"]2608['\"]/.test(SRC);
-  const hash=/GATE_HASH='[0-9a-f]{64}'/.test(SRC);
-  const gated=/phase:'gate'/.test(SRC)&&SRC.includes('gateHTML');
-  return (!plain&&hash&&gated)?true:`plain:${plain} hash:${hash} gated:${gated}`;});
+T('I23. 진입 비밀번호가 평문이 아니고, 들어올 때마다 묻는다',()=>{
+  const bad=[];
+  if(/['"]2608['"]/.test(SRC)) bad.push('평문이 들어 있음');
+  if(!/GATE_HASH='[0-9a-f]{64}'/.test(SRC)) bad.push('해시가 없음');
+  if(!SRC.includes('gateHTML')) bad.push('비밀번호 화면이 없음');
+  // 통과 여부를 저장하면 그 브라우저는 영영 안 묻는다. 메모리에만 둔다.
+  if(!/let passed=false/.test(SRC)) bad.push('통과 여부를 메모리에 안 둠');
+  if(!/if\(!passed\) return gateHTML/.test(SRC)) bad.push('그리기 전에 게이트를 안 세움');
+  // 옛 기록을 지우는 delete는 괜찮다. 읽거나 쓰는 게 남아 있으면 안 된다.
+  if(/S\.gate/.test(SRC.replace(/delete S\.gate;/g,''))) bad.push('통과 여부가 저장 대상에 남아 있음');
+  if(/gate:1/.test(SRC)) bad.push('되돌리기가 게이트를 통과시킴');
+  return bad.length===0?true:bad.join(', ');});
 
 T('I24. 학교 유형이 전부(일반고·자사고·외고·국제고·과학고·영재학교) 정의돼 있다',()=>{
   const ids=RULES.types.map(t=>t.id);

@@ -42,8 +42,12 @@ function sha256js(ascii){
     H=[(H[0]+a)|0,(H[1]+b)|0,(H[2]+c)|0,(H[3]+d)|0,(H[4]+e)|0,(H[5]+f)|0,(H[6]+g)|0,(H[7]+h)|0];}
   return H.map(x=>(x>>>0).toString(16).padStart(8,'0')).join('');
 }
-let S={a:{},i:0,phase:'gate',t0:0,ms:0};
+let S={a:{},i:0,phase:'intro',t0:0,ms:0};
 try{const r=localStorage.getItem(KEY); if(r) S=Object.assign(S,JSON.parse(r));}catch(e){}
+if(S.phase==='gate') S.phase='intro';        // 옛 기록 정리
+delete S.gate;                               // 통과 여부는 저장하지 않는다
+// 들어올 때마다 비밀번호를 받는다. 저장하면 그 브라우저는 영영 안 묻게 된다.
+let passed=false;
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const MO=['A1','A2','A3','A4','A5','A6','B1','B2','B3','B4','B5','C1','C2','D1','D2','D3',
           'E1','E2','F1','F2','G1','G2','G3','H1','I1','I2'];
@@ -141,8 +145,7 @@ function qHTML(q){
 function render(){
   window.scrollTo(0,0);
   const A=APP();
-  if(S.phase==='gate'&&!S.gate) return gateHTML(A);
-  if(S.phase==='gate') S.phase='intro';
+  if(!passed) return gateHTML(A);
   if(S.phase==='intro') return introHTML(A);
   if(S.phase==='handoff') return handoffHTML(A);
   if(S.phase==='check') return checkHTML(A);
