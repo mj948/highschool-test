@@ -377,7 +377,7 @@ function sincerity(a,ms){
 const $=s=>document.querySelector(s), APP=()=>document.getElementById('app');
 const esc=s=>String(s==null?'':s).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
 const KEY='hsc_v31';
-const GATE_HASH='32ea6aa8091a36e8779df25bed19f857a402b1f3862c8c07212928f0f2ea886d';   // SHA-256(검사 비밀번호). 평문은 소스에 두지 않는다.
+const GATE_HASH='b171875a25de1c92084c310cc8c323c59668112c2c680f5b161a93041cb7fed0';   // SHA-256(검사 비밀번호). 평문은 소스에 두지 않는다.
 async function sha256(t){
   try{
     if(typeof crypto!=='undefined'&&crypto.subtle){

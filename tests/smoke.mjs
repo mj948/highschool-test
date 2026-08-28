@@ -32,7 +32,7 @@ const press=id=>{const e=els['#'+id]; if(!e) throw new Error('버튼 없음 '+id
 let steps=0, seen=[];
 (async()=>{
 // 게이트 통과: 비밀번호 입력 → 들어가기 → 해시 검증(async) 완료까지 대기
-if(els['#gpw']){ els['#gpw'].value='2608'; els['#genter'].onclick(); }
+if(els['#gpw']){ els['#gpw'].value='2609'; els['#genter'].onclick(); }
 for(let w=0; w<100 && !els['#start']; w++){ await new Promise(r=>setImmediate(r)); }
 if(!els['#start']) throw new Error('게이트를 통과하지 못했습니다');
 press('start');
